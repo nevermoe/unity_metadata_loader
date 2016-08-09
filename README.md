@@ -17,7 +17,7 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 6. Press Alt-F8. Everything is done.
 
 
-## Find **end** of **STRINGLITERALS**
+## Find The **End** of **STRINGLITERALS**
 
 
 
