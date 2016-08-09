@@ -12,8 +12,8 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 1. Copy Debug/unity_decoder.exe to the same directory as your binary to be analyzed.
 2. Copy unity_loader.py to any directory. (I recommned to copy it to the same directory as your binary to be analyzed.)
 3. Copy global-metadata.dat to the same directory as your binary to be analyzed. It's located in Data/Managed/Metadata/global-metadata.dat.
-4. Load unity_loader.py by using File->Script File.
-5. This is the most difficult step. Open your binary with IDA and find the **end** of **STRINGLITERALS** and put your curse right on it. I will show how to find it later.
+4. Load unity_loader.py using File->Script File.
+5. This is the most difficult step. Open your binary with IDA and find the **end** of **STRINGLITERALS** and put your cursor right on it. I will show how to find it later.
 6. Press Alt-F8. Everything is done.
 
 
@@ -34,7 +34,7 @@ This is the **start** of **STRINGLITERALS**. But we need to locate to the **end*
 
 ![strlit_end](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png)
 
-This is what we are seeking for, just put your curse one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
+This is what we are seeking for, just put your cursor one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
 
 
 
