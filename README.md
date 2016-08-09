@@ -22,12 +22,15 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 
 
 The pointer to **STRINGLITERALS** are in `__const` section of the binary file. Locate to the `__const` section and drag downwards until you see somethinglike this picture: 
+
 ![sub_end](https://www.nevermoe.com/wp-content/uploads/2016/08/sub_end.png)
 This is the end of many `subs`.
 
 Scroll down a little, you will see many `qwords` start to show up:
+
 ![strlit_start](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_start.png)
 This is the **start** of **STRINGLITERALS**. But we need to locate to the **end** of **STRINGLITERALS**, so keep scrolling down until you see the following screenshot:
+
 ![strlit_end](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png)
 This is what we are seeking for, just put your curse one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
 
