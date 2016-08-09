@@ -29,9 +29,11 @@ This is the end of many `subs`.
 Scroll down a little, you will see many `qwords` start to show up:
 
 ![strlit_start](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_start.png)
+
 This is the **start** of **STRINGLITERALS**. But we need to locate to the **end** of **STRINGLITERALS**, so keep scrolling down until you see the following screenshot:
 
 ![strlit_end](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png)
+
 This is what we are seeking for, just put your curse one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
 
 
