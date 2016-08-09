@@ -1,3 +1,13 @@
-﻿  main.cpp
-  unity_decoder.vcxproj -> D:\vs_project\unity_decoder\Debug\unity_decoder.exe
-  unity_decoder.vcxproj -> D:\vs_project\unity_decoder\Debug\unity_decoder.pdb (Full PDB)
+﻿Build started 2016/08/10 0:39:41.
+     1>Project "E:\codes\unity_metadata_loader\unity_decoder\unity_decoder.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\libil2cpp /IE:\local\boost_1_61_0 /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\codes\unity_metadata_loader\Debug\unity_decoder.exe" /INCREMENTAL /NOLOGO /LIBPATH:"E:\local\boost_1_61_0\lib32-msvc-14.0" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"E:\codes\unity_metadata_loader\Debug\unity_decoder.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\codes\unity_metadata_loader\Debug\unity_decoder.lib" /MACHINE:X86 Debug\main.obj
+         unity_decoder.vcxproj -> E:\codes\unity_metadata_loader\Debug\unity_decoder.exe
+     1>Done Building Project "E:\codes\unity_metadata_loader\unity_decoder\unity_decoder.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.69
