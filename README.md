@@ -22,3 +22,6 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 The pointer to STRINGLITERALS are in `__const` section of the binary file. Locate to the `__const` section and drag downwards until you see somethinglike this picture: 
 
 ![strlit_end]("http://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png")
+
+![strlit_end]("http://www.hdwallpapers.in/walls/love_heart_candy_pair-wide.jpg")
+
