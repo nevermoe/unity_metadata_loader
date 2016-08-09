@@ -19,9 +19,17 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 
 ## Find last position of STRINGLITERALS
 
+
+
 The pointer to STRINGLITERALS are in `__const` section of the binary file. Locate to the `__const` section and drag downwards until you see somethinglike this picture: 
+![sub_end](https://www.nevermoe.com/wp-content/uploads/2016/08/sub_end.png)
+This is the end of many `subs`.
 
+Scroll down a little, you will see many `qword` start:
+![strlit_start](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_start.png)
+This is the start of STRINGLITERAL. But we need to locate to the end of STRINGLITERAL, so keep scrolling down until you see the following screenshot:
 ![strlit_end](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png)
+This is what we are seeking for, just put your curse one line before `off_xxxx` which is the end of STRINGLITERAL.
 
-![strlit_end](http://www.hdwallpapers.in/walls/love_heart_candy_pair-wide.jpg)
+
 
