@@ -52,6 +52,7 @@ public:
 	static Il2CppClass* GetTypeInfoFromTypeIndex (TypeIndex index);
 	static const Il2CppType* GetIl2CppTypeFromIndex (TypeIndex index);
 	static const MethodInfo* GetMethodInfoFromIndex (EncodedMethodIndex index);
+	__declspec(dllexport) static const MethodInfo* GetMethodInfoFromIndex2(EncodedMethodIndex index);
 	static const Il2CppGenericMethod* GetGenericMethodFromIndex (GenericMethodIndex index);
 	static Il2CppString* GetStringLiteralFromIndex (StringLiteralIndex index);
 	static const char* GetStringFromIndex (StringIndex index);
