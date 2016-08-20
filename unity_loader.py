@@ -14,20 +14,19 @@ def ParseMethod():
     i = 0;
 
     for line in file:
-        line = line.replace(' ', '_')
-        line = re.sub(r'[^a-zA-Z0-9_$]', '', line)
-        
-        if len(line) > 0 and line[0].isdigit():
-            line = 's' + line
+        line = line.strip(' ').replace('\r', '').replace('\n', '')
+        new_line = re.sub(r'[^a-zA-Z0-9_$]', '_', line)
         
         if bits == 32: 
             addr = idc.Dword(ea)
-            idc.MakeNameEx(addr, str(line), SN_NOWARN)
+            ret = idc.MakeNameEx(addr, str(new_line), SN_NOWARN)
+            idc.MakeComm(ea, str(line))
             ea = ea + 4
             
         elif bits == 64:
             addr = idc.Qword(ea)
-            idc.MakeNameEx(addr, str(line), SN_NOWARN)
+            ret = idc.MakeNameEx(addr, str(new_line), SN_NOWARN)
+            idc.MakeComm(ea, str(line))
             ea = ea + 8
         
     
@@ -46,20 +45,21 @@ def ParseString():
     i = 0;
 
     for line in file:
-        line = line.replace(' ', '_')
-        line = re.sub(r'[^a-zA-Z0-9_]', '', line)
+        line = line.strip(' ').replace('\r', '').replace('\n', '')
+        new_line = re.sub(r'[^a-zA-Z0-9_]', '_', line)
         
-        if len(line) > 0 and line[0].isdigit():
-            line = 's' + line
+        if len(new_line) > 0 and new_line[0].isdigit():
+            new_line = 's_' + new_line
         
         if bits == 64:
             addr = idc.Qword(ea)
-            idc.MakeNameEx(addr, str(line), SN_NOWARN)
+            ret = idc.MakeNameEx(addr, str(new_line), SN_NOWARN)
+            idc.MakeComm(ea, str(line))
             ea = ea - 8
         elif bits == 32:
-            print line
             addr = idc.Dword(ea)
-            idc.MakeNameEx(addr, str(line), SN_NOWARN)
+            ret = idc.MakeNameEx(addr, str(new_line), SN_NOWARN)
+            idc.MakeComm(ea, str(line))
             ea = ea - 4
     
     file.close()
