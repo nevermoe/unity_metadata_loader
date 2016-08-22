@@ -1,20 +1,31 @@
 # unity_metadata_loader
 
-This project will load strings in global-metadata.dat to IDA.
+This project will load strings and method/class names in global-metadata.dat to IDA.
 
 ## Introduction
 
-As you know, if you use IL2CPP to compile an unity game for iOS, all the strings will be stored in global-metadata.dat so you can't find any strings in IDA which significantly makes the static analysis more difficult. With this project, you are able to load the strings in global-metadata.dat to IDA to make analysis a little bit easier.
+As you know, if you use IL2CPP to compile an unity game for iOS, all the strings will be stored in global-metadata.dat so you can't find any strings in IDA which significantly makes the static analysis more difficult. With this project, you are able to load the strings in global-metadata.dat to IDA to make analysis a little bit easier. Besides, as C# utilized the reflection technique, all the class/method names are also stored in the global-metadata.dat file. This enables us to extract the names and mapping them back to IDA.
 
 
-## Usage
+## Installation
 
 1. Copy Debug/unity_decoder.exe to the same directory as your binary to be analyzed.
 2. Copy unity_loader.py to any directory. (I recommned to copy it to the same directory as your binary to be analyzed.)
 3. Copy global-metadata.dat to the same directory as your binary to be analyzed. It's located in Data/Managed/Metadata/global-metadata.dat.
 4. Load unity_loader.py using File->Script File.
-5. This is the most difficult step. Open your binary with IDA and find the **end** of **STRINGLITERALS** and put your cursor right on it. I will show how to find it later.
-6. Press Alt-F8. Everything is done.
+
+
+## Usage
+### For String Literal:
+
+1. Open your binary with IDA and find the **end** of **STRINGLITERALS** and put your cursor right on it. I will show how to find it later.
+2. Press Alt-F8. Now strings are recovered.
+
+### For Class/Method Name:
+
+1. This is almost the same as for String Literal. Open your binary with IDA and find the **start** of **g_methodPointers** and put your cursor above it. I will show how to find it later.
+2. Press Alt-F9. Now Class/Method names are recovered.
+
 
 
 ## Find The **End** of **STRINGLITERALS**
@@ -24,6 +35,7 @@ As you know, if you use IL2CPP to compile an unity game for iOS, all the strings
 The pointer to **STRINGLITERALS** are in `__const` section of the binary file. Locate to the `__const` section and drag downwards until you see somethinglike this picture: 
 
 ![sub_end](https://www.nevermoe.com/wp-content/uploads/2016/08/sub_end.png)
+
 This is the end of many `subs`.
 
 Scroll down a little, you will see many `qwords` start to show up:
@@ -37,4 +49,6 @@ This is the **start** of **STRINGLITERALS**. But we need to locate to the **end*
 This is what we are seeking for, just put your cursor one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
 
 
+## Find The **Start** of **g_methodPointers**
 
+If you can find the **End** of **STRINGLITERALS**, then this step is suprisingly easy because the **Start** of **g_methodPointers** locates just next to the **End** of **STRINGLITERALS**!
