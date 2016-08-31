@@ -59,9 +59,7 @@ def ParseString():
     for line in file:
         line = line.strip(' ').replace('\r', '').replace('\n', '')
         new_line = re.sub(r'[^a-zA-Z0-9_]', '_', line)
-        
-        if len(new_line) > 0 and new_line[0].isdigit():
-            new_line = 'StringLiteral_' + new_line
+        new_line = 'StringLiteral_' + new_line
         
         i = 0;
         if bits == 64:
