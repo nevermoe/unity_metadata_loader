@@ -1,2 +1,6 @@
 *.VC.db
 *.VC.opendb
+*.sdf
+*.pdb
+*.ilk
+unity_decoder/Debug/

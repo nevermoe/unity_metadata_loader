@@ -1,8 +1,5 @@
 #include "core.h"
 #include <iostream>
-#include <boost/interprocess/file_mapping.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-#include <boost/filesystem.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,8 +13,8 @@
 #include <vm/MetadataCache.h>
 #include <windows.h>
 #include <fstream>
-
-using namespace boost::interprocess;
+#include <cstdio>
+#include <cstdlib>
 
 
 //Define file names
@@ -43,18 +40,6 @@ char* removeAllChars(char* str, char c)
 		pw += (*pw != c);
 	}
 	*pw = '\0';
-
-	return str;
-}
-
-char *replaceAllReturns(char* str)
-{
-	char *pw = str;
-	while (*pw) {
-		if (*pw == '\r' || *pw == '\n')
-			*pw = '^';
-		pw++;
-	}
 
 	return str;
 }
@@ -226,7 +211,6 @@ char* GetStringLiteralFromIndex(StringLiteralIndex index)
 	char *dstStr = new char[stringLiteral->length+1];
 	snprintf(dstStr, stringLiteral->length+1, "%s", srcStr);
 
-	//dstStr = replaceAllReturns(dstStr);
 	dstStr = removeAllChars(dstStr, '\r');
 	dstStr = removeAllChars(dstStr, '\n');
 
@@ -294,16 +278,22 @@ int main()
 {
 
 	std::ofstream stringLiteralFile, methodNameFile;
+	std::ifstream metadataFile;
 	
-	
-	file_mapping m_file(MetadataFileName, boost::interprocess::read_only);
-	mapped_region region(m_file, boost::interprocess::read_only);
+	metadataFile.open(MetadataFileName, std::ios::binary | std::ios::ate);
+	std::streamsize size = metadataFile.tellg();
+	metadataFile.seekg(0, std::ios::beg);
+	char *addr = (char*)malloc(size + 1);
+	metadataFile.read(&addr[0], size);
+	addr[size] = 0;
 
-	//Get the address of the mapped region
-	void * addr = region.get_address();
 	s_GlobalMetadata = addr;
 	s_GlobalMetadataHeader = (Il2CppGlobalMetadataHeader*)addr;
 
+
+	if (s_GlobalMetadataHeader->version != 21) {
+		std::cerr << "[error] metadata version is: " << s_GlobalMetadataHeader->version << std::endl;
+	}
 	assert(s_GlobalMetadataHeader->sanity == 0xFAB11BAF);
 	assert(s_GlobalMetadataHeader->version == 21);
 
