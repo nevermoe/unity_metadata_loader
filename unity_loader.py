@@ -119,12 +119,46 @@ def IsStringPreceding(addr):
         
     return True
     
-def AutoLoad():
-    if FILE_TYPE != "f_MACHO":
-        print "AutoLoad is not supported for your platform. Please try LocationHelper."
-        return;
+def IsStringFollowing(addr):
+    i = 0
+    while i < 10:
+        #pAddr = GetVarFromAddr(addr)
+        #if not IsData(pAddr):
+        if not IsData(addr):
+            return False;
+        
+        addr = idc.NextHead(addr)
+        i = i + 1
+        
+    return True
+
     
+def AutoLoadAndroid():
+    constSegList = [];
+    seg = idc.FirstSeg()
+    while seg != idc.BADADDR:
+        seg = idc.NextSeg(seg)
+        segName = idc.SegName(seg)
+        if segName == ".data.rel.ro":
+            constSegList.append(seg)
     
+    print "Locating Methods and Strings..."
+    for addr in constSegList:
+        while idc.SegName(addr) == '.data.rel.ro':
+            if IsSubFollowing(addr) and IsStringFollowing(GetVarFromAddr(idc.PrevHead(addr))):
+                print "Location Found At: %x" % (addr)
+                idc.Jump(addr)
+                break;
+            
+            addr = idc.NextHead(addr)
+    
+    print "Loading Symbols..."
+    LoadMethods(addr)
+    #LoadStrings(idc.PrevHead(addr))
+    
+    print "Done."
+    
+def AutoLoadiOS():
     constSegList = [];
     seg = idc.FirstSeg()
     while seg != idc.BADADDR:
@@ -148,6 +182,16 @@ def AutoLoad():
     LoadStrings(idc.PrevHead(addr))
     
     print "Done."
+    
+    
+def AutoLoad():
+
+    if FILE_TYPE == "f_MACHO":
+        AutoLoadiOS()
+    elif FILE_TYPE == "f_ELF":
+        AutoLoadAndroid()
+    else:
+        print "AutoLoad is not supported for your platform. Please try LocationHelper."
     
     
 def LocationHelper():
