@@ -107,7 +107,7 @@ def IsSubFollowing(addr):
     return True
     
     
-def IsStringPreceding(addr):
+def IsStringPrecedingiOS(addr):
     i = 0
     while i < 10:
         pAddr = GetVarFromAddr(addr)
@@ -119,7 +119,7 @@ def IsStringPreceding(addr):
         
     return True
     
-def IsStringFollowing(addr):
+def IsStringFollowingAndroid(addr):
     i = 0
     while i < 10:
         #pAddr = GetVarFromAddr(addr)
@@ -133,6 +133,13 @@ def IsStringFollowing(addr):
     return True
 
     
+def FindStringsEndAndroid(addr):
+    while True:
+        addr = IncreaseAddr(addr)
+        if not IsData(addr):
+            addr = idc.PrevHead(idc.PrevHead(addr))
+            return addr;
+    
 def AutoLoadAndroid():
     constSegList = [];
     seg = idc.FirstSeg()
@@ -145,8 +152,8 @@ def AutoLoadAndroid():
     print "Locating Methods and Strings..."
     for addr in constSegList:
         while idc.SegName(addr) == '.data.rel.ro':
-            if IsSubFollowing(addr) and IsStringFollowing(GetVarFromAddr(idc.PrevHead(addr))):
-                print "Location Found At: %x" % (addr)
+            if IsSubFollowing(addr) and IsStringFollowingAndroid(GetVarFromAddr(idc.PrevHead(addr))):
+                print "Methods Start At: %x" % (addr)
                 idc.Jump(addr)
                 break;
             
@@ -154,7 +161,10 @@ def AutoLoadAndroid():
     
     print "Loading Symbols..."
     LoadMethods(addr)
-    #LoadStrings(idc.PrevHead(addr))
+    
+    addr = FindStringsEndAndroid(GetVarFromAddr(idc.PrevHead(addr)))
+    print "Strings End At %x" % (addr)
+    LoadStrings(addr)
     
     print "Done."
     
@@ -170,8 +180,8 @@ def AutoLoadiOS():
     print "Locating Methods and Strings..."
     for addr in constSegList:
         while idc.SegName(addr) == '__const':
-            if IsSubFollowing(addr) and IsStringPreceding(idc.PrevHead(addr)):
-                print "Location Found At: %x" % (addr)
+            if IsSubFollowing(addr) and IsStringPrecedingiOS(idc.PrevHead(addr)):
+                print "Methods Start At: %x" % (addr)
                 idc.Jump(addr)
                 break;
             
