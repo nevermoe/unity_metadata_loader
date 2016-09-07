@@ -266,7 +266,7 @@ AddHotkey("Ctrl-Alt-L", 'LocationHelper')
 
 print "Ctrl-Alt-S : Load String Literals"
 print "Ctrl-Alt-M : Load Methods"
-print "Ctrl-Alt-A : Automatically Load Everything (iOS only)"
-print "Ctrl-Alt-L : Locate Methods (Experimental)"
+print "Ctrl-Alt-A : Automatically Load Everything (iOS and Android Only)"
+print "Ctrl-Alt-L : Locate Methods (TODO)"
 
 
