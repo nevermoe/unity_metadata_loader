@@ -4,51 +4,26 @@ This project will load strings and method/class names in global-metadata.dat to 
 
 ## Introduction
 
-As you know, if you use IL2CPP to compile an unity game for iOS, all the strings will be stored in global-metadata.dat so you can't find any strings in IDA which significantly makes the static analysis more difficult. With this project, you are able to load the strings in global-metadata.dat to IDA to make analysis a little bit easier. Besides, as C# utilized the reflection technique, all the class/method names are also stored in the global-metadata.dat file. This enables us to extract the names and mapping them back to IDA.
+As most game hackers may know, if you use IL2CPP to compile an Unity game, all the strings used in your original source code will be stored separately in another file call `global-metadata.dat` so that you are not able to find any strings when you load the game binary to IDA. Moreover, as the game is compiled to native assembly, all the symbols like class names or function names are removed from the binary. This significantly makes the static analysis of these games more difficult and is usually considered to be un-hackable. However, with this IDA plugin, you are able to recover all the class names, method names and string constants and mapping them to IDA. Hacking unity games becomes incredibly easy.
 
 
-## Installation
+## Installation & Usage
 
 1. Copy Debug/unity_decoder.exe to the same directory as your binary to be analyzed.
 2. Copy unity_loader.py to any directory. (I recommned to copy it to the same directory as your binary to be analyzed.)
-3. Copy global-metadata.dat to the same directory as your binary to be analyzed. It's located in Data/Managed/Metadata/global-metadata.dat.
+3. Copy global-metadata.dat to the same directory as your binary to be analyzed. It's located in Data/Managed/Metadata/global-metadata.dat in the ipa file or apk file.
 4. Load unity_loader.py using File->Script File.
+5. Press Ctrl+Alt+A and all is done.
 
 
-## Usage
-### For String Literal:
+## Demo
 
-1. Open your binary with IDA and find the **end** of **STRINGLITERALS** and put your cursor right on it. I will show how to find it later.
-2. Press Alt-F8. Now strings are recovered.
+Before recovering the symbols:
+![before](https://www.nevermoe.com/wp-content/uploads/2016/09/before.png)
 
-### For Class/Method Name:
+After recovering the symbols:
+![after](https://www.nevermoe.com/wp-content/uploads/2016/09/after.png)
 
-1. This is almost the same as for String Literal. Open your binary with IDA and find the **start** of **g_methodPointers** and put your cursor above it. I will show how to find it later.
-2. Press Alt-F9. Now Class/Method names are recovered.
+## Declaration
 
-
-
-## Find The **End** of **STRINGLITERALS**
-
-
-
-The pointer to **STRINGLITERALS** are in `__const` section of the binary file. Locate to the `__const` section and drag downwards until you see somethinglike this picture: 
-
-![sub_end](https://www.nevermoe.com/wp-content/uploads/2016/08/sub_end.png)
-
-This is the end of many `subs`.
-
-Scroll down a little, you will see many `qwords` start to show up:
-
-![strlit_start](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_start.png)
-
-This is the **start** of **STRINGLITERALS**. But we need to locate to the **end** of **STRINGLITERALS**, so keep scrolling down until you see the following screenshot:
-
-![strlit_end](https://www.nevermoe.com/wp-content/uploads/2016/08/strlit_end.png)
-
-This is what we are seeking for, just put your cursor one line before `off_xxxx` which is the **end** of **STRINGLITERALS**.
-
-
-## Find The **Start** of **g_methodPointers**
-
-If you can find the **End** of **STRINGLITERALS**, then this step is suprisingly easy because the **Start** of **g_methodPointers** locates just next to the **End** of **STRINGLITERALS**!
+You are not able to compile this project because the libil2cpp's source code is removed from this repository intentionally. If you would like to make modification to this project, please search for libil2cpp's source code on your own. However, any pull request is welcome.
