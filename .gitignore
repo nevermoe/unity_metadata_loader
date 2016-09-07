@@ -4,3 +4,10 @@
 *.pdb
 *.ilk
 unity_decoder/Debug/
+unity_decoder/libil2cpp/
+/Debug/string_literal.txt
+/Debug/global-metadata.dat
+/Debug/global-metadata.dat-ios
+/Debug/global-metadata.dat-win
+/Debug/method_name.txt
+/unity_decoder/global-metadata.dat
