@@ -22,6 +22,9 @@ def GetVarFromAddr(addr):
         return idc.Qword(addr)
     elif BITS == 32:
         return idc.Dword(addr)
+        
+def GetMethodFromAddr(addr):
+    return GetVarFromAddr(addr) & 0xFFFFFFFFFE
 
 def LoadMethods(ea = None):
     
@@ -40,7 +43,7 @@ def LoadMethods(ea = None):
         new_line = re.sub(r'[^a-zA-Z0-9_$]', '_', line)
         
         i = 0;
-        addr = GetVarFromAddr(ea)
+        addr = GetMethodFromAddr(ea)
         ret = idc.MakeNameEx(addr, str(new_line), SN_NOWARN)
         while ret == 0 and i < 5: # failed
             new_line_rand = new_line + '_' + str(random.randint(0, 99999))
@@ -94,10 +97,13 @@ def IsCode(addr):
 def IsData(addr):
     return idc.isData(idc.GetFlags(addr))
     
+def IsInSegment(addr, segName):
+    return segName == idc.SegName(addr)
+    
 def IsSubFollowing(addr):
     i = 0
     while i < 20:
-        pAddr = GetVarFromAddr(addr)
+        pAddr = GetMethodFromAddr(addr)
         if not IsCode(pAddr):
             return False;
         
@@ -111,10 +117,10 @@ def IsStringPrecedingiOS(addr):
     i = 0
     while i < 10:
         pAddr = GetVarFromAddr(addr)
-        if not IsData(pAddr):
+        if not IsInSegment(pAddr, '__common'):
             return False;
         
-        addr = idc.PrevHead(addr)
+        addr = DecreaseAddr(addr)
         i = i + 1
         
     return True
@@ -122,8 +128,6 @@ def IsStringPrecedingiOS(addr):
 def IsStringFollowingAndroid(addr):
     i = 0
     while i < 10:
-        #pAddr = GetVarFromAddr(addr)
-        #if not IsData(pAddr):
         if not IsData(addr):
             return False;
         
@@ -180,7 +184,7 @@ def AutoLoadiOS():
     print "Locating Methods and Strings..."
     for addr in constSegList:
         while idc.SegName(addr) == '__const':
-            if IsSubFollowing(addr) and IsStringPrecedingiOS(idc.PrevHead(addr)):
+            if IsSubFollowing(addr) and IsStringPrecedingiOS(DecreaseAddr(addr)):
                 print "Methods Start At: %x" % (addr)
                 idc.Jump(addr)
                 break;
