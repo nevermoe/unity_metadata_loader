@@ -1,7 +1,0 @@
-﻿  main.cpp
-main.cpp(286): warning C4244: 'argument': conversion from 'std::streamsize' to 'std::size_t', possible loss of data
-  Generating code
-  All 159 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Finished generating code
-  unity_decoder.vcxproj -> E:\codes\unity_metadata_loader_github\Release\unity_decoder.exe
-  unity_decoder.vcxproj -> E:\codes\unity_metadata_loader_github\Release\unity_decoder.pdb (Full PDB)
