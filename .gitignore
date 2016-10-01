@@ -3,6 +3,8 @@
 *.sdf
 *.pdb
 *.ilk
+*.iobj
+*.ipdb
 unity_decoder/Debug/
 unity_decoder/libil2cpp/
 /Debug/string_literal.txt
