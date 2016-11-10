@@ -1,4 +1,5 @@
 import idaapi
+import ida_idp
 import os, sys
 import re
 import random
@@ -24,7 +25,10 @@ def GetVarFromAddr(addr):
         return idc.Dword(addr)
         
 def GetMethodFromAddr(addr):
-    return GetVarFromAddr(addr) & 0xFFFFFFFFFE
+    if ARCH == 'arm' and BITS == 32:
+        return GetVarFromAddr(addr) & 0xFFFFFFFFFE
+    else:
+        return GetVarFromAddr(addr)
 
 def LoadMethods(ea = None):
     
@@ -244,7 +248,7 @@ ENUM_FILE_TYPE =\
 
 info = idaapi.get_inf_structure()
 BITS = None
-
+ARCH = 'arm'
 
 if info.is_64bit():
     BITS = 64
@@ -255,6 +259,12 @@ else:
 
 FILE_TYPE = ENUM_FILE_TYPE[info.filetype]
 #print FILE_TYPE
+
+
+if 'PC' in ida_idp.ph_get_regnames() or 'pc' in ida_idp.ph_get_regnames():
+    ARCH = 'arm'
+else:
+    ARCH = 'x86'
  
 # must be created
 idaapi.CompileLine('static LoadStrings() { RunPythonStatement("LoadStrings()"); }')
