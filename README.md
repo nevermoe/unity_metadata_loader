@@ -15,7 +15,7 @@ Please refer to these two blogs for detailed information:
 
 ## Installation & Usage
 
-1. Copy Debug/unity_decoder.exe to the same directory as your binary to be analyzed.
+1. Copy Release/unity_decoder.exe to the same directory as your binary to be analyzed.
 2. Copy unity_loader.py to any directory. (I recommned to copy it to the same directory as your binary to be analyzed.)
 3. Copy global-metadata.dat to the same directory as your binary to be analyzed. It's located in Data/Managed/Metadata/global-metadata.dat in the ipa file or apk file.
 4. Load unity_loader.py using File->Script File.
