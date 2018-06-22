@@ -22,11 +22,13 @@ Please refer to these two blogs for detailed information:
 5. Press Ctrl+Alt+A and all is done.
 
 ## Notice
-This branch "v24" now only support 32bit Android build. 
+This branch "v24" now only support 32bit Android build.
+For metadata v23 support, see this fork: [https://github.com/kenjiaiko/unity_metadata_loader](https://github.com/kenjiaiko/unity_metadata_loader)
 
 
 ## Demo
 
+Note: The v24's binary layout is different to the following picture.
 Before recovering the symbols:
 ![before](https://www.nevermoe.com/wp-content/uploads/2016/09/before.png)
 
@@ -35,4 +37,4 @@ After recovering the symbols:
 
 ## Declaration
 
-You are not able to compile this project because the libil2cpp's source code is removed from this repository intentionally. If you would like to make modification to this project, please search for libil2cpp's source code on your own. However, any pull request is welcome.
+Now you are able to compile this project directly because I added libil2cpp header files.
