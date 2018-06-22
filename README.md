@@ -1,6 +1,7 @@
 # unity_metadata_loader
 
 This project will load strings and method/class names in global-metadata.dat to IDA.
+For the newest unity version (2017.1.4p1), use branch "v24" -- which indicates the metadata's version.
 
 ## Introduction
 
