@@ -14,3 +14,5 @@ unity_decoder/Debug/
 /Debug/method_name.txt
 /unity_decoder/global-metadata.dat
 unity_decoder/Release/
+.vs/
+co.sh
