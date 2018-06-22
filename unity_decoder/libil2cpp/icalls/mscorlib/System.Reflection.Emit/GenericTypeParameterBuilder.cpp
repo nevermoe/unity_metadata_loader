@@ -1,7 +1,6 @@
 #include "il2cpp-config.h"
 #include "icalls/mscorlib/System.Reflection.Emit/GenericTypeParameterBuilder.h"
 #include "vm/Exception.h"
-#include <cassert>
 
 namespace il2cpp
 {
@@ -15,12 +14,10 @@ namespace Reflection
 {
 namespace Emit
 {
-
-void GenericTypeParameterBuilder::initialize (Il2CppReflectionGenericParam* genericParameter)
-{
-	NOT_SUPPORTED_SRE (GenericTypeParameterBuilder::initialize);
-}
-
+    void GenericTypeParameterBuilder::initialize(Il2CppReflectionGenericParam* genericParameter)
+    {
+        NOT_SUPPORTED_SRE(GenericTypeParameterBuilder::initialize);
+    }
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

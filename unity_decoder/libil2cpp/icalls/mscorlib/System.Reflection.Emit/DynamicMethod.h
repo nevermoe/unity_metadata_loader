@@ -15,14 +15,12 @@ namespace Reflection
 {
 namespace Emit
 {
-
-class LIBIL2CPP_CODEGEN_API DynamicMethod
-{
-public:
-	static void create_dynamic_method (Il2CppReflectionDynamicMethod*, Il2CppReflectionDynamicMethod*);
-	static void destroy_dynamic_method (Il2CppReflectionDynamicMethod*, Il2CppReflectionDynamicMethod*);
-};
-	
+    class LIBIL2CPP_CODEGEN_API DynamicMethod
+    {
+    public:
+        static void create_dynamic_method(Il2CppReflectionDynamicMethod*, Il2CppReflectionDynamicMethod*);
+        static void destroy_dynamic_method(Il2CppReflectionDynamicMethod*, Il2CppReflectionDynamicMethod*);
+    };
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

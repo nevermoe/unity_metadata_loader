@@ -9,22 +9,18 @@ namespace il2cpp
 {
 namespace os
 {
-
 namespace FileSystemWatcher
 {
-
-int IsSupported()
-{
+    int IsSupported()
+    {
 #if IL2CPP_TARGET_IOS
-	return 0; // Not supported on iOS
+        return 0; // Not supported on iOS
 #else
-	NOT_IMPLEMENTED_ICALL (FileSystemWatcher::IsSupported);
-	return 0;
+        NOT_IMPLEMENTED_ICALL(FileSystemWatcher::IsSupported);
+        return 0;
 #endif
+    }
 }
-
-}
-
 }
 }
 

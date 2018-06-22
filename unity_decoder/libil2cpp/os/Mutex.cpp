@@ -11,60 +11,61 @@
 #else
 #include "os/MutexImpl.h"
 #endif
-#include <cassert>
-
 
 namespace il2cpp
 {
 namespace os
 {
+    Mutex::Mutex(bool initiallyOwned)
+        : m_Mutex(new MutexImpl())
+    {
+        if (initiallyOwned)
+            Lock();
+    }
 
-Mutex::Mutex (bool initiallyOwned)
-	: m_Mutex (new MutexImpl ())
-{
-	if (initiallyOwned)
-		Lock ();
-}
+    Mutex::~Mutex()
+    {
+        delete m_Mutex;
+    }
 
-Mutex::~Mutex ()
-{
-	delete m_Mutex;
-}
+    void Mutex::Lock(bool interruptible)
+    {
+        m_Mutex->Lock(interruptible);
+    }
 
-void Mutex::Lock (bool interruptible)
-{
-	 m_Mutex->Lock (interruptible);
-}
+    bool Mutex::TryLock(uint32_t milliseconds, bool interruptible)
+    {
+        return m_Mutex->TryLock(milliseconds, interruptible);
+    }
 
-bool Mutex::TryLock (uint32_t milliseconds, bool interruptible)
-{
-	return m_Mutex->TryLock (milliseconds, interruptible);
-}
+    void Mutex::Unlock()
+    {
+        m_Mutex->Unlock();
+    }
 
-void Mutex::Unlock ()
-{
-	m_Mutex->Unlock ();
-}
+    FastMutex::FastMutex()
+        : m_Impl(new FastMutexImpl())
+    {
+    }
 
-FastMutex::FastMutex ()
-	: m_Impl (new FastMutexImpl ())
-{
-}
+    FastMutex::~FastMutex()
+    {
+        delete m_Impl;
+    }
 
-FastMutex::~FastMutex ()
-{
-	delete m_Impl;
-}
+    void FastMutex::Lock()
+    {
+        m_Impl->Lock();
+    }
 
-void FastMutex::Lock ()
-{
-	m_Impl->Lock ();
-}
+    void FastMutex::Unlock()
+    {
+        m_Impl->Unlock();
+    }
 
-void FastMutex::Unlock ()
-{
-	m_Impl->Unlock ();
-}
-
+    FastMutexImpl* FastMutex::GetImpl()
+    {
+        return m_Impl;
+    }
 }
 }

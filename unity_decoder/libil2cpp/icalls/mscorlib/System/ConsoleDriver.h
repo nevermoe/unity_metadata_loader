@@ -24,17 +24,15 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API ConsoleDriver
-{
-public:
-	static int32_t InternalKeyAvailable (int32_t ms_timeout);
-	static bool SetBreak (bool wantBreak);
-	static bool SetEcho (bool wantEcho);
-	static bool TtySetup (Il2CppString* keypadXmit, Il2CppString* teardown, Il2CppArray** control_characters, int32_t** size);
-	static bool Isatty (Il2CppIntPtr handle);
-};
-
+    class LIBIL2CPP_CODEGEN_API ConsoleDriver
+    {
+    public:
+        static int32_t InternalKeyAvailable(int32_t ms_timeout);
+        static bool SetBreak(bool wantBreak);
+        static bool SetEcho(bool wantEcho);
+        static bool TtySetup(Il2CppString* keypadXmit, Il2CppString* teardown, Il2CppArray** control_characters, int32_t** size);
+        static bool Isatty(Il2CppIntPtr handle);
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

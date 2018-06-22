@@ -1,6 +1,5 @@
 #include "il2cpp-config.h"
 
-#include <cassert>
 #include <stddef.h>
 
 #include "icalls/mscorlib/System.Reflection/FieldInfo.h"
@@ -21,36 +20,43 @@ namespace System
 {
 namespace Reflection
 {
+    Il2CppArray* FieldInfo::GetTypeModifiers(Il2CppReflectionField* field, bool optional)
+    {
+        NOT_SUPPORTED_IL2CPP(FieldInfo::GetTypeModifiers, "GetOptionalCustomModifiers and GetRequiredCustomModifiers are not supported.");
+        return NULL;
+    }
 
-Il2CppArray* FieldInfo::GetTypeModifiers (Il2CppReflectionField* field, bool optional)
-{
-	NOT_SUPPORTED_IL2CPP(FieldInfo::GetTypeModifiers, "GetOptionalCustomModifiers and GetRequiredCustomModifiers are not supported.");
-	return NULL;
-}
+    Il2CppReflectionMarshal* FieldInfo::GetUnmanagedMarshal(Il2CppReflectionField* field)
+    {
+        NOT_IMPLEMENTED_ICALL_NO_ASSERT(FieldInfo::GetUnmanagedMarshal, "This should only be needed for types with a MarshalAsAttribute");
+        return NULL;
+    }
 
-Il2CppReflectionMarshal* FieldInfo::GetUnmanagedMarshal(Il2CppReflectionField* field)
-{
-	NOT_IMPLEMENTED_ICALL_NO_ASSERT (FieldInfo::GetUnmanagedMarshal, "This should only be needed for types with a MarshalAsAttribute");
-	return NULL;
-}
+    Il2CppReflectionField* FieldInfo::internal_from_handle_type(Il2CppIntPtr field_handle, Il2CppIntPtr type_handle)
+    {
+        ::FieldInfo* fieldInfo = (::FieldInfo*)field_handle.m_value;
+        Il2CppType* il2cppType = (Il2CppType*)type_handle.m_value;
 
-Il2CppReflectionField* FieldInfo::internal_from_handle_type (Il2CppIntPtr field_handle, Il2CppIntPtr type_handle)
-{
-	::FieldInfo* fieldInfo = (::FieldInfo*)field_handle.m_value;
-	Il2CppType* il2cppType = (Il2CppType*)type_handle.m_value;
-	
-	if(il2cppType == NULL)
-		return vm::Reflection::GetFieldObject(fieldInfo->parent, fieldInfo);
-	
-	for (Il2CppClass* k = vm::Class::FromIl2CppType(il2cppType); k; k = k->parent)
-	{
-		if (k == fieldInfo->parent)
-			return vm::Reflection::GetFieldObject(fieldInfo->parent, fieldInfo);
-	}
-		
-	return NULL;
-}
+        if (il2cppType == NULL)
+            return vm::Reflection::GetFieldObject(fieldInfo->parent, fieldInfo);
 
+        for (Il2CppClass* k = vm::Class::FromIl2CppType(il2cppType); k; k = k->parent)
+        {
+            if (k == fieldInfo->parent)
+                return vm::Reflection::GetFieldObject(fieldInfo->parent, fieldInfo);
+        }
+
+        return NULL;
+    }
+
+#if NET_4_0
+    Il2CppObject* FieldInfo::get_marshal_info(Il2CppObject* _this)
+    {
+        NOT_IMPLEMENTED_ICALL_NO_ASSERT(FieldInfo::get_marshal_info, "We currently don't store marshal information in metadata");
+        return NULL;
+    }
+
+#endif
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

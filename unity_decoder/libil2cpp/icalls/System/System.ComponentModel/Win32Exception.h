@@ -15,13 +15,11 @@ namespace System
 {
 namespace ComponentModel
 {
-
-class LIBIL2CPP_CODEGEN_API Win32Exception
-{
-public:
-	static Il2CppString *W32ErrorMessage (int32_t code);
-};
-
+    class LIBIL2CPP_CODEGEN_API Win32Exception
+    {
+    public:
+        static Il2CppString *W32ErrorMessage(int32_t code);
+    };
 } /* namespace ComponentModel */
 } /* namespace System */
 } /* namespace System */

@@ -13,32 +13,30 @@ namespace il2cpp
 {
 namespace os
 {
+    const int kMaxStackFrames = 128;
 
-const int kMaxStackFrames = 128;
+    void StackTrace::WalkStack(WalkStackCallback callback, void* context, WalkOrder walkOrder)
+    {
+        void* callstack[kMaxStackFrames];
+        int frames = backtrace(callstack, kMaxStackFrames);
 
-void StackTrace::WalkStack(WalkStackCallback callback, void* context, WalkOrder walkOrder)
-{
-	void* callstack[kMaxStackFrames];
-	int frames = backtrace(callstack, kMaxStackFrames);
-
-	if (walkOrder == kFirstCalledToLastCalled)
-	{
-		for (size_t i = frames; i--;)
-		{
-			if (!callback(reinterpret_cast<Il2CppMethodPointer>(callstack[i]), context))
-				break;
-		}
-	}
-	else
-	{
-		for (size_t i = 0; i < frames; i++)
-		{
-			if (!callback(reinterpret_cast<Il2CppMethodPointer>(callstack[i]), context))
-				break;
-		}
-	}
-}
-
+        if (walkOrder == kFirstCalledToLastCalled)
+        {
+            for (size_t i = frames; i--;)
+            {
+                if (!callback(reinterpret_cast<Il2CppMethodPointer>(callstack[i]), context))
+                    break;
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < frames; i++)
+            {
+                if (!callback(reinterpret_cast<Il2CppMethodPointer>(callstack[i]), context))
+                    break;
+            }
+        }
+    }
 }
 }
 

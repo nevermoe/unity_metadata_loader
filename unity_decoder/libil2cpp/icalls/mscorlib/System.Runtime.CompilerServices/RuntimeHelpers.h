@@ -15,17 +15,19 @@ namespace Runtime
 {
 namespace CompilerServices
 {
+    class LIBIL2CPP_CODEGEN_API RuntimeHelpers
+    {
+    public:
+        static Il2CppObject* GetObjectValue(Il2CppObject* obj);
+        static void RunClassConstructor(Il2CppIntPtr type);
+        static void RunModuleConstructor(Il2CppIntPtr module);
+        static int get_OffsetToStringData(void);
+        static void InitializeArray(Il2CppArray* arr, Il2CppIntPtr ptr);
 
-class LIBIL2CPP_CODEGEN_API RuntimeHelpers
-{
-public:
-	static Il2CppObject* GetObjectValue (Il2CppObject* obj);
-	static void RunClassConstructor (Il2CppIntPtr type);
-	static void RunModuleConstructor (Il2CppIntPtr module);
-	static int get_OffsetToStringData (void);
-	static void InitializeArray (Il2CppArray* arr,Il2CppIntPtr ptr);
-};
-
+#if NET_4_0
+        static bool SufficientExecutionStack();
+#endif
+    };
 } /* namespace CompilerServices */
 } /* namespace Runtime */
 } /* namespace System */

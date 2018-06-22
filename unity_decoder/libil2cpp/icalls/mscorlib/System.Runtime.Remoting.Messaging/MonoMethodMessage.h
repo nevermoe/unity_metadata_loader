@@ -19,13 +19,11 @@ namespace Remoting
 {
 namespace Messaging
 {
-
-class LIBIL2CPP_CODEGEN_API MonoMethodMessage
-{
-public:
-	static void InitMessage (Il2CppMethodMessage*, Il2CppReflectionMethod*, Il2CppArray*);
-};
-
+    class LIBIL2CPP_CODEGEN_API MonoMethodMessage
+    {
+    public:
+        static void InitMessage(Il2CppMethodMessage*, Il2CppReflectionMethod*, Il2CppArray*);
+    };
 } /* namespace Messaging */
 } /* namespace Remoting */
 } /* namespace Runtime */

@@ -13,124 +13,118 @@ namespace il2cpp
 {
 namespace debugger
 {
+    class Event;
+    class Agent;
+    struct BreakpointData;
+    struct SingleStepData;
 
-class Event;
-class Agent;
-struct BreakpointData;
-struct SingleStepData;
+    static int32_t event_request_id;
 
-static int32_t event_request_id;
+    class EventRequest
+    {
+    public:
 
-class EventRequest
-{
+        EventRequest(EventKind kind, SuspendPolicy suspend_policy, const std::vector<Modifier*> &modifiers);
 
-public:
+        inline int32_t id() const
+        {
+            return _id;
+        }
 
-	EventRequest(EventKind kind, SuspendPolicy suspend_policy, const std::vector<Modifier*> &modifiers);
+        inline EventKind kind() const
+        {
+            return _kind;
+        }
 
-	inline int32_t id() const
-	{
-		return _id;
-	}
+        inline SuspendPolicy suspend_policy() const
+        {
+            return _suspend_policy;
+        }
 
-	inline EventKind kind() const
-	{
-		return _kind;
-	}
+        inline const std::vector<Modifier*> &modifiers() const
+        {
+            return _modifiers;
+        }
 
-	inline SuspendPolicy suspend_policy() const
-	{
-		return _suspend_policy;
-	}
+        inline bool has_modifiers() const
+        {
+            return _modifiers.size() > 0;
+        }
 
-	inline const std::vector<Modifier*> &modifiers() const
-	{
-		return _modifiers;
-	}
+        inline BreakpointData *breakpoint_data() const
+        {
+            return _breakpoint_data;
+        }
 
-	inline bool has_modifiers() const
-	{
-		return _modifiers.size() > 0;
-	}
+        inline void breakpoint_data(BreakpointData *value)
+        {
+            _breakpoint_data = value;
+        }
 
-	inline BreakpointData *breakpoint_data() const
-	{
-		return _breakpoint_data;
-	}
+        inline SingleStepData *single_step_data() const
+        {
+            return _single_step_data;
+        }
 
-	inline void breakpoint_data(BreakpointData *value)
-	{
-		_breakpoint_data = value;
-	}
+        inline void single_step_data(SingleStepData *value)
+        {
+            _single_step_data = value;
+        }
 
-	inline SingleStepData *single_step_data() const
-	{
-		return _single_step_data;
-	}
+    private:
 
-	inline void single_step_data(SingleStepData *value)
-	{
-		_single_step_data = value;
-	}
+        int32_t _id;
+        EventKind _kind;
+        SuspendPolicy _suspend_policy;
+        std::vector<Modifier*> _modifiers;
+        BreakpointData *_breakpoint_data;
+        SingleStepData *_single_step_data;
 
-private:
+        DISALLOW_COPY(EventRequest);
 
-	int32_t _id;
-	EventKind _kind;
-	SuspendPolicy _suspend_policy;
-	std::vector<Modifier*> _modifiers;
-	BreakpointData *_breakpoint_data;
-	SingleStepData *_single_step_data;
+        friend class Agent;
+    };
 
-	DISALLOW_COPY(EventRequest);
+    class EventRequestList
+    {
+    public:
 
-	friend class Agent;
-};
+        struct FilterInfo
+        {
+            Il2CppClass *klass;
+            Il2CppObject *exception;
 
-class EventRequestList
-{
+            FilterInfo() :
+                klass(0),
+                exception(0)
+            {
+            }
+        };
 
-public:
+        EventRequestList(Agent &agent, bool owns_requests);
+        ~EventRequestList();
 
-	struct FilterInfo
-	{
-		Il2CppClass *klass;
-		Il2CppObject *exception;
+        inline const std::list<const EventRequest*> requests() const
+        {
+            return _requests;
+        }
 
-		FilterInfo() :
-			klass(0),
-			exception(0)
-		{
+        int32_t RequestIdsFor(std::vector<int32_t> &ids, const Event &evt, FilterInfo &filter) const;
+        bool IsClientInterested(const Event &evt) const;
+        const EventRequest *GetEventRequestById(int32_t id) const;
 
-		}
-	};
+        void AddEventRequest(const EventRequest *request);
+        const EventRequest* RemoveEventRequest(EventKind kind, int32_t id);
 
-	EventRequestList(Agent &agent, bool owns_requests);
-	~EventRequestList();
+        void ClearAllRequests();
 
-	inline const std::list<const EventRequest*> requests() const
-	{
-		return _requests;
-	}
-	
-	int32_t RequestIdsFor(std::vector<int32_t> &ids, const Event &evt, FilterInfo &filter) const;
-	bool IsClientInterested(const Event &evt) const;
-	const EventRequest *GetEventRequestById(int32_t id) const;
+    private:
 
-	void AddEventRequest(const EventRequest *request);
-	const EventRequest* RemoveEventRequest(EventKind kind, int32_t id);
+        Agent &_agent;
+        bool _owns_requests;
+        std::list<const EventRequest*> _requests;
 
-	void ClearAllRequests();
-
-private:
-
-	Agent &_agent;
-	bool _owns_requests;
-	std::list<const EventRequest*> _requests;
-
-	DISALLOW_COPY(EventRequestList);
-
-};
-
+        DISALLOW_COPY(EventRequestList);
+    };
 } /* namespace debugger */
 } /* namespace il2cpp */

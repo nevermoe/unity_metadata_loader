@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="UnitTest++">
+      <UniqueIdentifier>{a90afd27-d348-410a-80f0-8e370ca5a1f0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FileTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeMethodsTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeZoneTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\AssertException.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Checks.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CurrentTest.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteReporter.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteResult.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestReporter.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestResult.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\MemoryOutStream.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\NunitTestReporter.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportAssert.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Test.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestDetails.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestList.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporter.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterDebugLog.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterFormat.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterStdout.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestResults.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestRunner.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeConstraint.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpersDefault.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\XmlTestReporter.cpp">
+      <Filter>UnitTest++</Filter>
+    </ClCompile>
+    <ClCompile Include="MainTestRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\AssertException.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CheckMacros.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Checks.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Config.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CurrentTest.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteReporter.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteResult.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestReporter.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestResult.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ExecuteTest.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\MemoryOutStream.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\NunitTestReporter.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportAssert.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportMacros.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Test.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestAttribute.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestDetails.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestList.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestMacros.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestProperty.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporter.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterDebugLog.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterFormat.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterStdout.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestResults.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestRunner.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestSuite.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeConstraint.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpers.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpersDefault.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TypeHelpers.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\UnitTest++.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\XmlTestReporter.h">
+      <Filter>UnitTest++</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

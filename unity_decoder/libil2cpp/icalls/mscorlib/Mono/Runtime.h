@@ -11,14 +11,15 @@ namespace mscorlib
 {
 namespace Mono
 {
-
-class LIBIL2CPP_CODEGEN_API Runtime
-{
-public:
-	static void mono_runtime_install_handlers ();
-	static Il2CppString* GetDisplayName ();
-};
-
+    class LIBIL2CPP_CODEGEN_API Runtime
+    {
+    public:
+        static void mono_runtime_install_handlers();
+        static Il2CppString* GetDisplayName();
+#if NET_4_0
+        static Il2CppString* GetNativeStackTrace(Il2CppException* exception);
+#endif
+    };
 } /* namespace Mono */
 } /* namespace mscorlib */
 } /* namespace icalls */

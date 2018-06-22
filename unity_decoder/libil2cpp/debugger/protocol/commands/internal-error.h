@@ -8,28 +8,24 @@ namespace il2cpp
 {
 namespace debugger
 {
+    struct InternalErrorNotImplementedCommand : public Command
+    {
+    public:
 
-struct InternalErrorNotImplementedCommand : public Command
-{
+        explicit InternalErrorNotImplementedCommand(int32_t id);
 
-public:
+        PROTOCOL_COMMAND(InternalError, NotImplemented);
 
-	explicit InternalErrorNotImplementedCommand(int32_t id);
+        DISALLOW_COPY(InternalErrorNotImplementedCommand);
+    };
 
-	PROTOCOL_COMMAND(InternalError, NotImplemented);
+    struct InternalErrorNotImplementedReply : public Reply
+    {
+    public:
 
-	DISALLOW_COPY(InternalErrorNotImplementedCommand);
-};
+        explicit InternalErrorNotImplementedReply(const Command *command);
 
-struct InternalErrorNotImplementedReply : public Reply
-{
-
-public:
-
-	explicit InternalErrorNotImplementedReply(const Command *command);
-
-	DISALLOW_COPY(InternalErrorNotImplementedReply);
-};
-
+        DISALLOW_COPY(InternalErrorNotImplementedReply);
+    };
 }
 }

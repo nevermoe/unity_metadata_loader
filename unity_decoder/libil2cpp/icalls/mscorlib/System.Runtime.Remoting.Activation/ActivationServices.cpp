@@ -22,23 +22,21 @@ namespace Remoting
 {
 namespace Activation
 {
+    void ActivationServices::EnableProxyActivation(Il2CppReflectionType*, bool)
+    {
+        NOT_SUPPORTED_REMOTING(ActivationServices::EnableProxyActivation);
+    }
 
-void ActivationServices::EnableProxyActivation (Il2CppReflectionType*, bool)
-{
-	NOT_SUPPORTED_REMOTING (ActivationServices::EnableProxyActivation);
-}
+    Il2CppObject* ActivationServices::AllocateUninitializedClassInstance(Il2CppReflectionType * type)
+    {
+        Il2CppClass* typeInfo = vm::Class::FromIl2CppType(type->type);
 
-Il2CppObject* ActivationServices::AllocateUninitializedClassInstance(Il2CppReflectionType * type)
-{
-	Il2CppClass* typeInfo = vm::Class::FromIl2CppType(type->type);
-		
-	if (typeInfo == NULL)
-		return NULL;
+        if (typeInfo == NULL)
+            return NULL;
 
-	il2cpp::vm::Class::Init(typeInfo);
-	return il2cpp_object_new(typeInfo);
-}
-
+        il2cpp::vm::Class::Init(typeInfo);
+        return il2cpp_object_new(typeInfo);
+    }
 } /* namespace Activation */
 } /* namespace Remoting */
 } /* namespace Runtime */

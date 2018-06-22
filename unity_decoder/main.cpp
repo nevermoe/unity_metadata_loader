@@ -291,11 +291,11 @@ int main()
 	s_GlobalMetadataHeader = (Il2CppGlobalMetadataHeader*)addr;
 
 
-	if (s_GlobalMetadataHeader->version != 21) {
-		std::cerr << "[error] metadata version is: " << s_GlobalMetadataHeader->version << std::endl;
-	}
+	std::cout << "metadata version is: " << s_GlobalMetadataHeader->version << std::endl;
+
+
 	assert(s_GlobalMetadataHeader->sanity == 0xFAB11BAF);
-	assert(s_GlobalMetadataHeader->version == 21);
+	assert(s_GlobalMetadataHeader->version == 24);
 
 
 
@@ -308,11 +308,29 @@ int main()
 
 	int strCount = s_GlobalMetadataHeader->stringLiteralCount / sizeof(Il2CppStringLiteral);
 	stringLiteralFile << strCount << std::endl;
+	
+	/*
 	for (int i = MAX_META_COUNT - 1 ; i >= 0 ; i--) {
 		if (g_metadataUsages[i] != NULL) {
 			stringLiteralFile << g_metadataUsages[i] << std::endl;
 		}
 	}
+	*/
+	int skip = 0;
+	int i = 0;
+	for (i = 0; i < MAX_META_COUNT; i++) {
+		if (g_metadataUsages[i] == NULL) {
+			skip++;
+		}
+		else {
+			break;
+		}
+	}
+	stringLiteralFile << skip << std::endl;
+	for (; i < MAX_META_COUNT; i++) {
+		stringLiteralFile << g_metadataUsages[i] << std::endl;
+	}
+	
 	
 	stringLiteralFile.close();
 

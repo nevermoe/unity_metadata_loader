@@ -13,81 +13,81 @@ using namespace il2cpp::debugger;
 
 const Reply *Agent::Process(const AppDomainGetRootDomainCommand *command)
 {
-	AppDomainGetRootDomainCommand::Reply *app_domain_get_root_domain_reply = command->reply();
+    AppDomainGetRootDomainCommand::Reply *app_domain_get_root_domain_reply = command->reply();
 
-	app_domain_get_root_domain_reply->domain(CALL_IL2CPP_API(il2cpp_domain_get)());
+    app_domain_get_root_domain_reply->domain(CALL_IL2CPP_API(il2cpp_domain_get)());
 
-	return app_domain_get_root_domain_reply;
+    return app_domain_get_root_domain_reply;
 }
 
 const Reply *Agent::Process(const AppDomainGetCorlibCommand *command)
 {
-	AppDomainGetCorlibCommand::Reply *get_corlib_reply = command->reply();
+    AppDomainGetCorlibCommand::Reply *get_corlib_reply = command->reply();
 
-	Il2CppDomain *domain = command->domain();
-	const Il2CppImage *image = il2cpp_get_corlib();
+    Il2CppDomain *domain = command->domain();
+    const Il2CppImage *image = il2cpp_get_corlib();
 
-	get_corlib_reply->assembly(const_cast<Il2CppAssembly*> (il2cpp_image_get_assembly(image)));
+    get_corlib_reply->assembly(const_cast<Il2CppAssembly*>(il2cpp_image_get_assembly(image)));
 
-	return get_corlib_reply;
+    return get_corlib_reply;
 }
 
 const Reply *Agent::Process(const AppDomainGetFriendlyNameCommand *command)
 {
-	AppDomainGetFriendlyNameCommand::Reply *get_friendly_name_reply = command->reply();
+    AppDomainGetFriendlyNameCommand::Reply *get_friendly_name_reply = command->reply();
 
-	Il2CppDomain *domain = command->domain();
-	
-	LOG("warning: `AppDomainGetFriendlyNameCommand` not implemented properly. Returning a stub name for now!");
+    Il2CppDomain *domain = command->domain();
 
-	get_friendly_name_reply->friendly_name("[ROOT_DOMAIN]");
+    LOG("warning: `AppDomainGetFriendlyNameCommand` not implemented properly. Returning a stub name for now!");
 
-	return get_friendly_name_reply;
+    get_friendly_name_reply->friendly_name("[ROOT_DOMAIN]");
+
+    return get_friendly_name_reply;
 }
 
 const Reply *Agent::Process(const AppDomainCreateStringCommand *command)
 {
-	AppDomainCreateStringCommand::Reply *create_string_reply = command->reply();
+    AppDomainCreateStringCommand::Reply *create_string_reply = command->reply();
 
-	const Il2CppDomain *domain = command->domain();
-	const std::string str = command->string();
+    const Il2CppDomain *domain = command->domain();
+    const std::string str = command->string();
 
-	create_string_reply->object((Il2CppObject*)il2cpp_string_new(str.c_str()));
+    create_string_reply->object((Il2CppObject*)il2cpp_string_new(str.c_str()));
 
-	return create_string_reply;
+    return create_string_reply;
 }
 
 const Reply *Agent::Process(const AppDomainGetEntryAssemblyCommand *command)
 {
-	LOG("warning: `AppDomainGetEntryAssemblyCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `AppDomainGetEntryAssemblyCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 const Reply *Agent::Process(const AppDomainCreateBoxedValueCommand *command)
 {
-	LOG("warning: `AppDomainCreateBoxedValueCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `AppDomainCreateBoxedValueCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 const Reply *Agent::Process(const AppDomainGetAssembliesCommand *command)
 {
-	AppDomainGetAssembliesCommand::Reply *get_assemblies_reply = command->reply();
+    AppDomainGetAssembliesCommand::Reply *get_assemblies_reply = command->reply();
 
-	size_t number_of_assemblies;
-	const Il2CppAssembly** assemblies = il2cpp_domain_get_assemblies(NULL, &number_of_assemblies);
+    size_t number_of_assemblies;
+    const Il2CppAssembly** assemblies = il2cpp_domain_get_assemblies(NULL, &number_of_assemblies);
 
-	get_assemblies_reply->number_of_assemblies(number_of_assemblies);
+    get_assemblies_reply->number_of_assemblies(number_of_assemblies);
 
-	for (size_t i = 0; i < number_of_assemblies; ++i)
-		get_assemblies_reply->assemblies().push_back(const_cast<Il2CppAssembly*> (assemblies[i]));
+    for (size_t i = 0; i < number_of_assemblies; ++i)
+        get_assemblies_reply->assemblies().push_back(const_cast<Il2CppAssembly*>(assemblies[i]));
 
-	return get_assemblies_reply;
+    return get_assemblies_reply;
 }
 
 #endif

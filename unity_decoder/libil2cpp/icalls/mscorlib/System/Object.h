@@ -14,16 +14,14 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API Object
-{
-public:
-	static Il2CppReflectionType* GetType (Il2CppObject* obj);
-	static int InternalGetHashCode (Il2CppObject* obj);
-	static Il2CppIntPtr obj_address (Il2CppObject* obj);
-	static Il2CppObject* MemberwiseClone (Il2CppObject* obj);
-};
-
+    class LIBIL2CPP_CODEGEN_API Object
+    {
+    public:
+        static Il2CppReflectionType* GetType(Il2CppObject* obj);
+        static int InternalGetHashCode(Il2CppObject* obj);
+        static Il2CppIntPtr obj_address(Il2CppObject* obj);
+        static Il2CppObject* MemberwiseClone(Il2CppObject* obj);
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

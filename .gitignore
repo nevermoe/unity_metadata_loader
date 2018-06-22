@@ -5,6 +5,7 @@
 *.ilk
 *.iobj
 *.ipdb
+*.swp
 unity_decoder/Debug/
 /Debug/string_literal.txt
 /Debug/global-metadata.dat

@@ -24,13 +24,15 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API TypedReference
-{
-public:
-	static Il2CppObject* ToObject (void* /* System.TypedReference */ value);
-};
-
+    class LIBIL2CPP_CODEGEN_API TypedReference
+    {
+    public:
+        static Il2CppObject* ToObject(void* /* System.TypedReference */ value);
+#if NET_4_0
+        static Il2CppObject* InternalToObject(void* value);
+        static Il2CppTypedRef MakeTypedReferenceInternal(Il2CppObject* target, Il2CppArray* fields);
+#endif
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

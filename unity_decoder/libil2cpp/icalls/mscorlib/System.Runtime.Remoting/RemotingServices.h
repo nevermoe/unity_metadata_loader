@@ -18,15 +18,13 @@ namespace Runtime
 {
 namespace Remoting
 {
-
-class LIBIL2CPP_CODEGEN_API RemotingServices
-{
-public:
-	static Il2CppReflectionMethod * GetVirtualMethod(Il2CppReflectionType*, Il2CppReflectionMethod*);
-	static Il2CppObject* InternalExecute (Il2CppReflectionMethod*, Il2CppObject*, Il2CppArray*, Il2CppArray**);
-	static bool IsTransparentProxy (Il2CppObject*);
-};
-
+    class LIBIL2CPP_CODEGEN_API RemotingServices
+    {
+    public:
+        static Il2CppReflectionMethod * GetVirtualMethod(Il2CppReflectionType*, Il2CppReflectionMethod*);
+        static Il2CppObject* InternalExecute(Il2CppReflectionMethod*, Il2CppObject*, Il2CppArray*, Il2CppArray**);
+        static bool IsTransparentProxy(Il2CppObject*);
+    };
 } /* namespace Remoting */
 } /* namespace Runtime */
 } /* namespace System */

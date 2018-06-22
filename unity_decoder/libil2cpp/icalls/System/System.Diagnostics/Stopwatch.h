@@ -13,13 +13,11 @@ namespace System
 {
 namespace Diagnostics
 {
-
-class LIBIL2CPP_CODEGEN_API Stopwatch
-{
-public:
-	static int64_t GetTimestamp ();
-};
-
+    class LIBIL2CPP_CODEGEN_API Stopwatch
+    {
+    public:
+        static int64_t GetTimestamp();
+    };
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace mscorlib */

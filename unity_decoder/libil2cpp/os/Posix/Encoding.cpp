@@ -12,21 +12,17 @@ namespace il2cpp
 {
 namespace os
 {
-
 namespace Encoding
 {
-
-std::string GetCharSet()
-{
+    std::string GetCharSet()
+    {
 #if HAVE_LANGINFO_H
-	return nl_langinfo (CODESET);
+        return nl_langinfo(CODESET);
 #else
-	return "UTF-8";
+        return "UTF-8";
 #endif
+    }
 }
-
-}
-
 }
 }
 

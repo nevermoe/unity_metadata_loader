@@ -28,13 +28,11 @@ namespace Security
 {
 namespace Policy
 {
-
-class LIBIL2CPP_CODEGEN_API Evidence
-{
-public:
-	static bool IsAuthenticodePresent (Il2CppAssembly* a);
-};
-
+    class LIBIL2CPP_CODEGEN_API Evidence
+    {
+    public:
+        static bool IsAuthenticodePresent(Il2CppAssembly* a);
+    };
 } /* namespace Policy */
 } /* namespace Security */
 } /* namespace System */

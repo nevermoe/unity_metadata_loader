@@ -1,20 +1,18 @@
 #include "il2cpp-config.h"
 
-#if IL2CPP_PLATFORM_WIN32
+#if IL2CPP_TARGET_WINDOWS
 
 #include "os/Debug.h"
-#include <windows.h>
+#include "os/Win32/WindowsHeaders.h"
 
 namespace il2cpp
 {
 namespace os
 {
-
-bool Debug::IsDebuggerPresent()
-{
-	return ::IsDebuggerPresent();
-}
-
+    bool Debug::IsDebuggerPresent()
+    {
+        return ::IsDebuggerPresent() != FALSE;
+    }
 }
 }
 

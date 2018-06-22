@@ -1,7 +1,5 @@
 #include "il2cpp-config.h"
 
-#include <cassert>
-
 #include "icalls/System/System.Configuration/InternalConfigurationHost.h"
 #include "vm/String.h"
 #include "vm/Exception.h"
@@ -17,18 +15,15 @@ namespace System
 {
 namespace Configuration
 {
+    Il2CppString* InternalConfigurationHost::get_bundled_machine_config()
+    {
+        const char *config_xml = vm::Runtime::GetBundledMachineConfig();
 
+        if (config_xml == 0)
+            return NULL;
 
-Il2CppString* InternalConfigurationHost::get_bundled_machine_config ()
-{
-	const char *config_xml = vm::Runtime::GetBundledMachineConfig ();
-
-	if (config_xml == 0)
-		return NULL;
-	
-	return vm::String::NewWrapper (config_xml);
-}
-
+        return vm::String::NewWrapper(config_xml);
+    }
 } /* namespace Configuration */
 } /* namespace System */
 } /* namespace System */

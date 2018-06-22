@@ -4,7 +4,6 @@
 
 #include "os/Thread.h"
 #include "ThreadImpl.h"
-#include <cassert>
 
 #include <thread>
 
@@ -12,60 +11,58 @@ namespace il2cpp
 {
 namespace os
 {
+    struct StartData
+    {
+        Thread::StartFunc m_StartFunc;
+        void* m_StartArg;
+    };
 
-struct StartData
-{
-	Thread::StartFunc m_StartFunc;
-	void* m_StartArg;
-};
 
+    static void ThreadStartWrapper(void* arg)
+    {
+        StartData* startData = (StartData*)arg;
+        startData->m_StartFunc(startData->m_StartArg);
 
-static void ThreadStartWrapper (void* arg)
-{
-	StartData* startData = (StartData*)arg;
-	startData->m_StartFunc (startData->m_StartArg);
+        free(startData);
+    }
 
-	free (startData);
-}
+    uint64_t ThreadImpl::Id()
+    {
+        return m_Thread.get_id().hash();
+    }
 
-uint64_t ThreadImpl::Id ()
-{
-	return m_Thread.get_id().hash();
-}
+    ErrorCode ThreadImpl::Run(Thread::StartFunc func, void* arg)
+    {
+        StartData* startData = (StartData*)malloc(sizeof(StartData));
+        startData->m_StartFunc = func;
+        startData->m_StartArg = arg;
 
-ErrorCode ThreadImpl::Run (Thread::StartFunc func, void* arg)
-{
-	StartData* startData = (StartData*)malloc (sizeof(StartData));
-	startData->m_StartFunc = func;
-	startData->m_StartArg = arg;
+        std::thread t(ThreadStartWrapper, startData);
 
-	std::thread t(ThreadStartWrapper, startData);
+        m_Thread.swap(t);
 
-	m_Thread.swap(t);
+        return kErrorCodeSuccess;
+    }
 
-	return kErrorCodeSuccess;
-}
+    WaitStatus ThreadImpl::Join(uint32_t ms)
+    {
+        m_Thread.join();
 
-WaitStatus ThreadImpl::Join (uint32_t ms)
-{
-	m_Thread.join ();
+        return kWaitStatusSuccess;
+    }
 
-	return kWaitStatusSuccess;
-}
+    ErrorCode ThreadImpl::Sleep(uint32_t milliseconds)
+    {
+        std::chrono::milliseconds dura(milliseconds);
+        std::this_thread::sleep_for(dura);
 
-ErrorCode ThreadImpl::Sleep (uint32_t milliseconds)
-{
-	std::chrono::milliseconds dura( milliseconds );
-    std::this_thread::sleep_for( dura );
+        return kErrorCodeSuccess;
+    }
 
-	return kErrorCodeSuccess;
-}
-
-uint64_t ThreadImpl::CurrentThreadId ()
-{
-	return std::this_thread::get_id().hash();
-}
-
+    uint64_t ThreadImpl::CurrentThreadId()
+    {
+        return std::this_thread::get_id().hash();
+    }
 }
 }
 

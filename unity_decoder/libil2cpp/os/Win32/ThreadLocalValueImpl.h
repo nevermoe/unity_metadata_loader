@@ -11,18 +11,16 @@ namespace il2cpp
 {
 namespace os
 {
-
-class ThreadLocalValueImpl : public il2cpp::utils::NonCopyable
-{
-public:
-	ThreadLocalValueImpl ();
-	~ThreadLocalValueImpl ();
-	ErrorCode SetValue (void* value);
-	ErrorCode GetValue (void** value);
-private:
-	DWORD m_Index;
-};
-
+    class ThreadLocalValueImpl : public il2cpp::utils::NonCopyable
+    {
+    public:
+        ThreadLocalValueImpl();
+        ~ThreadLocalValueImpl();
+        ErrorCode SetValue(void* value);
+        ErrorCode GetValue(void** value);
+    private:
+        DWORD m_Index;
+    };
 }
 }
 

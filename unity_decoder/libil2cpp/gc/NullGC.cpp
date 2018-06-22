@@ -9,152 +9,156 @@ struct Il2CppObject;
 #include "utils/Memory.h"
 
 void
-il2cpp::gc::GarbageCollector::Initialize ()
+il2cpp::gc::GarbageCollector::Initialize()
+{
+}
+
+void il2cpp::gc::GarbageCollector::UninitializeGC()
 {
 }
 
 void*
-il2cpp::gc::GarbageCollector::AllocateFixed (size_t size, void *descr)
+il2cpp::gc::GarbageCollector::AllocateFixed(size_t size, void *descr)
 {
-	return IL2CPP_MALLOC_ZERO (size);
+    return IL2CPP_MALLOC_ZERO(size);
 }
 
 void*
-il2cpp::gc::GarbageCollector::MakeDescriptorForObject (size_t *bitmap, int numbits)
+il2cpp::gc::GarbageCollector::MakeDescriptorForObject(size_t *bitmap, int numbits)
 {
-	return NULL;
+    return NULL;
 }
 
 void* il2cpp::gc::GarbageCollector::MakeDescriptorForString()
 {
-	return NULL;
+    return NULL;
 }
 
 void* il2cpp::gc::GarbageCollector::MakeDescriptorForArray()
 {
-	return NULL;
+    return NULL;
 }
 
-void il2cpp::gc::GarbageCollector::StopWorld ()
+void il2cpp::gc::GarbageCollector::StopWorld()
 {
-	NOT_IMPLEMENTED(il2cpp::gc::GarbageCollector::StopWorld);
+    NOT_IMPLEMENTED(il2cpp::gc::GarbageCollector::StopWorld);
 }
 
-void il2cpp::gc::GarbageCollector::StartWorld ()
+void il2cpp::gc::GarbageCollector::StartWorld()
 {
-	NOT_IMPLEMENTED(il2cpp::gc::GarbageCollector::StartWorld);
+    NOT_IMPLEMENTED(il2cpp::gc::GarbageCollector::StartWorld);
 }
 
 void
-il2cpp::gc::GarbageCollector::RemoveWeakLink (void **link_addr)
+il2cpp::gc::GarbageCollector::RemoveWeakLink(void **link_addr)
 {
-	*link_addr = NULL;
+    *link_addr = NULL;
 }
 
 Il2CppObject*
-il2cpp::gc::GarbageCollector::GetWeakLink (void **link_addr)
+il2cpp::gc::GarbageCollector::GetWeakLink(void **link_addr)
 {
-	return (Il2CppObject*)*link_addr;
+    return (Il2CppObject*)*link_addr;
 }
 
 void
-il2cpp::gc::GarbageCollector::AddWeakLink (void **link_addr, Il2CppObject *obj, bool track)
+il2cpp::gc::GarbageCollector::AddWeakLink(void **link_addr, Il2CppObject *obj, bool track)
 {
-	*link_addr = obj;
+    *link_addr = obj;
 }
 
 bool
 il2cpp::gc::GarbageCollector::RegisterThread(void *baseptr)
 {
-	return true;
+    return true;
 }
 
 bool
 il2cpp::gc::GarbageCollector::UnregisterThread()
 {
-	return true;
+    return true;
+}
+
+il2cpp::gc::GarbageCollector::FinalizerCallback il2cpp::gc::GarbageCollector::RegisterFinalizerWithCallback(Il2CppObject* obj, FinalizerCallback callback)
+{
+    return NULL;
 }
 
 void
-il2cpp::gc::GarbageCollector::RegisterFinalizerWithCallback (Il2CppObject* obj, void(*callback)(void *, void *))
+il2cpp::gc::GarbageCollector::FreeFixed(void* addr)
 {
-}
-
-void
-il2cpp::gc::GarbageCollector::FreeFixed (void* addr)
-{
-	IL2CPP_FREE (addr);
+    IL2CPP_FREE(addr);
 }
 
 int32_t
 il2cpp::gc::GarbageCollector::InvokeFinalizers()
 {
-	return 0;
+    return 0;
 }
 
 bool
-il2cpp::gc::GarbageCollector::HasPendingFinalizers ()
+il2cpp::gc::GarbageCollector::HasPendingFinalizers()
 {
-	return false;
+    return false;
 }
 
 void
-il2cpp::gc::GarbageCollector::Collect (int maxGeneration)
+il2cpp::gc::GarbageCollector::Collect(int maxGeneration)
 {
 }
 
 int32_t
-il2cpp::gc::GarbageCollector::CollectALittle ()
+il2cpp::gc::GarbageCollector::CollectALittle()
 {
-	return 0;
+    return 0;
 }
 
 void
-il2cpp::gc::GarbageCollector::Enable ()
+il2cpp::gc::GarbageCollector::Enable()
 {
 }
 
 void
-il2cpp::gc::GarbageCollector::Disable ()
+il2cpp::gc::GarbageCollector::Disable()
 {
 }
 
 int64_t
-il2cpp::gc::GarbageCollector::GetUsedHeapSize (void)
+il2cpp::gc::GarbageCollector::GetUsedHeapSize(void)
 {
-	return 0;
+    return 0;
 }
 
 int64_t
-il2cpp::gc::GarbageCollector::GetAllocatedHeapSize (void)
+il2cpp::gc::GarbageCollector::GetAllocatedHeapSize(void)
 {
-	return 0;
+    return 0;
 }
 
 int32_t
-il2cpp::gc::GarbageCollector::GetMaxGeneration ()
+il2cpp::gc::GarbageCollector::GetMaxGeneration()
 {
-	return 0;
+    return 0;
 }
 
 int32_t
-il2cpp::gc::GarbageCollector::GetCollectionCount (int32_t generation)
+il2cpp::gc::GarbageCollector::GetCollectionCount(int32_t generation)
 {
-	return 0;
+    return 0;
 }
 
-void il2cpp::gc::GarbageCollector::ForEachHeapSection (void* user_data, HeapSectionCallback callback)
+void il2cpp::gc::GarbageCollector::ForEachHeapSection(void* user_data, HeapSectionCallback callback)
 {
 }
 
-size_t il2cpp::gc::GarbageCollector::GetSectionCount ()
+size_t il2cpp::gc::GarbageCollector::GetSectionCount()
 {
-	return 0;
+    return 0;
 }
 
-void* il2cpp::gc::GarbageCollector::CallWithAllocLockHeld (GCCallWithAllocLockCallback callback, void* user_data)
+void* il2cpp::gc::GarbageCollector::CallWithAllocLockHeld(GCCallWithAllocLockCallback callback, void* user_data)
 {
-	return callback(user_data);
+    return callback(user_data);
 }
 
 #endif

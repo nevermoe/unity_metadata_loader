@@ -1,6 +1,6 @@
 #include "il2cpp-config.h"
 
-#if IL2CPP_TARGET_WINDOWS && !IL2CPP_TARGET_WINRT
+#if IL2CPP_TARGET_WINDOWS_DESKTOP
 
 #include "WindowsHelpers.h"
 #include <Psapi.h>
@@ -9,50 +9,47 @@
 
 struct ProcessHandle
 {
-	HANDLE handle;
+    HANDLE handle;
 };
 
 namespace il2cpp
 {
 namespace os
 {
+    int Process::GetCurrentProcessId()
+    {
+        return ::GetCurrentProcessId();
+    }
 
-int Process::GetCurrentProcessId()
-{
-	return ::GetCurrentProcessId();
-}
+    ProcessHandle* Process::GetProcess(int processId)
+    {
+        return (ProcessHandle*)OpenProcess(PROCESS_ALL_ACCESS, TRUE, processId);
+    }
 
-ProcessHandle* Process::GetProcess(int processId)
-{
-	return (ProcessHandle*)OpenProcess(PROCESS_ALL_ACCESS, TRUE, processId);
-}
+    void Process::FreeProcess(ProcessHandle* handle)
+    {
+        ::CloseHandle((HANDLE)handle);
+    }
 
-void Process::FreeProcess(ProcessHandle* handle)
-{
-	::CloseHandle((HANDLE)handle);
-}
+    std::string Process::GetProcessName(ProcessHandle* handle)
+    {
+        const size_t bufferLength = 256;
+        WCHAR buf[bufferLength];
 
-std::string Process::GetProcessName(ProcessHandle* handle)
-{
-	const size_t bufferLength = 256;
-	WCHAR buf[bufferLength];
+        DWORD length = ::GetProcessImageFileName((HANDLE)handle, buf, bufferLength);
 
-	DWORD length = ::GetProcessImageFileName((HANDLE)handle, buf, bufferLength);
-	
-	if (length == 0)
-		return std::string();
+        if (length == 0)
+            return std::string();
 
-	char multiByteStr[bufferLength];
+        char multiByteStr[bufferLength];
 
-	size_t numConverted = wcstombs(multiByteStr, buf, bufferLength);
-	if (numConverted <= 0)
-		return std::string();
+        size_t numConverted = wcstombs(multiByteStr, buf, bufferLength);
+        if (numConverted <= 0)
+            return std::string();
 
-	return std::string(multiByteStr, numConverted);
-}
-
+        return std::string(multiByteStr, numConverted);
+    }
 }
 }
 
 #endif
-

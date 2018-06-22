@@ -1,79 +1,101 @@
 #include "il2cpp-config.h"
 #include "class-internals.h"
 #include "Il2CppTypeCompare.h"
-#include <cassert>
 
 namespace il2cpp
 {
 namespace metadata
 {
+    template<typename T>
+    static inline int Compare(const T& left, const T& right)
+    {
+        if (left == right)
+            return 0;
 
-bool Il2CppTypeCompare::operator() (const Il2CppType* t1,const Il2CppType* t2) const
-{
-	return Compare (t1, t2);
-}
+        if (left < right)
+            return -1;
 
-bool Il2CppTypeCompare::Compare (const Il2CppType* t1,const Il2CppType* t2)
-{
-	
-	if ((t1->type != t2->type) ||
-		(t1->byref != t2->byref))
-		return false;
+        return 1;
+    }
 
-	switch (t1->type) {
-	case IL2CPP_TYPE_VOID:
-	case IL2CPP_TYPE_BOOLEAN:
-	case IL2CPP_TYPE_CHAR:
-	case IL2CPP_TYPE_I1:
-	case IL2CPP_TYPE_U1:
-	case IL2CPP_TYPE_I2:
-	case IL2CPP_TYPE_U2:
-	case IL2CPP_TYPE_I4:
-	case IL2CPP_TYPE_U4:
-	case IL2CPP_TYPE_I8:
-	case IL2CPP_TYPE_U8:
-	case IL2CPP_TYPE_R4:
-	case IL2CPP_TYPE_R8:
-	case IL2CPP_TYPE_STRING:
-	case IL2CPP_TYPE_I:
-	case IL2CPP_TYPE_U:
-	case IL2CPP_TYPE_OBJECT:
-	case IL2CPP_TYPE_TYPEDBYREF:
-		return true;
-	case IL2CPP_TYPE_VALUETYPE:
-	case IL2CPP_TYPE_CLASS:
-		return t1->data.klassIndex == t2->data.klassIndex;
-	case IL2CPP_TYPE_PTR:
-	case IL2CPP_TYPE_SZARRAY:
-		return Compare (t1->data.type, t2->data.type);
-	case IL2CPP_TYPE_ARRAY:
-		if (t1->data.array->rank != t2->data.array->rank)
-			return false;
-		return Compare (t1->data.array->etype, t2->data.array->etype);
-	case IL2CPP_TYPE_GENERICINST: {
-		const Il2CppGenericInst *i1 = t1->data.generic_class->context.class_inst;
-		const Il2CppGenericInst *i2 = t2->data.generic_class->context.class_inst;
-		if (i1->type_argc != i2->type_argc)
-			return false;
-		if (t1->data.generic_class->typeDefinitionIndex != t2->data.generic_class->typeDefinitionIndex)
-			return false;
-		/* FIXME: we should probably just compare the instance pointers directly.  */
-		for (uint32_t i = 0; i < i1->type_argc; ++i) {
-			if (!Compare (i1->type_argv[i], i2->type_argv[i]))
-				return false;
-		}
-		return true;
-	}
-	case IL2CPP_TYPE_VAR:
-	case IL2CPP_TYPE_MVAR:
-		return t1->data.genericParameterIndex == t2->data.genericParameterIndex;
-	default:
-		NOT_IMPLEMENTED (Il2CppTypeCompare::compare);
-		return false;
-	}
+    static int Compare(const Il2CppType* t1, const Il2CppType* t2)
+    {
+        int result = Compare(t1->type, t2->type);
+        if (result != 0)
+            return result;
 
-	return false;
-}
+        result = Compare(t1->byref, t2->byref);
+        if (result != 0)
+            return result;
 
+        switch (t1->type)
+        {
+            case IL2CPP_TYPE_VALUETYPE:
+            case IL2CPP_TYPE_CLASS:
+                return Compare(t1->data.klassIndex, t2->data.klassIndex);
+
+            case IL2CPP_TYPE_PTR:
+            case IL2CPP_TYPE_SZARRAY:
+                return Compare(t1->data.type, t2->data.type);
+
+            case IL2CPP_TYPE_ARRAY:
+            {
+                result = Compare(t1->data.array->rank, t2->data.array->rank);
+                if (result != 0)
+                    return result;
+
+                return Compare(t1->data.array->etype, t2->data.array->etype);
+            }
+            case IL2CPP_TYPE_GENERICINST:
+            {
+                const Il2CppGenericInst *i1 = t1->data.generic_class->context.class_inst;
+                const Il2CppGenericInst *i2 = t2->data.generic_class->context.class_inst;
+
+                // this happens when maximum generic recursion is hit
+                if (i1 == NULL || i2 == NULL)
+                {
+                    if (i1 == i2)
+                        return 0;
+                    return (i1 == NULL) ? -1 : 1;
+                }
+
+                result = Compare(i1->type_argc, i2->type_argc);
+                if (result != 0)
+                    return result;
+
+                result = Compare(t1->data.generic_class->typeDefinitionIndex, t2->data.generic_class->typeDefinitionIndex);
+                if (result != 0)
+                    return result;
+
+                /* FIXME: we should probably just compare the instance pointers directly.  */
+                for (uint32_t i = 0; i < i1->type_argc; ++i)
+                {
+                    result = Compare(i1->type_argv[i], i2->type_argv[i]);
+                    if (result != 0)
+                        return result;
+                }
+
+                return 0;
+            }
+            case IL2CPP_TYPE_VAR:
+            case IL2CPP_TYPE_MVAR:
+                return Compare(t1->data.genericParameterIndex, t2->data.genericParameterIndex);
+            default:
+                return 0;
+        }
+
+        NOT_IMPLEMENTED(Il2CppTypeEqualityComparer::compare);
+        return Compare(static_cast<const void*>(t1), static_cast<const void*>(t2));
+    }
+
+    bool Il2CppTypeEqualityComparer::AreEqual(const Il2CppType* t1, const Il2CppType* t2)
+    {
+        return Compare(t1, t2) == 0;
+    }
+
+    bool Il2CppTypeLess::operator()(const Il2CppType * t1, const Il2CppType * t2) const
+    {
+        return Compare(t1, t2) < 0;
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

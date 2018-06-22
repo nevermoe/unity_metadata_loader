@@ -26,22 +26,20 @@ namespace System
 {
 namespace Diagnostics
 {
+    typedef int32_t PerformanceCounterCategoryType;
 
-typedef int32_t PerformanceCounterCategoryType;
-
-class LIBIL2CPP_CODEGEN_API PerformanceCounterCategory
-{
-public:
-	static Il2CppString* CategoryHelpInternal (Il2CppString* category, Il2CppString* machine);
-	static bool CounterCategoryExists (Il2CppString* counter, Il2CppString* category, Il2CppString* machine);
-	static bool Create (Il2CppString* categoryName, Il2CppString* categoryHelp, PerformanceCounterCategoryType categoryType, Il2CppArray* items);
-	static Il2CppArray* GetCategoryNames (Il2CppString* machine);
-	static Il2CppArray* GetCounterNames (Il2CppString* category, Il2CppString* machine);
-	static Il2CppArray* GetInstanceNames (Il2CppString* category, Il2CppString* machine);
-	static int32_t InstanceExistsInternal (Il2CppString* instance, Il2CppString* category, Il2CppString* machine);
-	static bool CategoryDelete (Il2CppString* name);
-};
-
+    class LIBIL2CPP_CODEGEN_API PerformanceCounterCategory
+    {
+    public:
+        static Il2CppString* CategoryHelpInternal(Il2CppString* category, Il2CppString* machine);
+        static bool CounterCategoryExists(Il2CppString* counter, Il2CppString* category, Il2CppString* machine);
+        static bool Create(Il2CppString* categoryName, Il2CppString* categoryHelp, PerformanceCounterCategoryType categoryType, Il2CppArray* items);
+        static Il2CppArray* GetCategoryNames(Il2CppString* machine);
+        static Il2CppArray* GetCounterNames(Il2CppString* category, Il2CppString* machine);
+        static Il2CppArray* GetInstanceNames(Il2CppString* category, Il2CppString* machine);
+        static int32_t InstanceExistsInternal(Il2CppString* instance, Il2CppString* category, Il2CppString* machine);
+        static bool CategoryDelete(Il2CppString* name);
+    };
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace System */

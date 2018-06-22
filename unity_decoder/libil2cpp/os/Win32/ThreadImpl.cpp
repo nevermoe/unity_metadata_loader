@@ -3,373 +3,385 @@
 #if !IL2CPP_THREADS_STD && IL2CPP_THREADS_WIN32
 
 #include "ThreadImpl.h"
-#include "vm/Exception.h"
 #include "os/Time.h"
 #include "WindowsHelpers.h"
-#include <cassert>
-
-using namespace il2cpp::vm;
+#include "il2cpp-vm-support.h"
 
 namespace il2cpp
 {
 namespace os
 {
+    struct StartData
+    {
+        Thread::StartFunc m_StartFunc;
+        void* m_StartArg;
+        volatile DWORD* m_ThreadId;
+    };
 
-struct StartData
-{
-	Thread::StartFunc m_StartFunc;
-	void* m_StartArg;
-	volatile DWORD* m_ThreadId;
-};
+    static DWORD WINAPI ThreadStartWrapper(LPVOID arg)
+    {
+        StartData startData = *(StartData*)arg;
+        free(arg);
+        *startData.m_ThreadId = GetCurrentThreadId();
+        startData.m_StartFunc(startData.m_StartArg);
+        return 0;
+    }
 
-static DWORD WINAPI ThreadStartWrapper(LPVOID arg)
-{
-	StartData startData = *(StartData*)arg;
-	free(arg);
-	*startData.m_ThreadId = GetCurrentThreadId();
-	startData.m_StartFunc(startData.m_StartArg);
-	return 0;
-}
+    ThreadImpl::ThreadImpl()
+        : m_ThreadHandle(0), m_ThreadId(0), m_StackSize(IL2CPP_DEFAULT_STACK_SIZE), m_ApartmentState(kApartmentStateUnknown), m_Priority(kThreadPriorityNormal)
+    {
+    }
 
-ThreadImpl::ThreadImpl ()
- : m_ThreadHandle (0), m_ThreadId(0), m_StackSize(IL2CPP_DEFAULT_STACK_SIZE), m_ApartmentState(kApartmentStateUnknown)
-{
-}
+    ThreadImpl::~ThreadImpl()
+    {
+        if (m_ThreadHandle != NULL)
+            CloseHandle(m_ThreadHandle);
+    }
 
-ThreadImpl::~ThreadImpl()
-{
-	if (m_ThreadHandle != NULL)
-		CloseHandle(m_ThreadHandle);
-}
+    uint64_t ThreadImpl::Id()
+    {
+        return m_ThreadId;
+    }
 
-uint64_t ThreadImpl::Id ()
-{
-	return m_ThreadId;
-}
+    void ThreadImpl::SetName(const std::string& name)
+    {
+        // http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
 
-void ThreadImpl::SetName (const std::string& name)
-{
-	// http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
+        const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
-	const DWORD MS_VC_EXCEPTION=0x406D1388;
+    #pragma pack(push,8)
+        typedef struct tagTHREADNAME_INFO
+        {
+            DWORD dwType; // Must be 0x1000.
+            LPCSTR szName; // Pointer to name (in user addr space).
+            DWORD dwThreadID; // Thread ID (-1=caller thread).
+            DWORD dwFlags; // Reserved for future use, must be zero.
+        } THREADNAME_INFO;
+    #pragma pack(pop)
 
-	#pragma pack(push,8)
-	typedef struct tagTHREADNAME_INFO
-	{
-	   DWORD dwType; // Must be 0x1000.
-	   LPCSTR szName; // Pointer to name (in user addr space).
-	   DWORD dwThreadID; // Thread ID (-1=caller thread).
-	   DWORD dwFlags; // Reserved for future use, must be zero.
-	} THREADNAME_INFO;
-	#pragma pack(pop)
+        THREADNAME_INFO info;
+        info.dwType = 0x1000;
+        info.szName = name.c_str();
+        info.dwThreadID = static_cast<DWORD>(Id());
+        info.dwFlags = 0;
 
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = name.c_str ();
-	info.dwThreadID = static_cast<DWORD>(Id());
-	info.dwFlags = 0;
+        __try
+        {
+            RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+        }
+        __except (EXCEPTION_EXECUTE_HANDLER)
+        {
+        }
+    }
 
-	__try
-	{
-		RaiseException (MS_VC_EXCEPTION, 0, sizeof (info) / sizeof (ULONG_PTR), (ULONG_PTR*) &info);
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
-}
+    void ThreadImpl::SetPriority(ThreadPriority priority)
+    {
+        if (m_ThreadHandle == NULL)
+            m_Priority = priority;
+        else
+        {
+            int ret = ::SetThreadPriority(m_ThreadHandle, priority - 2);
+            IL2CPP_ASSERT(ret);
+        }
+    }
 
-void ThreadImpl::SetPriority (ThreadPriority priority)
-{
-	int threadPriority;
-	switch (priority)
-	{
-		case kThreadPriorityNormal:
-			threadPriority = THREAD_PRIORITY_NORMAL;
-			break;
+    ThreadPriority ThreadImpl::GetPriority()
+    {
+        if (m_ThreadHandle == NULL)
+            return m_Priority;
+        int ret = ::GetThreadPriority(m_ThreadHandle) + 2;
+        IL2CPP_ASSERT(ret != THREAD_PRIORITY_ERROR_RETURN);
+        return (ThreadPriority)ret;
+    }
 
-		case kThreadPriorityLow:
-			threadPriority = THREAD_PRIORITY_BELOW_NORMAL;
-			break;
+    ErrorCode ThreadImpl::Run(Thread::StartFunc func, void* arg)
+    {
+        // It might happen that func will start executing and will try to access m_ThreadId before CreateThread gets a chance to assign it.
+        // Therefore m_ThreadId is assigned both by this thread and from the newly created thread (race condition could go the other way too).
 
-		case kThreadPriorityHigh:
-			threadPriority = THREAD_PRIORITY_ABOVE_NORMAL;
-			break;
-	}
+        StartData* startData = (StartData*)malloc(sizeof(StartData));
+        startData->m_StartFunc = func;
+        startData->m_StartArg = arg;
+        startData->m_ThreadId = &m_ThreadId;
 
-	::SetThreadPriority (m_ThreadHandle, threadPriority);
-}
+        // Create thread.
+        DWORD threadId;
+        HANDLE threadHandle = ::CreateThread(NULL, m_StackSize, &ThreadStartWrapper, startData, STACK_SIZE_PARAM_IS_A_RESERVATION, &threadId);
 
-ErrorCode ThreadImpl::Run (Thread::StartFunc func, void* arg)
-{
-	// It might happen that func will start executing and will try to access m_ThreadId before CreateThread gets a chance to assign it.
-	// Therefore m_ThreadId is assigned both by this thread and from the newly created thread (race condition could go the other way too).
+        if (!threadHandle)
+            return kErrorCodeGenFailure;
 
-	StartData* startData = (StartData*)malloc (sizeof(StartData));
-	startData->m_StartFunc = func;
-	startData->m_StartArg = arg;
-	startData->m_ThreadId = &m_ThreadId;
+        m_ThreadHandle = threadHandle;
+        m_ThreadId = threadId;
 
-	// Create thread.
-	DWORD threadId;
-	HANDLE threadHandle = ::CreateThread (NULL, m_StackSize, &ThreadStartWrapper, startData, 0, &threadId);
+        return kErrorCodeSuccess;
+    }
 
-	if (!threadHandle)
-		return kErrorCodeGenFailure;
+    void ThreadImpl::Sleep(uint32_t ms, bool interruptible)
+    {
+        uint32_t remainingWaitTime = ms;
+        while (true)
+        {
+            uint32_t startWaitTime = os::Time::GetTicksMillisecondsMonotonic();
+            DWORD sleepResult = ::SleepEx(remainingWaitTime, interruptible);
 
-	m_ThreadHandle = threadHandle;
-	m_ThreadId = threadId;
+            if (sleepResult == WAIT_IO_COMPLETION)
+            {
+                uint32_t waitedTime = os::Time::GetTicksMillisecondsMonotonic() - startWaitTime;
+                if (waitedTime >= remainingWaitTime)
+                    return;
 
-	return kErrorCodeSuccess;
-}
+                remainingWaitTime -= waitedTime;
+                continue;
+            }
 
-void ThreadImpl::Sleep (uint32_t ms, bool interruptible)
-{
-	uint32_t remainingWaitTime = ms;
-	while (true)
-	{
-		uint32_t startWaitTime = os::Time::GetTicksMillisecondsMonotonic ();
-		DWORD sleepResult = ::SleepEx (remainingWaitTime, interruptible);
+            break;
+        }
+    }
 
-		if (sleepResult == WAIT_IO_COMPLETION)
-		{
-			uint32_t waitedTime = os::Time::GetTicksMillisecondsMonotonic () - startWaitTime;
-			if (waitedTime >= remainingWaitTime)
-				return;
-
-			remainingWaitTime -= waitedTime;
-			continue;
-		}
-
-		break;
-	}
-}
-
-void ThreadImpl::QueueUserAPC (Thread::APCFunc func, void* context)
-{
-	::QueueUserAPC(reinterpret_cast<PAPCFUNC>(func), m_ThreadHandle, reinterpret_cast<ULONG_PTR>(context));
-}
+    void ThreadImpl::QueueUserAPC(Thread::APCFunc func, void* context)
+    {
+        ::QueueUserAPC(reinterpret_cast<PAPCFUNC>(func), m_ThreadHandle, reinterpret_cast<ULONG_PTR>(context));
+    }
 
 namespace
 {
-	// It would be nice to always use CoGetApartmentType but it's only available on Windows 7 and later.
-	// That's why we check for function at runtime and do a fallback on Windows XP.
-	// CoGetApartmentType is always available in Windows Store Apps.
+    // It would be nice to always use CoGetApartmentType but it's only available on Windows 7 and later.
+    // That's why we check for function at runtime and do a fallback on Windows XP.
+    // CoGetApartmentType is always available in Windows Store Apps.
 
-	typedef HRESULT (STDAPICALLTYPE* CoGetApartmentTypeFunc)(APTTYPE* type, APTTYPEQUALIFIER* qualifier);
+    typedef HRESULT (STDAPICALLTYPE * CoGetApartmentTypeFunc)(APTTYPE* type, APTTYPEQUALIFIER* qualifier);
 
-	ApartmentState GetApartmentWindows7(CoGetApartmentTypeFunc coGetApartmentType, bool* implicit)
-	{
-		*implicit = false;
+    ApartmentState GetApartmentWindows7(CoGetApartmentTypeFunc coGetApartmentType, bool* implicit)
+    {
+        *implicit = false;
 
-		APTTYPE type;
-		APTTYPEQUALIFIER qualifier;
-		const HRESULT hr = coGetApartmentType(&type, &qualifier);
-		if (FAILED(hr))
-		{
-			assert(CO_E_NOTINITIALIZED == hr);
-			return kApartmentStateUnknown;
-		}
+        APTTYPE type;
+        APTTYPEQUALIFIER qualifier;
+        const HRESULT hr = coGetApartmentType(&type, &qualifier);
+        if (FAILED(hr))
+        {
+            IL2CPP_ASSERT(CO_E_NOTINITIALIZED == hr);
+            return kApartmentStateUnknown;
+        }
 
-		switch (type)
-		{
-		case APTTYPE_STA:
-		case APTTYPE_MAINSTA:
-			return kApartmentStateInSTA;
+        switch (type)
+        {
+            case APTTYPE_STA:
+            case APTTYPE_MAINSTA:
+                return kApartmentStateInSTA;
 
-		case APTTYPE_MTA:
-			*implicit = (APTTYPEQUALIFIER_IMPLICIT_MTA == qualifier);
-			return kApartmentStateInMTA;
+            case APTTYPE_MTA:
+                *implicit = (APTTYPEQUALIFIER_IMPLICIT_MTA == qualifier);
+                return kApartmentStateInMTA;
 
-		case APTTYPE_NA:
-			switch (qualifier)
-			{
-			case APTTYPEQUALIFIER_NA_ON_STA:
-			case APTTYPEQUALIFIER_NA_ON_MAINSTA:
-				return kApartmentStateInSTA;
+            case APTTYPE_NA:
+                switch (qualifier)
+                {
+                    case APTTYPEQUALIFIER_NA_ON_STA:
+                    case APTTYPEQUALIFIER_NA_ON_MAINSTA:
+                        return kApartmentStateInSTA;
 
-			case APTTYPEQUALIFIER_NA_ON_MTA:
-				return kApartmentStateInMTA;
+                    case APTTYPEQUALIFIER_NA_ON_MTA:
+                        return kApartmentStateInMTA;
 
-			case APTTYPEQUALIFIER_NA_ON_IMPLICIT_MTA:
-				*implicit = true;
-				return kApartmentStateInMTA;
-			}
-			break;
-		}
+                    case APTTYPEQUALIFIER_NA_ON_IMPLICIT_MTA:
+                        *implicit = true;
+                        return kApartmentStateInMTA;
+                }
+                break;
+        }
 
-		assert(0 && "CoGetApartmentType returned unexpected value.");
-		return kApartmentStateUnknown;
-	}
+        IL2CPP_ASSERT(0 && "CoGetApartmentType returned unexpected value.");
+        return kApartmentStateUnknown;
+    }
 
 #if !defined(WINAPI_FAMILY) || WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-	ApartmentState GetApartmentWindowsXp(bool* implicit)
-	{
-		*implicit = false;
+    ApartmentState GetApartmentWindowsXp(bool* implicit)
+    {
+        *implicit = false;
 
-		IUnknown* context = nullptr;
-		HRESULT hr = CoGetContextToken(reinterpret_cast<ULONG_PTR*>(&context));
-		if (SUCCEEDED(hr))
-		{
-			IComThreadingInfo* info;
-			hr = context->QueryInterface(&info);
-			if (SUCCEEDED(hr))
-			{
-				THDTYPE type;
-				hr = info->GetCurrentThreadType(&type);
-				if (SUCCEEDED(hr))
-				{
-					// THDTYPE_PROCESSMESSAGES means that we are in STA thread.
-					// Otherwise it's an MTA thread. We are not sure at this moment if CoInitializeEx has been called explicitly on this thread
-					// or if it has been implicitly made MTA by a CoInitialize call on another thread.
-					if (THDTYPE_PROCESSMESSAGES == type)
-						return kApartmentStateInSTA;
+        IUnknown* context = nullptr;
+        HRESULT hr = CoGetContextToken(reinterpret_cast<ULONG_PTR*>(&context));
+        if (SUCCEEDED(hr))
+        {
+            IComThreadingInfo* info;
+            hr = context->QueryInterface(&info);
+            if (SUCCEEDED(hr))
+            {
+                THDTYPE type;
+                hr = info->GetCurrentThreadType(&type);
+                if (SUCCEEDED(hr))
+                {
+                    // THDTYPE_PROCESSMESSAGES means that we are in STA thread.
+                    // Otherwise it's an MTA thread. We are not sure at this moment if CoInitializeEx has been called explicitly on this thread
+                    // or if it has been implicitly made MTA by a CoInitialize call on another thread.
+                    if (THDTYPE_PROCESSMESSAGES == type)
+                        return kApartmentStateInSTA;
 
-					// Assume implicit. Even if it's explicit, we'll handle the case correctly by checking CoInitializeEx return value.
-					*implicit = true;
-					return kApartmentStateInMTA;
-				}
+                    // Assume implicit. Even if it's explicit, we'll handle the case correctly by checking CoInitializeEx return value.
+                    *implicit = true;
+                    return kApartmentStateInMTA;
+                }
 
-				info->Release();
-			}
+                info->Release();
+            }
 
-			// No need to release context.
-		}
+            // No need to release context.
+        }
 
-		return kApartmentStateUnknown;
-	}
+        return kApartmentStateUnknown;
+    }
 
-	class CoGetApartmentTypeHelper
-	{
-	private:
-		HMODULE _library;
-		CoGetApartmentTypeFunc _func;
+    class CoGetApartmentTypeHelper
+    {
+    private:
+        HMODULE _library;
+        CoGetApartmentTypeFunc _func;
 
-	public:
-		inline CoGetApartmentTypeHelper()
-		{
-			_library = LoadLibraryW(L"ole32.dll");
-			Assert(_library);
-			_func = reinterpret_cast<CoGetApartmentTypeFunc>(GetProcAddress(_library, "CoGetApartmentType"));
-		}
+    public:
+        inline CoGetApartmentTypeHelper()
+        {
+            _library = LoadLibraryW(L"ole32.dll");
+            Assert(_library);
+            _func = reinterpret_cast<CoGetApartmentTypeFunc>(GetProcAddress(_library, "CoGetApartmentType"));
+        }
 
-		inline ~CoGetApartmentTypeHelper()
-		{
-			FreeLibrary(_library);
-		}
+        inline ~CoGetApartmentTypeHelper()
+        {
+            FreeLibrary(_library);
+        }
 
-		inline CoGetApartmentTypeFunc GetFunc() const { return _func; }
-	};
+        inline CoGetApartmentTypeFunc GetFunc() const { return _func; }
+    };
 
-	inline ApartmentState GetApartmentImpl(bool* implicit)
-	{
-		static CoGetApartmentTypeHelper coGetApartmentTypeHelper;
-		const CoGetApartmentTypeFunc func = coGetApartmentTypeHelper.GetFunc();
-		return func ? GetApartmentWindows7(func, implicit) : GetApartmentWindowsXp(implicit);
-	}
+    inline ApartmentState GetApartmentImpl(bool* implicit)
+    {
+        static CoGetApartmentTypeHelper coGetApartmentTypeHelper;
+        const CoGetApartmentTypeFunc func = coGetApartmentTypeHelper.GetFunc();
+        return func ? GetApartmentWindows7(func, implicit) : GetApartmentWindowsXp(implicit);
+    }
 
 #else
 
-	inline ApartmentState GetApartmentImpl(bool* implicit)
-	{
-		return GetApartmentWindows7(CoGetApartmentType, implicit);
-	}
+    inline ApartmentState GetApartmentImpl(bool* implicit)
+    {
+        return GetApartmentWindows7(CoGetApartmentType, implicit);
+    }
 
 #endif
 }
 
-ApartmentState ThreadImpl::GetApartment()
-{
-	Assert(GetCurrentThreadId() == m_ThreadId);
+    ApartmentState ThreadImpl::GetApartment()
+    {
+        Assert(GetCurrentThreadId() == m_ThreadId);
 
-	ApartmentState state = static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
+        ApartmentState state = static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
 
-	if (kApartmentStateUnknown == state)
-	{
-		bool implicit;
-		state = GetApartmentImpl(&implicit);
-		if (!implicit)
-			m_ApartmentState = state;
-	}
+        if (kApartmentStateUnknown == state)
+        {
+            bool implicit;
+            state = GetApartmentImpl(&implicit);
+            if (!implicit)
+                m_ApartmentState = state;
+        }
 
-	return state;
-}
+        return state;
+    }
 
-ApartmentState ThreadImpl::GetExplicitApartment()
-{
-	return static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
-}
+    ApartmentState ThreadImpl::GetExplicitApartment()
+    {
+        return static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
+    }
 
-ApartmentState ThreadImpl::SetApartment(ApartmentState state)
-{
-	Assert(GetCurrentThreadId() == m_ThreadId);
+    ApartmentState ThreadImpl::SetApartment(ApartmentState state)
+    {
+        Assert(GetCurrentThreadId() == m_ThreadId);
 
-	// Unknown state uninitializes COM.
-	if (kApartmentStateUnknown == state)
-	{
-		if (m_ApartmentState & kApartmentStateCoInitialized)
-		{
-			CoUninitialize();
-			m_ApartmentState = kApartmentStateUnknown;
-		}
+        // Unknown state uninitializes COM.
+        if (kApartmentStateUnknown == state)
+        {
+            if (m_ApartmentState & kApartmentStateCoInitialized)
+            {
+                CoUninitialize();
+                m_ApartmentState = kApartmentStateUnknown;
+            }
 
-		return GetApartment();
-	}
+            return GetApartment();
+        }
 
-	// Initialize apartment state. Ignore result of this function because it will return MTA value for both implicit and explicit apartment.
-	// On the other hand m_ApartmentState will only be set to MTA if it was initialized explicitly with CoInitializeEx.
-	GetApartment();
+        // Initialize apartment state. Ignore result of this function because it will return MTA value for both implicit and explicit apartment.
+        // On the other hand m_ApartmentState will only be set to MTA if it was initialized explicitly with CoInitializeEx.
+        GetApartment();
 
-	ApartmentState currentState = static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
+        ApartmentState currentState = static_cast<ApartmentState>(m_ApartmentState & ~kApartmentStateCoInitialized);
 
-	if (kApartmentStateUnknown != currentState)
-	{
-		Assert(state == currentState);
-		return currentState;
-	}
+        if (kApartmentStateUnknown != currentState)
+        {
+            Assert(state == currentState);
+            return currentState;
+        }
 
-	HRESULT hr = CoInitializeEx(nullptr, (kApartmentStateInSTA == state) ? COINIT_APARTMENTTHREADED : COINIT_MULTITHREADED);
-	if (SUCCEEDED(hr))
-	{
-		m_ApartmentState = state;
-		if (S_OK == hr)
-			m_ApartmentState = static_cast<ApartmentState>(m_ApartmentState | kApartmentStateCoInitialized);
-		else
-			CoUninitialize(); // Someone has already called correct CoInitialize. Don't leave incorrect reference count.
-	}
-	else if (RPC_E_CHANGED_MODE == hr)
-	{
-		// CoInitialize has already been called with a different apartment state.
-		m_ApartmentState = (kApartmentStateInSTA == state) ? kApartmentStateInMTA : kApartmentStateInSTA;
-	}
-	else
-	{
-		Exception::Raise(hr);
-	}
+#if IL2CPP_TARGET_XBOXONE
+        if (state == kApartmentStateInSTA)
+        {
+            // Only assert in debug.. we wouldn't want to bring down the application in Release config
+            IL2CPP_ASSERT(false && "STA apartment state is not supported on Xbox One");
+            state = kApartmentStateInMTA;
+        }
+#endif
 
-	return GetApartment();
-}
+        HRESULT hr = CoInitializeEx(nullptr, (kApartmentStateInSTA == state) ? COINIT_APARTMENTTHREADED : COINIT_MULTITHREADED);
+        if (SUCCEEDED(hr))
+        {
+            m_ApartmentState = state;
+            if (S_OK == hr)
+                m_ApartmentState = static_cast<ApartmentState>(m_ApartmentState | kApartmentStateCoInitialized);
+            else
+                CoUninitialize(); // Someone has already called correct CoInitialize. Don't leave incorrect reference count.
+        }
+        else if (RPC_E_CHANGED_MODE == hr)
+        {
+            // CoInitialize has already been called with a different apartment state.
+            m_ApartmentState = (kApartmentStateInSTA == state) ? kApartmentStateInMTA : kApartmentStateInSTA;
+        }
+        else
+        {
+            IL2CPP_VM_RAISE_COM_EXCEPTION(hr, true);
+        }
 
-void ThreadImpl::SetExplicitApartment(ApartmentState state)
-{
-	Assert(!(m_ApartmentState & kApartmentStateCoInitialized));
-	m_ApartmentState = state;
-}
+        return GetApartment();
+    }
 
-uint64_t ThreadImpl::CurrentThreadId ()
-{
-	return GetCurrentThreadId ();
-}
+    void ThreadImpl::SetExplicitApartment(ApartmentState state)
+    {
+        Assert(!(m_ApartmentState & kApartmentStateCoInitialized));
+        m_ApartmentState = state;
+    }
 
-ThreadImpl* ThreadImpl::CreateForCurrentThread ()
-{
-	ThreadImpl* thread = new ThreadImpl ();
-	BOOL duplicateResult = DuplicateHandle(::GetCurrentProcess(), ::GetCurrentThread(), ::GetCurrentProcess(), &thread->m_ThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-	Assert(duplicateResult && "DuplicateHandle failed.");
-	thread->m_ThreadId = ::GetCurrentThreadId();
-	return thread;
-}
+    uint64_t ThreadImpl::CurrentThreadId()
+    {
+        return GetCurrentThreadId();
+    }
 
+    ThreadImpl* ThreadImpl::CreateForCurrentThread()
+    {
+        ThreadImpl* thread = new ThreadImpl();
+        BOOL duplicateResult = DuplicateHandle(::GetCurrentProcess(), ::GetCurrentThread(), ::GetCurrentProcess(), &thread->m_ThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+        Assert(duplicateResult && "DuplicateHandle failed.");
+        thread->m_ThreadId = ::GetCurrentThreadId();
+        return thread;
+    }
+
+#if NET_4_0
+
+    bool ThreadImpl::YieldInternal()
+    {
+        return SwitchToThread();
+    }
+
+#endif
 }
 }
 

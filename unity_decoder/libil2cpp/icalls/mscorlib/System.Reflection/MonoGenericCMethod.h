@@ -26,13 +26,11 @@ namespace System
 {
 namespace Reflection
 {
-
-class LIBIL2CPP_CODEGEN_API MonoGenericCMethod
-{
-public:
-	static Il2CppReflectionType* get_ReflectedType (void* /* System.Reflection.MonoGenericCMethod */ self);
-};
-
+    class LIBIL2CPP_CODEGEN_API MonoGenericCMethod
+    {
+    public:
+        static Il2CppReflectionType* get_ReflectedType(void* /* System.Reflection.MonoGenericCMethod */ self);
+    };
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

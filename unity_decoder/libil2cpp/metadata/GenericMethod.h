@@ -10,18 +10,16 @@ namespace il2cpp
 {
 namespace metadata
 {
+    class GenericMethod
+    {
+    public:
+        // exported
 
-class GenericMethod
-{
-public:
-	// exported
-
-public:
-	//internal
-	static const MethodInfo* GetMethod (const Il2CppGenericMethod* gmethod);
-	static const Il2CppGenericContext* GetContext (const Il2CppGenericMethod* gmethod);
-	static std::string GetFullName (const Il2CppGenericMethod* gmethod);
-};
-
+    public:
+        //internal
+        static const MethodInfo* GetMethod(const Il2CppGenericMethod* gmethod);
+        static const Il2CppGenericContext* GetContext(const Il2CppGenericMethod* gmethod);
+        static std::string GetFullName(const Il2CppGenericMethod* gmethod);
+    };
 } /* namespace vm */
 } /* namespace il2cpp */

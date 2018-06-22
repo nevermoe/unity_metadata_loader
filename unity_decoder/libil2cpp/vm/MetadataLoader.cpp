@@ -4,31 +4,31 @@
 #include "os/MemoryMappedFile.h"
 #include "os/Mutex.h"
 #include "utils/PathUtils.h"
-#include "vm/Runtime.h"
+#include "utils/Runtime.h"
 
 using namespace il2cpp::os;
 using namespace il2cpp::vm;
 
-void* MetadataLoader::LoadMetadataFile (const char* fileName)
+void* MetadataLoader::LoadMetadataFile(const char* fileName)
 {
-	std::string resourcesDirectory = utils::PathUtils::Combine (Runtime::GetDataDir (), "Metadata");
+    std::string resourcesDirectory = utils::PathUtils::Combine(utils::Runtime::GetDataDir(), utils::StringView<char>("Metadata"));
 
-	std::string resourceFilePath = utils::PathUtils::Combine (resourcesDirectory, fileName);
+    std::string resourceFilePath = utils::PathUtils::Combine(resourcesDirectory, utils::StringView<char>(fileName, strlen(fileName)));
 
-	int error = 0;
-	FileHandle* handle = File::Open (resourceFilePath, File::kFileModeOpen, File::kFileAccessRead, File::kFileShareRead, File::kFileOptionsNone, &error);
-	if (error != 0)
-		return NULL;
+    int error = 0;
+    FileHandle* handle = File::Open(resourceFilePath, kFileModeOpen, kFileAccessRead, kFileShareRead, kFileOptionsNone, &error);
+    if (error != 0)
+        return NULL;
 
-	void* fileBuffer = MemoryMappedFile::Map (handle);
+    void* fileBuffer = MemoryMappedFile::Map(handle);
 
-	File::Close (handle, &error);
-	if (error != 0)
-	{
-		MemoryMappedFile::Unmap (fileBuffer);
-		fileBuffer = NULL;
-		return NULL;
-	}
+    File::Close(handle, &error);
+    if (error != 0)
+    {
+        MemoryMappedFile::Unmap(fileBuffer);
+        fileBuffer = NULL;
+        return NULL;
+    }
 
-	return fileBuffer;
+    return fileBuffer;
 }

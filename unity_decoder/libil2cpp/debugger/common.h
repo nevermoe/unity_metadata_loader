@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include <sstream>
 #include <iostream>
 #include <stdlib.h>
@@ -24,21 +23,22 @@ struct Il2CppType;
 extern bool is_debugger_thread();
 
 #define DISALLOW_COPY(t) \
-	private: \
-		t(const t&); \
-		t& operator=(const t&);
+    private: \
+        t(const t&); \
+        t& operator=(const t&);
 
 #if IL2CPP_DEBUGGER_LOG
-	#define LOG(msg) \
-		{\
-			std::cout << "[debugger:"<< il2cpp::os::Thread::CurrentThreadId() << "/" << (is_debugger_thread() ? "dbg" : "vm") << "] " << msg << std::endl; \
-		}
+    #define LOG(msg) \
+        {\
+            std::cout << "[debugger:"<< il2cpp::os::Thread::CurrentThreadId() << "/" << (is_debugger_thread() ? "dbg" : "vm") << "] " << msg << std::endl; \
+        }
 #else
-	#define LOG(msg) do{} while(0)
+    #define LOG(msg) do{} while(0)
 #endif
 
-enum SuspendPolicy {
-	kSuspendPolicyNone = 0,
-	kSuspendPolicyEventThread = 1,
-	kSuspendPolicyAll = 2
+enum SuspendPolicy
+{
+    kSuspendPolicyNone = 0,
+    kSuspendPolicyEventThread = 1,
+    kSuspendPolicyAll = 2
 };

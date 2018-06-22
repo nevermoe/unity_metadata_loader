@@ -8,43 +8,40 @@
 #else
 #include "os/EventImpl.h"
 #endif
-#include <cassert>
 
 
 namespace il2cpp
 {
 namespace os
 {
+    Event::Event(bool manualReset, bool signaled)
+        : m_Event(new EventImpl(manualReset, signaled))
+    {
+    }
 
-Event::Event (bool manualReset, bool signaled)
-: m_Event (new EventImpl (manualReset, signaled))
-{
-}
+    Event::~Event()
+    {
+        delete m_Event;
+    }
 
-Event::~Event ()
-{
-	delete m_Event;
-}
+    ErrorCode Event::Set()
+    {
+        return m_Event->Set();
+    }
 
-ErrorCode Event::Set ()
-{
-	return m_Event->Set ();
-}
+    ErrorCode Event::Reset()
+    {
+        return m_Event->Reset();
+    }
 
-ErrorCode Event::Reset ()
-{
-	return m_Event->Reset ();
-}
+    WaitStatus Event::Wait(bool interruptible)
+    {
+        return m_Event->Wait(interruptible);
+    }
 
-WaitStatus Event::Wait (bool interruptible)
-{
-	return m_Event->Wait (interruptible);
-}
-
-WaitStatus Event::Wait (uint32_t ms, bool interruptible)
-{
-	return m_Event->Wait (ms, interruptible);
-}
-
+    WaitStatus Event::Wait(uint32_t ms, bool interruptible)
+    {
+        return m_Event->Wait(ms, interruptible);
+    }
 }
 }

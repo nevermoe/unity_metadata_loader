@@ -7,13 +7,11 @@ namespace il2cpp
 {
 namespace metadata
 {
-
-class GenericSharing
-{
-public:
-	static bool IsShareable (Il2CppGenericClass* gclass);
-	static bool IsShareable (Il2CppGenericMethod* gmethod);
-};
-
+    class GenericSharing
+    {
+    public:
+        static bool IsShareable(Il2CppGenericClass* gclass);
+        static bool IsShareable(Il2CppGenericMethod* gmethod);
+    };
 } /* namespace metadata */
 } /* namespace il2cpp */

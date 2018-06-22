@@ -19,14 +19,12 @@ namespace Remoting
 {
 namespace Proxies
 {
-
-class LIBIL2CPP_CODEGEN_API RealProxy
-{
-public:
-	static Il2CppObject* InternalGetTransparentProxy(Il2CppObject*, Il2CppString*);
-	static Il2CppReflectionType* InternalGetProxyType(Il2CppObject*);
-};
-
+    class LIBIL2CPP_CODEGEN_API RealProxy
+    {
+    public:
+        static Il2CppObject* InternalGetTransparentProxy(Il2CppObject*, Il2CppString*);
+        static Il2CppReflectionType* InternalGetProxyType(Il2CppObject*);
+    };
 } /* namespace Proxies */
 } /* namespace Remoting */
 } /* namespace Runtime */

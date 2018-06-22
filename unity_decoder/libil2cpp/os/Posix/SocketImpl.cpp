@@ -2,7 +2,6 @@
 
 #if !IL2CPP_USE_GENERIC_SOCKET_IMPL && IL2CPP_TARGET_POSIX
 
-
 // enable support for AF_UNIX and socket paths
 #define SUPPORT_UNIXSOCKETS (1)
 
@@ -13,9 +12,6 @@
 #if IL2CPP_USE_POSIX_SOCKET_PLATFORM_CONFIG
 #include "SocketImplPlatformConfig.h"
 #endif
-
-
-#include <cassert>
 
 #include <string.h>
 #include <unistd.h>
@@ -48,2292 +44,2461 @@
 #include "utils/StringUtils.h"
 #include "vm/Exception.h"
 
+#include "il2cpp-vm-support.h"
+
 namespace il2cpp
 {
 namespace os
 {
-
-static bool is_loopback (int32_t family, uint8_t *addr)
-{
-	if (family == AF_INET)
-		return addr[0] == 127;
+    static bool is_loopback(int32_t family, uint8_t *addr)
+    {
+        if (family == AF_INET)
+            return addr[0] == 127;
 #if IL2CPP_SUPPORT_IPV6
-	else if (family == AF_INET6)
-		return (IN6_IS_ADDR_LOOPBACK ((struct in6_addr *) addr));
+        else if (family == AF_INET6)
+            return (IN6_IS_ADDR_LOOPBACK((struct in6_addr *)addr));
 #endif
-	return false;
-}
+        return false;
+    }
 
-static struct in_addr *get_local_ips (int32_t family, int32_t *nips)
-{
-	const int32_t max_ifaces = 50; // 50 interfaces should be enough ...
+    static struct in_addr *get_local_ips(int32_t family, int32_t *nips)
+    {
+        const int32_t max_ifaces = 50; // 50 interfaces should be enough ...
 
-	*nips = 0;
+        *nips = 0;
 
-	if (family != AF_INET)
-		return NULL;
+        if (family != AF_INET)
+            return NULL;
 
-	int32_t addr_size = 0;
-	int32_t offset = 0;
-	if (family == AF_INET) {
-		addr_size = sizeof (struct in_addr);
-		offset = offsetof (struct sockaddr_in, sin_addr);
+        int32_t addr_size = 0;
+        int32_t offset = 0;
+        if (family == AF_INET)
+        {
+            addr_size = sizeof(struct in_addr);
+            offset = offsetof(struct sockaddr_in, sin_addr);
 #if IL2CPP_SUPPORT_IPV6
-	} else if (family == AF_INET6) {
-		addr_size = sizeof (struct in6_addr);
-		offset = offsetof (struct sockaddr_in6, sin6_addr);
+        }
+        else if (family == AF_INET6)
+        {
+            addr_size = sizeof(struct in6_addr);
+            offset = offsetof(struct sockaddr_in6, sin6_addr);
 #endif
-	} else {
-		return NULL;
-	}
+        }
+        else
+        {
+            return NULL;
+        }
 
-	int32_t fd = socket (family, SOCK_STREAM, 0);
+        int32_t fd = socket(family, SOCK_STREAM, 0);
 
-	struct ifconf ifc;
-	ifc.ifc_len = max_ifaces * sizeof (struct ifreq);
-	ifc.ifc_buf = (char*)malloc (ifc.ifc_len);
+        struct ifconf ifc;
+        ifc.ifc_len = max_ifaces * sizeof(struct ifreq);
+        ifc.ifc_buf = (char*)malloc(ifc.ifc_len);
 
-	if (ioctl (fd, SIOCGIFCONF, &ifc) < 0)
-	{
-		close (fd);
-		free (ifc.ifc_buf);
-		return NULL;
-	}
+        if (ioctl(fd, SIOCGIFCONF, &ifc) < 0)
+        {
+            close(fd);
+            free(ifc.ifc_buf);
+            return NULL;
+        }
 
-	int32_t count = ifc.ifc_len / sizeof (struct ifreq);
-	*nips = count;
-	if (count == 0) {
-		free (ifc.ifc_buf);
-		close (fd);
-		return NULL;
-	}
+        int32_t count = ifc.ifc_len / sizeof(struct ifreq);
+        *nips = count;
+        if (count == 0)
+        {
+            free(ifc.ifc_buf);
+            close(fd);
+            return NULL;
+        }
 
-	int32_t i;
-	struct ifreq *ifr;
-	struct ifreq iflags;
-	bool ignore_loopback = false;
+        int32_t i;
+        struct ifreq *ifr;
+        struct ifreq iflags;
+        bool ignore_loopback = false;
 
-	for (i = 0, ifr = ifc.ifc_req; i < *nips; i++, ifr++)
-	{
-		strcpy (iflags.ifr_name, ifr->ifr_name);
-		if (ioctl (fd, SIOCGIFFLAGS, &iflags) < 0)
-			continue;
+        for (i = 0, ifr = ifc.ifc_req; i < *nips; i++, ifr++)
+        {
+            strcpy(iflags.ifr_name, ifr->ifr_name);
+            if (ioctl(fd, SIOCGIFFLAGS, &iflags) < 0)
+                continue;
 
-		if ((iflags.ifr_flags & IFF_UP) == 0)
-		{
-			ifr->ifr_name [0] = '\0';
-			continue;
-		}
+            if ((iflags.ifr_flags & IFF_UP) == 0)
+            {
+                ifr->ifr_name[0] = '\0';
+                continue;
+            }
 
-		if ((iflags.ifr_flags & IFF_LOOPBACK) == 0)
-			ignore_loopback = true;
-	}
+            if ((iflags.ifr_flags & IFF_LOOPBACK) == 0)
+                ignore_loopback = true;
+        }
 
-	close (fd);
+        close(fd);
 
-	uint8_t *result = (uint8_t*)malloc (addr_size * count);
-	uint8_t *tmp_ptr = result;
+        uint8_t *result = (uint8_t*)malloc(addr_size * count);
+        uint8_t *tmp_ptr = result;
 
-	for (i = 0, ifr = ifc.ifc_req; i < count; i++, ifr++)
-	{
-		if (ifr->ifr_name [0] == '\0')
-		{
-			(*nips)--;
-			continue;
-		}
+        for (i = 0, ifr = ifc.ifc_req; i < count; i++, ifr++)
+        {
+            if (ifr->ifr_name[0] == '\0')
+            {
+                (*nips)--;
+                continue;
+            }
 
-		if (ignore_loopback && is_loopback (family, ((uint8_t*) &ifr->ifr_addr) + offset))
-		{
-			(*nips)--;
-			continue;
-		}
+            if (ignore_loopback && is_loopback(family, ((uint8_t*)&ifr->ifr_addr) + offset))
+            {
+                (*nips)--;
+                continue;
+            }
 
-		memcpy (tmp_ptr, ((uint8_t*) &ifr->ifr_addr) + offset, addr_size);
-		tmp_ptr += addr_size;
-	}
+            memcpy(tmp_ptr, ((uint8_t*)&ifr->ifr_addr) + offset, addr_size);
+            tmp_ptr += addr_size;
+        }
 
-	free (ifc.ifc_buf);
-	return (struct in_addr *)result;
-}
+        free(ifc.ifc_buf);
+        return (struct in_addr *)result;
+    }
 
-static bool hostent_get_info(struct hostent *he, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
-{
-	if (he == NULL)
-		return false;
+    static bool hostent_get_info(struct hostent *he, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
+    {
+        if (he == NULL)
+            return false;
 
-	if(he->h_length != 4 || he->h_addrtype != AF_INET)
-		return false;
+        if (he->h_length != 4 || he->h_addrtype != AF_INET)
+            return false;
 
-	name.assign (he->h_name);
+        name.assign(he->h_name);
 
-	for(int32_t i = 0; he->h_aliases[i] != NULL; ++i)
-		aliases.push_back (he->h_aliases[i]);
+        for (int32_t i = 0; he->h_aliases[i] != NULL; ++i)
+            aliases.push_back(he->h_aliases[i]);
 
-	for(int32_t i = 0; he->h_addr_list[i] != NULL; ++i)
-		addr_list.push_back (
-			utils::StringUtils::NPrintf ("%u.%u.%u.%u", 16,
-				 (uint8_t) he->h_addr_list[i][0],
-				 (uint8_t) he->h_addr_list[i][1],
-				 (uint8_t) he->h_addr_list[i][2],
-				 (uint8_t) he->h_addr_list[i][3]));
+        for (int32_t i = 0; he->h_addr_list[i] != NULL; ++i)
+            addr_list.push_back(
+                utils::StringUtils::NPrintf("%u.%u.%u.%u", 16,
+                    (uint8_t)he->h_addr_list[i][0],
+                    (uint8_t)he->h_addr_list[i][1],
+                    (uint8_t)he->h_addr_list[i][2],
+                    (uint8_t)he->h_addr_list[i][3]));
 
-	return true;
-}
+        return true;
+    }
 
-static bool hostent_get_info_with_local_ips (struct hostent *he, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
-{
-	int32_t nlocal_in = 0;
+    static bool hostent_get_info_with_local_ips(struct hostent *he, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
+    {
+        int32_t nlocal_in = 0;
 
-	if (he != NULL)
-	{
-		if(he->h_length != 4 || he->h_addrtype != AF_INET)
-			return false;
+        if (he != NULL)
+        {
+            if (he->h_length != 4 || he->h_addrtype != AF_INET)
+                return false;
 
-		name.assign (he->h_name);
+            name.assign(he->h_name);
 
-		for(int32_t i = 0; he->h_aliases[i] != NULL; ++i)
-			aliases.push_back (he->h_aliases[i]);
-	}
+            for (int32_t i = 0; he->h_aliases[i] != NULL; ++i)
+                aliases.push_back(he->h_aliases[i]);
+        }
 
-	struct in_addr *local_in = get_local_ips (AF_INET, &nlocal_in);
+        struct in_addr *local_in = get_local_ips(AF_INET, &nlocal_in);
 
-	if (nlocal_in)
-	{
-		for(int32_t i = 0; i < nlocal_in; ++i)
-		{
-			const uint8_t *ptr = (uint8_t *) &local_in [i];
+        if (nlocal_in)
+        {
+            for (int32_t i = 0; i < nlocal_in; ++i)
+            {
+                const uint8_t *ptr = (uint8_t*)&local_in[i];
 
-			addr_list.push_back (
-				utils::StringUtils::NPrintf ("%u.%u.%u.%u", 16,
-					(uint8_t) ptr [0],
-					(uint8_t) ptr [1],
-					(uint8_t) ptr [2],
-					(uint8_t) ptr [3]));
-		}
+                addr_list.push_back(
+                    utils::StringUtils::NPrintf("%u.%u.%u.%u", 16,
+                        (uint8_t)ptr[0],
+                        (uint8_t)ptr[1],
+                        (uint8_t)ptr[2],
+                        (uint8_t)ptr[3]));
+            }
 
-		free (local_in);
-	} else if (he == NULL)
-	{
-		// If requesting "" and there are no other interfaces up, MS returns 127.0.0.1
-		addr_list.push_back ("127.0.0.1");
-		return true;
-	}
+            free(local_in);
+        }
+        else if (he == NULL)
+        {
+            // If requesting "" and there are no other interfaces up, MS returns 127.0.0.1
+            addr_list.push_back("127.0.0.1");
+            return true;
+        }
 
-	if (nlocal_in == 0 && he != NULL)
-	{
-		for(int32_t i = 0; he->h_addr_list[i] != NULL; ++i)
-		{
-			addr_list.push_back (
-				utils::StringUtils::NPrintf ("%u.%u.%u.%u", 16,
-					(uint8_t) he->h_addr_list[i][0],
-					(uint8_t) he->h_addr_list[i][1],
-					(uint8_t) he->h_addr_list[i][2],
-					(uint8_t) he->h_addr_list[i][3]));
-		}
-	}
+        if (nlocal_in == 0 && he != NULL)
+        {
+            for (int32_t i = 0; he->h_addr_list[i] != NULL; ++i)
+            {
+                addr_list.push_back(
+                    utils::StringUtils::NPrintf("%u.%u.%u.%u", 16,
+                        (uint8_t)he->h_addr_list[i][0],
+                        (uint8_t)he->h_addr_list[i][1],
+                        (uint8_t)he->h_addr_list[i][2],
+                        (uint8_t)he->h_addr_list[i][3]));
+            }
+        }
 
-	return true;
-}
+        return true;
+    }
 
-static int32_t convert_socket_flags (os::SocketFlags flags)
-{
-	int32_t c_flags = 0;
+    static int32_t convert_socket_flags(os::SocketFlags flags)
+    {
+        int32_t c_flags = 0;
 
-	if (flags)
-	{
-		// Check if contains invalid flag values
-		if (flags & ~(os::kSocketFlagsOutOfBand | os::kSocketFlagsMaxIOVectorLength | os::kSocketFlagsPeek | os::kSocketFlagsDontRoute | os::kSocketFlagsPartial))
-		{
-			return -1;
-		}
-	#ifdef MSG_OOB
-		if (flags & os::kSocketFlagsOutOfBand)
-			c_flags |= MSG_OOB;
-	#endif
-		if (flags & os::kSocketFlagsPeek)
-			c_flags |= MSG_PEEK;
+        if (flags)
+        {
+            // Check if contains invalid flag values
+            if (flags & ~(os::kSocketFlagsOutOfBand | os::kSocketFlagsMaxIOVectorLength | os::kSocketFlagsPeek | os::kSocketFlagsDontRoute | os::kSocketFlagsPartial))
+            {
+                return -1;
+            }
+    #ifdef MSG_OOB
+            if (flags & os::kSocketFlagsOutOfBand)
+                c_flags |= MSG_OOB;
+    #endif
+            if (flags & os::kSocketFlagsPeek)
+                c_flags |= MSG_PEEK;
 
-		if (flags & os::kSocketFlagsDontRoute)
-			c_flags |= MSG_DONTROUTE;
+            if (flags & os::kSocketFlagsDontRoute)
+                c_flags |= MSG_DONTROUTE;
 
-		 // Ignore Partial - see bug 349688.  Don't return -1, because
-		 // according to the comment in that bug ms runtime doesn't for
-		 // UDP sockets (this means we will silently ignore it for TCP
-		 // too)
+            // Ignore Partial - see bug 349688.  Don't return -1, because
+            // according to the comment in that bug ms runtime doesn't for
+            // UDP sockets (this means we will silently ignore it for TCP
+            // too)
 
-	#ifdef MSG_MORE
-		if (flags & os::kSocketFlagsPartial)
-			c_flags |= MSG_MORE;
-	#endif
-	}
+    #ifdef MSG_MORE
+            if (flags & os::kSocketFlagsPartial)
+                c_flags |= MSG_MORE;
+    #endif
+        }
 
-	return c_flags;
-}
+        return c_flags;
+    }
 
-void SocketImpl::Startup ()
-{
+    void SocketImpl::Startup()
+    {
+    }
 
-}
-
-void SocketImpl::Cleanup ()
-{
-
-}
+    void SocketImpl::Cleanup()
+    {
+    }
 
 #if IL2CPP_SUPPORT_IPV6
-static void AddrinfoGetAddresses(struct addrinfo *info, std::string& name, bool add_local_ips,
-								std::vector<std::string> &addr_list)
-{
-	if (add_local_ips)
-	{
-		int nlocal_in = 0;
-		int nlocal_in6 = 0;
-		in_addr* local_in = (struct in_addr *) get_local_ips (AF_INET, &nlocal_in);
-		in6_addr* local_in6 = (struct in6_addr *) get_local_ips (AF_INET6, &nlocal_in6);
-		if (nlocal_in || nlocal_in6)
-		{
-			if (nlocal_in)
-			{
-				for (int i = 0; i < nlocal_in; i++)
-				{
-					char addr [16];
-					inet_ntop (AF_INET, &local_in [i], addr, sizeof (addr));
-					addr_list.push_back(std::string(addr));
-				}
-			}
+    static void AddrinfoGetAddresses(struct addrinfo *info, std::string& name, bool add_local_ips,
+        std::vector<std::string> &addr_list)
+    {
+        if (add_local_ips)
+        {
+            int nlocal_in = 0;
+            int nlocal_in6 = 0;
+            in_addr* local_in = (struct in_addr *)get_local_ips(AF_INET, &nlocal_in);
+            in6_addr* local_in6 = (struct in6_addr *)get_local_ips(AF_INET6, &nlocal_in6);
+            if (nlocal_in || nlocal_in6)
+            {
+                if (nlocal_in)
+                {
+                    for (int i = 0; i < nlocal_in; i++)
+                    {
+                        char addr[16];
+                        inet_ntop(AF_INET, &local_in[i], addr, sizeof(addr));
+                        addr_list.push_back(std::string(addr));
+                    }
+                }
 
-			if (nlocal_in6)
-			{
-				for (int i = 0; i < nlocal_in6; i++)
-				{
-					char addr [48];
-					const char* ret = inet_ntop (AF_INET6, &local_in6 [i], addr, sizeof (addr));
-					if (ret != NULL)
-						addr_list.push_back(std::string(addr));
-				}
-			}
+                if (nlocal_in6)
+                {
+                    for (int i = 0; i < nlocal_in6; i++)
+                    {
+                        char addr[48];
+                        const char* ret = inet_ntop(AF_INET6, &local_in6[i], addr, sizeof(addr));
+                        if (ret != NULL)
+                            addr_list.push_back(std::string(addr));
+                    }
+                }
+            }
 
-			free (local_in);
-			free (local_in6);
+            free(local_in);
+            free(local_in6);
+        }
 
-			return;
-		}
+        bool nameSet = false;
+        for (addrinfo* ai = info; ai != NULL; ai = ai->ai_next)
+        {
+            const char *ret;
+            char buffer[48]; /* Max. size for IPv6 */
 
-		free (local_in);
-		free (local_in6);
-	}
+            if ((ai->ai_family != PF_INET) && (ai->ai_family != PF_INET6))
+                continue;
 
-	bool nameSet = false;
-	for (addrinfo* ai=info; ai!=NULL; ai=ai->ai_next)
-	{
-		const char *ret;
-		char buffer [48]; /* Max. size for IPv6 */
+            if (ai->ai_family == PF_INET)
+                ret = inet_ntop(ai->ai_family, (void*)&(((struct sockaddr_in*)ai->ai_addr)->sin_addr), buffer, 16);
+            else
+                ret = inet_ntop(ai->ai_family, (void*)&(((struct sockaddr_in6*)ai->ai_addr)->sin6_addr), buffer, 48);
 
-		if((ai->ai_family != PF_INET) && (ai->ai_family != PF_INET6))
-			continue;
+            if (ret)
+                addr_list.push_back(std::string(buffer));
+            else
+                addr_list.push_back(std::string());
 
-		if(ai->ai_family == PF_INET)
-			ret = inet_ntop(ai->ai_family, (void*)&(((struct sockaddr_in*)ai->ai_addr)->sin_addr), buffer, 16);
-		else
-			ret = inet_ntop(ai->ai_family, (void*)&(((struct sockaddr_in6*)ai->ai_addr)->sin6_addr), buffer, 48);
+            if (!nameSet)
+            {
+                if (ai->ai_canonname != NULL)
+                    name = std::string(ai->ai_canonname);
+                else
+                    name = std::string();
 
-		if(ret)
-			addr_list.push_back(std::string(buffer));
-		else
-			addr_list.push_back(std::string());
+                nameSet = true;
+            }
+        }
+    }
 
-		if (!nameSet)
-		{
-			if (ai->ai_canonname != NULL)
-				name = std::string(ai->ai_canonname);
-			else
-				name = std::string();
+    WaitStatus GetAddressInfo(const char* hostname, bool add_local_ips, std::string &name, std::vector<std::string> &addr_list)
+    {
+        addrinfo *info = NULL;
 
-			nameSet = true;
-		}
-	}
-}
+        addrinfo hints;
+        memset(&hints, 0, sizeof(hints));
 
-WaitStatus GetAddressInfo(const char* hostname, bool add_local_ips, std::string &name, std::vector<std::string> &addr_list)
-{
-	addrinfo *info = NULL;
+        // Here Mono inspects the ipv4Supported and ipv6Supported properties on the managed Socket class.
+        // This seems to be unnecessary though, as we can use PF_UNSPEC in all cases, and getaddrinfo works.
+        hints.ai_family = PF_UNSPEC;
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_flags = AI_CANONNAME | AI_ADDRCONFIG;
 
-	addrinfo hints;
-	memset(&hints, 0, sizeof(hints));
+        if (*hostname && getaddrinfo(hostname, NULL, &hints, &info) == -1)
+            return kWaitStatusFailure;
 
-	// Here Mono inspects the ipv4Supported and ipv6Supported properties on the managed Socket class.
-	// This seems to be unnecessary though, as we can use PF_UNSPEC in all cases, and getaddrinfo works.
-	hints.ai_family = PF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_CANONNAME | AI_ADDRCONFIG;
+        AddrinfoGetAddresses(info, name, add_local_ips, addr_list);
 
-	if (*hostname && getaddrinfo(hostname, NULL, &hints, &info) == -1)
-		return kWaitStatusFailure;
+        if (info)
+            freeaddrinfo(info);
 
-	AddrinfoGetAddresses(info, name, add_local_ips, addr_list);
+        if (name.empty())
+            name.assign(hostname);
 
-	if(info)
-		freeaddrinfo(info);
+        return kWaitStatusSuccess;
+    }
 
-	return kWaitStatusSuccess;
-}
 #endif
 
-WaitStatus SocketImpl::GetHostByAddr (const std::string &address, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
-{
+    WaitStatus SocketImpl::GetHostByAddr(const std::string &address, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
+    {
 #if IL2CPP_SUPPORT_IPV6
-	struct sockaddr_in saddr;
-	struct sockaddr_in6 saddr6;
-	int32_t family;
-	char hostname[1024] = {0};
-	int flags = 0;
+        struct sockaddr_in saddr;
+        struct sockaddr_in6 saddr6;
+        int32_t family;
+        char hostname[1024] = {0};
+        int flags = 0;
 
-	if (inet_pton (AF_INET, address.c_str(), &saddr.sin_addr ) <= 0)
-	{
-		/* Maybe an ipv6 address */
-		if (inet_pton (AF_INET6, address.c_str(), &saddr6.sin6_addr) <= 0)
-		{
-			return kWaitStatusFailure;
-		}
-		else
-		{
-			family = AF_INET6;
-			saddr6.sin6_family = AF_INET6;
-		}
-	}
-	else
-	{
-		family = AF_INET;
-		saddr.sin_family = AF_INET;
-	}
-	
-	if(family == AF_INET)
-	{
+        if (inet_pton(AF_INET, address.c_str(), &saddr.sin_addr) <= 0)
+        {
+            /* Maybe an ipv6 address */
+            if (inet_pton(AF_INET6, address.c_str(), &saddr6.sin6_addr) <= 0)
+            {
+                return kWaitStatusFailure;
+            }
+            else
+            {
+                family = AF_INET6;
+                saddr6.sin6_family = AF_INET6;
+            }
+        }
+        else
+        {
+            family = AF_INET;
+            saddr.sin_family = AF_INET;
+        }
+
+        if (family == AF_INET)
+        {
 #if HAVE_SOCKADDR_IN_SIN_LEN
-		saddr.sin_len = sizeof (saddr);
+            saddr.sin_len = sizeof(saddr);
 #endif
-		if(getnameinfo ((struct sockaddr*)&saddr, sizeof(saddr),
-				hostname, sizeof(hostname), NULL, 0,
-				flags) != 0)
-		{
-			return kWaitStatusFailure;
-		}
-	}
-	else if(family == AF_INET6)
-	{
+            if (getnameinfo((struct sockaddr*)&saddr, sizeof(saddr),
+                    hostname, sizeof(hostname), NULL, 0,
+                    flags) != 0)
+            {
+                return kWaitStatusFailure;
+            }
+        }
+        else if (family == AF_INET6)
+        {
 #if HAVE_SOCKADDR_IN6_SIN_LEN
-		saddr6.sin6_len = sizeof (saddr6);
+            saddr6.sin6_len = sizeof(saddr6);
 #endif
-		if(getnameinfo ((struct sockaddr*)&saddr6, sizeof(saddr6),
-				hostname, sizeof(hostname), NULL, 0,
-				flags) != 0)
-		{
-			return kWaitStatusFailure;
-		}
-	}
+            if (getnameinfo((struct sockaddr*)&saddr6, sizeof(saddr6),
+                    hostname, sizeof(hostname), NULL, 0,
+                    flags) != 0)
+            {
+                return kWaitStatusFailure;
+            }
+        }
 
-	return GetAddressInfo(hostname, false, name, addr_list);
+        return GetAddressInfo(hostname, false, name, addr_list);
 #else
-	struct in_addr inaddr;
-	if (inet_pton (AF_INET, address.c_str (), &inaddr) <= 0)
-		return kWaitStatusFailure;
+        struct in_addr inaddr;
+        if (inet_pton(AF_INET, address.c_str(), &inaddr) <= 0)
+            return kWaitStatusFailure;
 
-	struct hostent *he = gethostbyaddr ((char *) &inaddr, sizeof (inaddr), AF_INET);
+        struct hostent *he = gethostbyaddr((char*)&inaddr, sizeof(inaddr), AF_INET);
 
-	if(he == NULL)
-	{
-		name = address;
-		addr_list.push_back (name);
+        if (he == NULL)
+        {
+            name = address;
+            addr_list.push_back(name);
 
-		return kWaitStatusSuccess;
-	}
+            return kWaitStatusSuccess;
+        }
 
-	return hostent_get_info (he, name, aliases, addr_list)
-		? kWaitStatusSuccess
-		: kWaitStatusFailure;
+        return hostent_get_info(he, name, aliases, addr_list)
+            ? kWaitStatusSuccess
+            : kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::GetHostByName (const std::string &host, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
-{
-	char this_hostname [256] = {0};
+    WaitStatus SocketImpl::GetHostByName(const std::string &host, std::string &name, std::vector<std::string> &aliases, std::vector<std::string> &addr_list)
+    {
+        char this_hostname[256] = {0};
 
-	const char *hostname = host.c_str ();
-	bool add_local_ips = (*hostname == '\0');
+        const char *hostname = host.c_str();
+        bool add_local_ips = (*hostname == '\0');
 
-	if (!add_local_ips && gethostname (this_hostname, sizeof (this_hostname)) != -1)
-	{
-		if (!strcmp (hostname, this_hostname))
-			add_local_ips = true;
-	}
+        if (!add_local_ips && gethostname(this_hostname, sizeof(this_hostname)) != -1)
+        {
+            if (!strcmp(hostname, this_hostname))
+                add_local_ips = true;
+        }
 
 #if IL2CPP_SUPPORT_IPV6
-	return GetAddressInfo(hostname, add_local_ips, name, addr_list);
+        return GetAddressInfo(hostname, add_local_ips, name, addr_list);
 #else
-	struct hostent *he = NULL;
-	if (*hostname)
-		he = gethostbyname (hostname);
+        struct hostent *he = NULL;
+        if (*hostname)
+            he = gethostbyname(hostname);
 
-	if (*hostname && he == NULL)
-		return kWaitStatusFailure;
+        if (*hostname && he == NULL)
+            return kWaitStatusFailure;
 
-	return (add_local_ips
-			? hostent_get_info_with_local_ips (he, name, aliases, addr_list)
-			: hostent_get_info (he, name, aliases, addr_list))
-				? kWaitStatusSuccess
-				: kWaitStatusFailure;
+        return (add_local_ips
+                ? hostent_get_info_with_local_ips(he, name, aliases, addr_list)
+                : hostent_get_info(he, name, aliases, addr_list))
+            ? kWaitStatusSuccess
+            : kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::GetHostName (std::string &name)
-{
-	char hostname[256];
-	int32_t ret = gethostname (hostname, sizeof (hostname));
+    WaitStatus SocketImpl::GetHostName(std::string &name)
+    {
+        char hostname[256];
+        int32_t ret = gethostname(hostname, sizeof(hostname));
 
-	if(ret == -1)
-		return kWaitStatusFailure;
+        if (ret == -1)
+            return kWaitStatusFailure;
 
-	name.assign(hostname);
+        name.assign(hostname);
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-SocketImpl::SocketImpl (ThreadStatusCallback thread_status_callback)
-:	_is_valid (false)
-,	_fd (-1)
-,	_domain (-1)
-,	_type (-1)
-,	_protocol (-1)
-,	_saved_error (kErrorCodeSuccess)
-,	_still_readable (0)
-,	_thread_status_callback (thread_status_callback)
-{
+    SocketImpl::SocketImpl(ThreadStatusCallback thread_status_callback)
+        :   _is_valid(false)
+        ,   _fd(-1)
+        ,   _domain(-1)
+        ,   _type(-1)
+        ,   _protocol(-1)
+        ,   _saved_error(kErrorCodeSuccess)
+        ,   _still_readable(0)
+        ,   _thread_status_callback(thread_status_callback)
+    {
+    }
 
-}
+    SocketImpl::~SocketImpl()
+    {
+    }
 
-SocketImpl::~SocketImpl ()
-{
+    static int32_t convert_address_family(AddressFamily family)
+    {
+        switch (family)
+        {
+            case kAddressFamilyUnspecified:
+                return AF_UNSPEC;
 
-}
+            case kAddressFamilyUnix:
+                return AF_UNIX;
 
-static int32_t convert_address_family (AddressFamily family)
-{
-	switch(family)
-	{
-		case kAddressFamilyUnspecified:
-			return AF_UNSPEC;
-
-		case kAddressFamilyUnix:
-			return AF_UNIX;
-
-		case kAddressFamilyInterNetwork:
-			return AF_INET;
+            case kAddressFamilyInterNetwork:
+                return AF_INET;
 #ifdef AF_IPX
-		case kAddressFamilyIpx:
-			return AF_IPX;
+            case kAddressFamilyIpx:
+                return AF_IPX;
 #endif
 #ifdef AF_SNA
-		case kAddressFamilySna:
-			return AF_SNA;
+            case kAddressFamilySna:
+                return AF_SNA;
 #endif
 #ifdef AF_DECnet
-		case kAddressFamilyDecNet:
-			return AF_DECnet;
+            case kAddressFamilyDecNet:
+                return AF_DECnet;
 #endif
 #ifdef AF_APPLETALK
-		case kAddressFamilyAppleTalk:
-			return AF_APPLETALK;
+            case kAddressFamilyAppleTalk:
+                return AF_APPLETALK;
 #endif
 #ifdef AF_INET6
-		case kAddressFamilyInterNetworkV6:
-			return AF_INET6;
+            case kAddressFamilyInterNetworkV6:
+                return AF_INET6;
 #endif
 #ifdef AF_IRDA
-		case kAddressFamilyIrda:
-			return AF_IRDA;
+            case kAddressFamilyIrda:
+                return AF_IRDA;
 #endif
 
-		default:
-			break;
-	}
+            default:
+                break;
+        }
 
-	return -1;
-}
+        return -1;
+    }
 
-static AddressFamily convert_define_to_address_family (int32_t family)
-{
-	switch(family)
-	{
-		case AF_UNSPEC:
-			return kAddressFamilyUnspecified;
+    static AddressFamily convert_define_to_address_family(int32_t family)
+    {
+        switch (family)
+        {
+            case AF_UNSPEC:
+                return kAddressFamilyUnspecified;
 
-		case AF_UNIX:
-			return kAddressFamilyUnix;
+            case AF_UNIX:
+                return kAddressFamilyUnix;
 
-		case AF_INET:
-			return kAddressFamilyInterNetwork;
+            case AF_INET:
+                return kAddressFamilyInterNetwork;
 #ifdef AF_IPX
-		case AF_IPX:
-			return kAddressFamilyIpx;
+            case AF_IPX:
+                return kAddressFamilyIpx;
 #endif
 #ifdef AF_SNA
-		case AF_SNA:
-			return kAddressFamilySna;
+            case AF_SNA:
+                return kAddressFamilySna;
 #endif
 #ifdef AF_DECnet
-		case AF_DECnet:
-			return kAddressFamilyDecNet;
+            case AF_DECnet:
+                return kAddressFamilyDecNet;
 #endif
 #ifdef AF_APPLETALK
-		case AF_APPLETALK:
-			return kAddressFamilyAppleTalk;
+            case AF_APPLETALK:
+                return kAddressFamilyAppleTalk;
 #endif
 #ifdef AF_INET6
-		case AF_INET6:
-			return kAddressFamilyInterNetworkV6;
+            case AF_INET6:
+                return kAddressFamilyInterNetworkV6;
 #endif
 #ifdef AF_IRDA
-		case AF_IRDA:
-			return kAddressFamilyIrda;
+            case AF_IRDA:
+                return kAddressFamilyIrda;
 #endif
 
-		default:
-			break;
-	}
+            default:
+                break;
+        }
 
-	return kAddressFamilyError;
-}
+        return kAddressFamilyError;
+    }
 
-static int32_t convert_socket_type (SocketType type)
-{
-	switch(type)
-	{
-		case kSocketTypeStream:
-			return SOCK_STREAM;
+    static int32_t convert_socket_type(SocketType type)
+    {
+        switch (type)
+        {
+            case kSocketTypeStream:
+                return SOCK_STREAM;
 
-		case kSocketTypeDgram:
-			return SOCK_DGRAM;
+            case kSocketTypeDgram:
+                return SOCK_DGRAM;
 
-		case kSocketTypeRaw:
-			return SOCK_RAW;
+            case kSocketTypeRaw:
+                return SOCK_RAW;
 #ifdef SOCK_RDM
-		case kSocketTypeRdm:
-			return SOCK_RDM;
+            case kSocketTypeRdm:
+                return SOCK_RDM;
 #endif
 #ifdef SOCK_SEQPACKET
-		case kSocketTypeSeqpacket:
-			return SOCK_SEQPACKET;
+            case kSocketTypeSeqpacket:
+                return SOCK_SEQPACKET;
 #endif
-		default:
-			break;
-	}
+            default:
+                break;
+        }
 
-	return -1;
-}
+        return -1;
+    }
 
-static int32_t convert_socket_protocol (ProtocolType protocol)
-{
-	switch(protocol)
-	{
-		case kProtocolTypeIP:
-		case kProtocolTypeIPv6:
-		case kProtocolTypeIcmp:
-		case kProtocolTypeIgmp:
-		case kProtocolTypeGgp:
-		case kProtocolTypeTcp:
-		case kProtocolTypePup:
-		case kProtocolTypeUdp:
-		case kProtocolTypeIdp:
-			// In this case the enum values map exactly.
-			return (int32_t) protocol;
+    static int32_t convert_socket_protocol(ProtocolType protocol)
+    {
+        switch (protocol)
+        {
+            case kProtocolTypeIP:
+            case kProtocolTypeIPv6:
+            case kProtocolTypeIcmp:
+            case kProtocolTypeIgmp:
+            case kProtocolTypeGgp:
+            case kProtocolTypeTcp:
+            case kProtocolTypePup:
+            case kProtocolTypeUdp:
+            case kProtocolTypeIdp:
+                // In this case the enum values map exactly.
+                return (int32_t)protocol;
 
-		default:
-			break;
-	}
+            default:
+                break;
+        }
 
-	// Everything else in unsupported and unexpected
-	return -1;
-}
+        // Everything else in unsupported and unexpected
+        return -1;
+    }
 
-WaitStatus SocketImpl::Create (AddressFamily family, SocketType type, ProtocolType protocol)
-{
-	_fd = -1;
-	_is_valid = false;
-	_still_readable = 1;
-	_domain = convert_address_family (family);
-	_type = convert_socket_type (type);
-	_protocol = convert_socket_protocol (protocol);
+    WaitStatus SocketImpl::Create(AddressFamily family, SocketType type, ProtocolType protocol)
+    {
+        _fd = -1;
+        _is_valid = false;
+        _still_readable = 1;
+        _domain = convert_address_family(family);
+        _type = convert_socket_type(type);
+        _protocol = convert_socket_protocol(protocol);
 
-	assert (_type != -1 && "Unsupported socket type");
-	assert (_domain != -1 && "Unsupported address family");
-	assert (_protocol != -1 && "Unsupported protocol type");
+        IL2CPP_ASSERT(_type != -1 && "Unsupported socket type");
+        IL2CPP_ASSERT(_domain != -1 && "Unsupported address family");
+        IL2CPP_ASSERT(_protocol != -1 && "Unsupported protocol type");
 
-	_fd = socket (_domain, _type, _protocol);
-	if (_fd == -1 && _domain == AF_INET && _type == SOCK_RAW && _protocol == 0)
-	{
-		// Retry with protocol == 4 (see bug #54565)
-		_protocol = 4;
-		_fd = socket (AF_INET, SOCK_RAW, 4);
-	}
+        _fd = socket(_domain, _type, _protocol);
+        if (_fd == -1 && _domain == AF_INET && _type == SOCK_RAW && _protocol == 0)
+        {
+            // Retry with protocol == 4 (see bug #54565)
+            _protocol = 4;
+            _fd = socket(AF_INET, SOCK_RAW, 4);
+        }
 
-	if (_fd == -1)
-	{
-		StoreLastError ();
+        if (_fd == -1)
+        {
+            StoreLastError();
 
-		return kWaitStatusFailure;
-	}
+            return kWaitStatusFailure;
+        }
 
-	// if (fd >= _wapi_fd_reserve)
-	// {
-	//	WSASetLastError (WSASYSCALLFAILURE);
-	//	close (fd);
+        // if (fd >= _wapi_fd_reserve)
+        // {
+        //  WSASetLastError (WSASYSCALLFAILURE);
+        //  close (fd);
 
-	//	return(INVALID_SOCKET);
-	// }
+        //  return(INVALID_SOCKET);
+        // }
 
-	/* .net seems to set this by default for SOCK_STREAM, not for
-	 * SOCK_DGRAM (see bug #36322)
-	 *
-	 * It seems winsock has a rather different idea of what
-	 * SO_REUSEADDR means.  If it's set, then a new socket can be
-	 * bound over an existing listening socket.  There's a new
-	 * windows-specific option called SO_EXCLUSIVEADDRUSE but
-	 * using that means the socket MUST be closed properly, or a
-	 * denial of service can occur.  Luckily for us, winsock
-	 * behaves as though any other system would when SO_REUSEADDR
-	 * is true, so we don't need to do anything else here.  See
-	 * bug 53992.
-	 */
-	{
-		int32_t v = 1;
-		const int32_t ret = setsockopt (_fd, SOL_SOCKET, SO_REUSEADDR, &v, sizeof (v));
+        /* .net seems to set this by default for SOCK_STREAM, not for
+         * SOCK_DGRAM (see bug #36322)
+         *
+         * It seems winsock has a rather different idea of what
+         * SO_REUSEADDR means.  If it's set, then a new socket can be
+         * bound over an existing listening socket.  There's a new
+         * windows-specific option called SO_EXCLUSIVEADDRUSE but
+         * using that means the socket MUST be closed properly, or a
+         * denial of service can occur.  Luckily for us, winsock
+         * behaves as though any other system would when SO_REUSEADDR
+         * is true, so we don't need to do anything else here.  See
+         * bug 53992.
+         */
+        {
+            int32_t v = 1;
+            const int32_t ret = setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &v, sizeof(v));
 
-		if (ret == -1)
-		{
-			if (SOCK_CLOSE(_fd) == -1)
-				StoreLastError ();
+            if (ret == -1)
+            {
+                if (SOCK_CLOSE(_fd) == -1)
+                    StoreLastError();
 
-			return kWaitStatusFailure;
-		}
-	}
+                return kWaitStatusFailure;
+            }
+        }
 
-	// mono_once (&socket_ops_once, socket_ops_init);
+#if IL2CPP_TARGET_DARWIN
+        int32_t value = 1;
+        setsockopt(_fd, SOL_SOCKET, SO_NOSIGPIPE, &value, sizeof(value));
+#endif
 
-	// handle = _wapi_handle_new_fd (WAPI_HANDLE_SOCKET, fd, &socket_handle);
-	// if (handle == _WAPI_HANDLE_INVALID) {
-	//	g_warning ("%s: error creating socket handle", __func__);
-	//	WSASetLastError (WSASYSCALLFAILURE);
-	//	close (fd);
+        // mono_once (&socket_ops_once, socket_ops_init);
 
-	//	return(INVALID_SOCKET);
-	// }
+        // handle = _wapi_handle_new_fd (WAPI_HANDLE_SOCKET, fd, &socket_handle);
+        // if (handle == _WAPI_HANDLE_INVALID) {
+        //  g_warning ("%s: error creating socket handle", __func__);
+        //  WSASetLastError (WSASYSCALLFAILURE);
+        //  close (fd);
 
-	_is_valid = true;
+        //  return(INVALID_SOCKET);
+        // }
 
-	return kWaitStatusSuccess;
-}
+        _is_valid = true;
 
-WaitStatus SocketImpl::Create (SocketDescriptor fd, int32_t family, int32_t type, int32_t protocol)
-{
-	_fd = fd;
-	_is_valid = (fd != -1);
-	_still_readable = 1;
-	_domain = family;
-	_type = type;
-	_protocol = protocol;
+        return kWaitStatusSuccess;
+    }
 
-	assert (_type != -1 && "Unsupported socket type");
-	assert (_domain != -1 && "Unsupported address family");
-	assert (_protocol != -1 && "Unsupported protocol type");
+    WaitStatus SocketImpl::Create(SocketDescriptor fd, int32_t family, int32_t type, int32_t protocol)
+    {
+        _fd = fd;
+        _is_valid = (fd != -1);
+        _still_readable = 1;
+        _domain = family;
+        _type = type;
+        _protocol = protocol;
 
-	return kWaitStatusSuccess;
-}
+        IL2CPP_ASSERT(_type != -1 && "Unsupported socket type");
+        IL2CPP_ASSERT(_domain != -1 && "Unsupported address family");
+        IL2CPP_ASSERT(_protocol != -1 && "Unsupported protocol type");
 
-WaitStatus SocketImpl::Close ()
-{
-	_saved_error = kErrorCodeSuccess;
+        return kWaitStatusSuccess;
+    }
 
-	if (_is_valid && _fd != -1)
-	{
-		if (SOCK_CLOSE(_fd) == -1)
-			StoreLastError ();
-	}
+    WaitStatus SocketImpl::Close()
+    {
+        _saved_error = kErrorCodeSuccess;
 
-	_fd = -1;
-	_is_valid = false;
-	_still_readable = 0;
-	_domain = -1;
-	_type = -1;
-	_protocol = -1;
+        if (_is_valid && _fd != -1)
+        {
+            if (SOCK_CLOSE(_fd) == -1)
+                StoreLastError();
+        }
 
-	return kWaitStatusSuccess;
-}
+        _fd = -1;
+        _is_valid = false;
+        _still_readable = 0;
+        _domain = -1;
+        _type = -1;
+        _protocol = -1;
 
-WaitStatus SocketImpl::SetBlocking (bool blocking)
-{
+        return kWaitStatusSuccess;
+    }
 
+    WaitStatus SocketImpl::SetBlocking(bool blocking)
+    {
 #if IL2CPP_USE_SOCKET_SETBLOCKING
-	return (WaitStatus)setBlocking(_fd,blocking);
+        return (WaitStatus)setBlocking(_fd, blocking);
 #else
 
-	int32_t flags = fcntl (_fd, F_GETFL, 0);
-	if (flags == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        int32_t flags = fcntl(_fd, F_GETFL, 0);
+        if (flags == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	flags = blocking
-		? (flags & ~O_NONBLOCK)
-		: (flags | O_NONBLOCK);
+        flags = blocking
+            ? (flags & ~O_NONBLOCK)
+            : (flags | O_NONBLOCK);
 
-	if (fcntl (_fd, F_SETFL, flags) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-	return kWaitStatusSuccess;
+        if (fcntl(_fd, F_SETFL, flags) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+        return kWaitStatusSuccess;
 #endif
-}
+    }
 
-ErrorCode SocketImpl::GetLastError () const
-{
-	return _saved_error;
-}
+    ErrorCode SocketImpl::GetLastError() const
+    {
+        return _saved_error;
+    }
 
-void SocketImpl::StoreLastError ()
-{
-	const ErrorCode error = SocketErrnoToErrorCode (errno);
+    void SocketImpl::StoreLastError()
+    {
+        const ErrorCode error = SocketErrnoToErrorCode(errno);
 
-	Error::SetLastError (error);
+        Error::SetLastError(error);
 
-	_saved_error = error;
-}
+        _saved_error = error;
+    }
 
-void SocketImpl::StoreLastError (int32_t error_no)
-{
-	const ErrorCode error = SocketErrnoToErrorCode (error_no);
+    void SocketImpl::StoreLastError(int32_t error_no)
+    {
+        const ErrorCode error = SocketErrnoToErrorCode(error_no);
 
-	Error::SetLastError (error);
+        Error::SetLastError(error);
 
-	_saved_error = error;
-}
+        _saved_error = error;
+    }
 
 #if SUPPORT_UNIXSOCKETS
-static void sockaddr_from_path(const char *path, struct sockaddr *sa, socklen_t *sa_size)
-{
-	struct sockaddr_un sa_un = {0};
-	const size_t len = strlen (path);
+    static void sockaddr_from_path(const char *path, struct sockaddr *sa, socklen_t *sa_size)
+    {
+        struct sockaddr_un sa_un = {0};
+        const size_t len = strlen(path);
 
-	memcpy (sa_un.sun_path, path, len);
+        memcpy(sa_un.sun_path, path, len);
 
-	*sa_size = (socklen_t)len;
-	*sa = *((struct sockaddr*)&sa_un);
-}
+        *sa_size = (socklen_t)len;
+        *sa = *((struct sockaddr*)&sa_un);
+    }
+
 #endif
 
 #if IL2CPP_SUPPORT_IPV6
-static void sockaddr_from_address(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, sockaddr_in6* sa, socklen_t *sa_size)
-{
-	sa->sin6_family = AF_INET6;
-	sa->sin6_port = port;
-	memcpy(&sa->sin6_addr, &address[0], 16);
-	sa->sin6_scope_id = scope;
+    static void sockaddr_from_address(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, sockaddr_in6* sa, socklen_t *sa_size)
+    {
+        sa->sin6_family = AF_INET6;
+        sa->sin6_port = port;
+        memcpy(&sa->sin6_addr, &address[0], 16);
+        sa->sin6_scope_id = scope;
 
-	*sa_size = sizeof(struct sockaddr_in6);
-}
+        *sa_size = sizeof(struct sockaddr_in6);
+    }
+
 #endif
 
-static void sockaddr_from_address(uint32_t address, uint16_t port, struct sockaddr *sa, socklen_t *sa_size)
-{
-	struct sockaddr_in sa_in = {0};
+    static void sockaddr_from_address(uint32_t address, uint16_t port, struct sockaddr *sa, socklen_t *sa_size)
+    {
+        struct sockaddr_in sa_in = {0};
 
-	sa_in.sin_family = AF_INET;
-	sa_in.sin_port = port;
-	sa_in.sin_addr.s_addr = address;
+        sa_in.sin_family = AF_INET;
+        sa_in.sin_port = port;
+        sa_in.sin_addr.s_addr = address;
 
-	*sa_size = sizeof(struct sockaddr_in);
-	*sa = *((struct sockaddr*)&sa_in);
-}
+        *sa_size = sizeof(struct sockaddr_in);
+        *sa = *((struct sockaddr*)&sa_in);
+    }
 
-static bool socketaddr_to_endpoint_info(const struct sockaddr *address, socklen_t address_len, EndPointInfo &info)
-{
-	info.family = convert_define_to_address_family(address->sa_family);
+    static bool socketaddr_to_endpoint_info(const struct sockaddr *address, socklen_t address_len, EndPointInfo &info)
+    {
+        info.family = convert_define_to_address_family(address->sa_family);
 
-	if (info.family == os::kAddressFamilyInterNetwork)
-	{
-		const struct sockaddr_in *address_in = (const struct sockaddr_in *)address;
+        if (info.family == os::kAddressFamilyInterNetwork)
+        {
+            const struct sockaddr_in *address_in = (const struct sockaddr_in *)address;
 
-		info.data.inet.port = ntohs (address_in->sin_port);
-		info.data.inet.address = ntohl (address_in->sin_addr.s_addr);
+            info.data.inet.port = ntohs(address_in->sin_port);
+            info.data.inet.address = ntohl(address_in->sin_addr.s_addr);
 
-		return true;
-	}
+            return true;
+        }
 
-	if (info.family == os::kAddressFamilyUnix)
-	{
-		for (int32_t i = 0; i < address_len; i++)
-			info.data.path[i] = address->sa_data[i];
+        if (info.family == os::kAddressFamilyUnix)
+        {
+            for (int32_t i = 0; i < address_len; i++)
+                info.data.path[i] = address->sa_data[i];
 
-		return true;
-	}
+            return true;
+        }
 
 #if IL2CPP_SUPPORT_IPV6
-	if (info.family == os::kAddressFamilyInterNetworkV6)
-	{
-		const struct sockaddr_in6 *address_in = (const struct sockaddr_in6 *)address;
+        if (info.family == os::kAddressFamilyInterNetworkV6)
+        {
+            const struct sockaddr_in6 *address_in = (const struct sockaddr_in6 *)address;
 
-		uint16_t port = ntohs (address_in->sin6_port);
+            uint16_t port = ntohs(address_in->sin6_port);
 
-		info.data.raw[2] = (port>>8) & 0xff;
-		info.data.raw[3] = port & 0xff;
+            info.data.raw[2] = (port >> 8) & 0xff;
+            info.data.raw[3] = port & 0xff;
 
-		for(int i=0; i<16; i++)
-			info.data.raw[i+8] = address_in->sin6_addr.s6_addr[i];
+            for (int i = 0; i < 16; i++)
+                info.data.raw[i + 8] = address_in->sin6_addr.s6_addr[i];
 
-		info.data.raw[24] = address_in->sin6_scope_id & 0xff;
-		info.data.raw[25] = (address_in->sin6_scope_id >> 8) & 0xff;
-		info.data.raw[26] = (address_in->sin6_scope_id >> 16) & 0xff;
-		info.data.raw[27] = (address_in->sin6_scope_id >> 24) & 0xff;
+            info.data.raw[24] = address_in->sin6_scope_id & 0xff;
+            info.data.raw[25] = (address_in->sin6_scope_id >> 8) & 0xff;
+            info.data.raw[26] = (address_in->sin6_scope_id >> 16) & 0xff;
+            info.data.raw[27] = (address_in->sin6_scope_id >> 24) & 0xff;
 
-		return true;
-	}
+            return true;
+        }
 #endif
 
-	return false;
-}
+        return false;
+    }
 
-WaitStatus SocketImpl::Bind (const char *path)
-{
+    WaitStatus SocketImpl::Bind(const char *path)
+    {
 #if SUPPORT_UNIXSOCKETS
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_path (path, &sa, &sa_size);
+        sockaddr_from_path(path, &sa, &sa_size);
 
-	if (bind (_fd, &sa, sa_size) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        if (bind(_fd, &sa, sa_size) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
+        return kWaitStatusSuccess;
 #else
-	return kWaitStatusFailure;
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::Bind (const char *address, uint16_t port)
-{
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+    WaitStatus SocketImpl::Bind(const char *address, uint16_t port)
+    {
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address (inet_addr (address), htons (port), &sa, &sa_size);
+        sockaddr_from_address(inet_addr(address), htons(port), &sa, &sa_size);
 
-	if (bind (_fd, &sa, sa_size) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        if (bind(_fd, &sa, sa_size) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::Bind (uint32_t address, uint16_t port)
-{
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+    WaitStatus SocketImpl::Bind(uint32_t address, uint16_t port)
+    {
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address (htonl (address), htons (port), &sa, &sa_size);
+        sockaddr_from_address(htonl(address), htons(port), &sa, &sa_size);
 
-	if (bind (_fd, &sa, sa_size) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        if (bind(_fd, &sa, sa_size) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::Bind (uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port)
-{
+    WaitStatus SocketImpl::Bind(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port)
+    {
 #if IL2CPP_SUPPORT_IPV6
-	struct sockaddr_in6 sa = { 0 };
-	socklen_t sa_size = 0;
+        struct sockaddr_in6 sa = { 0 };
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
+        sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
 
-	if (bind (_fd, (sockaddr*)&sa, sa_size) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        if (bind(_fd, (sockaddr*)&sa, sa_size) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
+        return kWaitStatusSuccess;
 #else
-	NOT_SUPPORTED_IL2CPP(sockaddr_from_address, "IPv6 is not supported on this platform.");
-	return kWaitStatusFailure;
+        IL2CPP_VM_NOT_SUPPORTED(sockaddr_from_address, "IPv6 is not supported on this platform.");
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::ConnectInternal (struct sockaddr *sa, int32_t sa_size)
-{
-	if (connect (_fd, sa, (socklen_t)sa_size) != -1)
-		return kWaitStatusSuccess;
+    WaitStatus SocketImpl::ConnectInternal(struct sockaddr *sa, int32_t sa_size)
+    {
+        if (connect(_fd, sa, (socklen_t)sa_size) != -1)
+            return kWaitStatusSuccess;
 
-	if (errno != EINTR)
-	{
-		// errnum = errno_to_WSA (errnum, __func__);
-		// if (errnum == WSAEINPROGRESS)
-		//	errnum = WSAEWOULDBLOCK; /* see bug #73053 */
+        if (errno != EINTR)
+        {
+            // errnum = errno_to_WSA (errnum, __func__);
+            // if (errnum == WSAEINPROGRESS)
+            //  errnum = WSAEWOULDBLOCK; /* see bug #73053 */
 
-		StoreLastError ();
+            StoreLastError();
 
-		return kWaitStatusFailure;
-	}
+            return kWaitStatusFailure;
+        }
 
-	struct pollfd fds = {0};
+        struct pollfd fds = {0};
 
-	fds.fd = _fd;
-	fds.events = POLLOUT;
+        fds.fd = _fd;
+        fds.events = POLLOUT;
 
-	while (poll (&fds, 1, -1) == -1)
-	{
-		if (errno != EINTR)
-		{
-			StoreLastError ();
-			return kWaitStatusFailure;
-		}
-	}
+        while (poll(&fds, 1, -1) == -1)
+        {
+            if (errno != EINTR)
+            {
+                StoreLastError();
+                return kWaitStatusFailure;
+            }
+        }
 
-	int32_t so_error = 0;
-	socklen_t len = sizeof (so_error);
+        int32_t so_error = 0;
+        socklen_t len = sizeof(so_error);
 
-	if (getsockopt (_fd, SOL_SOCKET, SO_ERROR, &so_error, &len) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        if (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &so_error, &len) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	if (so_error != 0)
-	{
-		StoreLastError (so_error);
-		return kWaitStatusFailure;
-	}
+        if (so_error != 0)
+        {
+            StoreLastError(so_error);
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::Connect (const char *path)
-{
+    WaitStatus SocketImpl::Connect(const char *path)
+    {
 #if SUPPORT_UNIXSOCKETS
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_path (path, &sa, &sa_size);
+        sockaddr_from_path(path, &sa, &sa_size);
 
-	return ConnectInternal ((struct sockaddr *)&sa, sa_size);
+        return ConnectInternal((struct sockaddr *)&sa, sa_size);
 #else
-	return kWaitStatusFailure;
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::Connect (uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port)
-{
+    WaitStatus SocketImpl::Connect(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port)
+    {
 #if IL2CPP_SUPPORT_IPV6
-	struct sockaddr_in6 sa = { 0 };
-	socklen_t sa_size = 0;
+        struct sockaddr_in6 sa = { 0 };
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
+        sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
 
-	return ConnectInternal((struct sockaddr *)&sa, sa_size);
+        return ConnectInternal((struct sockaddr *)&sa, sa_size);
 #else
-	NOT_SUPPORTED_IL2CPP(sockaddr_from_address, "IPv6 is not supported on this platform.");
+        IL2CPP_VM_NOT_SUPPORTED(sockaddr_from_address, "IPv6 is not supported on this platform.");
+        return kWaitStatusFailure;
 #endif
-}
-
-WaitStatus SocketImpl::Connect (uint32_t address, uint16_t port)
-{
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
-
-	sockaddr_from_address (htonl (address), htons (port), &sa, &sa_size);
-
-	return ConnectInternal ((struct sockaddr *)&sa, sa_size);
-}
-
-WaitStatus SocketImpl::GetLocalEndPointInfo (EndPointInfo &info)
-{
-	// Note: the size here could probably be smaller
-	uint8_t buffer[END_POINT_MAX_PATH_LEN + 3] = {0};
-	socklen_t address_len = sizeof (buffer);
-
-	if (getsockname (_fd, (struct sockaddr *)buffer, &address_len) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	if (!socketaddr_to_endpoint_info ((struct sockaddr *)buffer, address_len, info))
-	{
-		_saved_error = kWSAeafnosupport;
-		return kWaitStatusFailure;
-	}
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::GetRemoteEndPointInfo (EndPointInfo &info)
-{
-	// Note: the size here could probably be smaller
-	uint8_t buffer[END_POINT_MAX_PATH_LEN + 3] = {0};
-	socklen_t address_len = sizeof (buffer);
-
-	if (getpeername (_fd, (struct sockaddr *)buffer, &address_len) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	if (!socketaddr_to_endpoint_info ((struct sockaddr *)buffer, address_len, info))
-	{
-		_saved_error = kWSAeafnosupport;
-		return kWaitStatusFailure;
-	}
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Listen (int32_t backlog)
-{
-	if (listen (_fd, backlog) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Shutdown (int32_t how)
-{
-	if (shutdown (_fd, how) == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	if (how == SHUT_RD || how == SHUT_RDWR)
-		_still_readable = 0;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Accept (os::Socket **socket)
-{
-	int32_t new_fd = 0;
-
-	*socket = NULL;
-
-	do {
-		new_fd = accept (_fd, NULL, 0);
-	} while (new_fd == -1 && errno == EINTR);
-
-	if (new_fd == -1)
-	{
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-	*socket = new os::Socket (_thread_status_callback);
-
-	const WaitStatus status = (*socket)->Create (new_fd, _domain, _type, _protocol);
-
-	if (status != kWaitStatusSuccess)
-	{
-		delete *socket;
-		*socket = NULL;
-		return status;
-	}
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Disconnect (bool reuse)
-{
-	int32_t new_sock = socket (_domain, _type, _protocol);
-	if (new_sock == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	// According to Stevens "Advanced Programming in the UNIX
-	// Environment: UNIX File I/O" dup2() is atomic so there
-	// should not be a race condition between the old fd being
-	// closed and the new socket fd being copied over
-
-	int32_t ret = 0;
-
-	do {
-		ret = dup2 (new_sock, _fd);
-	} while (ret == -1 && errno == EAGAIN);
-
-	if (ret == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	SOCK_CLOSE(new_sock);
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Receive (const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
-	*len = 0;
-
-	const int32_t c_flags = convert_socket_flags (flags);
-
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
-
-	return ReceiveFromInternal (data, count, c_flags, len, NULL, 0);
-}
-
-WaitStatus SocketImpl::ReceiveFromInternal(const uint8_t *data, size_t count, int32_t flags, int32_t *len, struct sockaddr *from, int32_t *fromlen)
-{
-	int32_t ret = 0;
-
-	do {
-		ret = (int32_t)recvfrom (_fd, (void*)data, count, flags, from, (socklen_t*)fromlen);
-	} while (ret == -1 && errno == EINTR);
-
-	if (ret == 0 && count > 0)
-	{
-		// According to the Linux man page, recvfrom only
-		// returns 0 when the socket has been shut down
-		// cleanly.  Turn this into an EINTR to simulate win32
-		// behaviour of returning EINTR when a socket is
-		// closed while the recvfrom is blocking (we use a
-		// shutdown() in socket_close() to trigger this.) See
-		// bug 75705.
-
-		// Distinguish between the socket being shut down at
-		// the local or remote ends, and reads that request 0
-		// bytes to be read
-
-		// If this returns FALSE, it means the socket has been
-		// closed locally.  If it returns TRUE, but
-		// still_readable != 1 then shutdown
-		// (SHUT_RD|SHUT_RDWR) has been called locally.
-
-		if (_still_readable != 1)
-		{
-			ret = -1;
-			errno = EINTR;
-		}
-	}
-
-	if (ret == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	*len = ret;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::Send (const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
-	*len = 0;
-
-	const int32_t c_flags = convert_socket_flags (flags);
-
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
-
-	int32_t ret = 0;
-
-	do {
-		ret = (int32_t)send (_fd, (void*)data, count, flags);
-	} while (ret == -1 && errno == EINTR);
-
-	if (ret == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	*len = ret;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::SendArray (WSABuf *wsabufs, int32_t count, int32_t *sent, SocketFlags flags)
-{
-	const int32_t c_flags = convert_socket_flags (flags);
-
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
-
-	struct msghdr hdr = {0};
-
-	hdr.msg_iovlen = count;
-	hdr.msg_iov = (struct iovec*) malloc (sizeof (struct iovec) *count);
-
-	for (int32_t i = 0; i < count; ++i)
-	{
-		hdr.msg_iov[i].iov_base = wsabufs[i].buffer;
-		hdr.msg_iov[i].iov_len  = wsabufs[i].length;
-	}
-
-	int32_t ret = 0;
-
-	do {
-		ret = (int32_t)sendmsg (_fd, &hdr, c_flags);
-	} while (ret == -1 && errno == EINTR);
-
-	free (hdr.msg_iov);
-
-	if (ret == -1)
-	{
-		*sent = 0;
-
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-	*sent = ret;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::ReceiveArray (WSABuf *wsabufs, int32_t count, int32_t *len, SocketFlags flags)
-{
-	const int32_t c_flags = convert_socket_flags (flags);
-
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
-
-	struct msghdr hdr = {0};
-
-	hdr.msg_iovlen = count;
-	hdr.msg_iov = (struct iovec*) malloc (sizeof (struct iovec) *count);
-
-	for (int32_t i = 0; i < count; ++i)
-	{
-		hdr.msg_iov[i].iov_base = wsabufs[i].buffer;
-		hdr.msg_iov[i].iov_len  = wsabufs[i].length;
-	}
-
-	int32_t ret = 0;
-
-	do {
-		ret = (int32_t)recvmsg (_fd, &hdr, c_flags);
-	} while (ret == -1 && errno == EINTR);
-
-	if (ret == 0)
-	{
-		// See SocketImpl::ReceiveFromInternal
-		if (_still_readable != 1)
-		{
-			ret = -1;
-			errno = EINTR;
-		}
-	}
-
-	free (hdr.msg_iov);
-
-	if (ret == -1)
-	{
-		*len = 0;
-
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-	*len = ret;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::SendToInternal (struct sockaddr *sa, int32_t sa_size, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
-	const int32_t c_flags = convert_socket_flags (flags);
-
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
-
-	int32_t ret = 0;
-
-	do {
-		ret = (int32_t)sendto (_fd, (void*)data, count, c_flags, sa, sa_size);
-	} while (ret == -1 && errno == EINTR);
-
-	if (ret == -1)
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
-
-	*len = ret;
-
-	return kWaitStatusSuccess;
-}
-
-WaitStatus SocketImpl::SendTo (uint32_t address, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
-	*len = 0;
-
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
-
-	sockaddr_from_address (htonl (address), htons (port), &sa, &sa_size);
-
-	return SendToInternal(&sa, sa_size, data, count, flags, len);
-}
-
-WaitStatus SocketImpl::SendTo (const char *path, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
+    }
+
+    WaitStatus SocketImpl::Connect(uint32_t address, uint16_t port)
+    {
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
+
+        sockaddr_from_address(htonl(address), htons(port), &sa, &sa_size);
+
+        return ConnectInternal((struct sockaddr *)&sa, sa_size);
+    }
+
+    WaitStatus SocketImpl::GetLocalEndPointInfo(EndPointInfo &info)
+    {
+        // Note: the size here could probably be smaller
+        uint8_t buffer[END_POINT_MAX_PATH_LEN + 3] = {0};
+        socklen_t address_len = sizeof(buffer);
+
+        if (getsockname(_fd, (struct sockaddr *)buffer, &address_len) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        if (!socketaddr_to_endpoint_info((struct sockaddr *)buffer, address_len, info))
+        {
+            _saved_error = kWSAeafnosupport;
+            return kWaitStatusFailure;
+        }
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::GetRemoteEndPointInfo(EndPointInfo &info)
+    {
+        // Note: the size here could probably be smaller
+        uint8_t buffer[END_POINT_MAX_PATH_LEN + 3] = {0};
+        socklen_t address_len = sizeof(buffer);
+
+        if (getpeername(_fd, (struct sockaddr *)buffer, &address_len) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        if (!socketaddr_to_endpoint_info((struct sockaddr *)buffer, address_len, info))
+        {
+            _saved_error = kWSAeafnosupport;
+            return kWaitStatusFailure;
+        }
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Listen(int32_t backlog)
+    {
+        if (listen(_fd, backlog) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Shutdown(int32_t how)
+    {
+        if (shutdown(_fd, how) == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        if (how == SHUT_RD || how == SHUT_RDWR)
+            _still_readable = 0;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Accept(os::Socket **socket)
+    {
+        int32_t new_fd = 0;
+
+        *socket = NULL;
+
+        do
+        {
+            new_fd = accept(_fd, NULL, 0);
+        }
+        while (new_fd == -1 && errno == EINTR);
+
+        if (new_fd == -1)
+        {
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        *socket = new os::Socket(_thread_status_callback);
+
+        const WaitStatus status = (*socket)->Create(new_fd, _domain, _type, _protocol);
+
+        if (status != kWaitStatusSuccess)
+        {
+            delete *socket;
+            *socket = NULL;
+            return status;
+        }
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Disconnect(bool reuse)
+    {
+        int32_t new_sock = socket(_domain, _type, _protocol);
+        if (new_sock == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        // According to Stevens "Advanced Programming in the UNIX
+        // Environment: UNIX File I/O" dup2() is atomic so there
+        // should not be a race condition between the old fd being
+        // closed and the new socket fd being copied over
+
+        int32_t ret = 0;
+
+        do
+        {
+            ret = dup2(new_sock, _fd);
+        }
+        while (ret == -1 && errno == EAGAIN);
+
+        if (ret == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        SOCK_CLOSE(new_sock);
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Receive(const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
+        *len = 0;
+
+        const int32_t c_flags = convert_socket_flags(flags);
+
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
+
+        return ReceiveFromInternal(data, count, c_flags, len, NULL, 0);
+    }
+
+    WaitStatus SocketImpl::ReceiveFromInternal(const uint8_t *data, size_t count, int32_t flags, int32_t *len, struct sockaddr *from, int32_t *fromlen)
+    {
+        int32_t ret = 0;
+
+        do
+        {
+            ret = (int32_t)recvfrom(_fd, (void*)data, count, flags, from, (socklen_t*)fromlen);
+        }
+        while (ret == -1 && errno == EINTR);
+
+        if (ret == 0 && count > 0)
+        {
+            // According to the Linux man page, recvfrom only
+            // returns 0 when the socket has been shut down
+            // cleanly.  Turn this into an EINTR to simulate win32
+            // behaviour of returning EINTR when a socket is
+            // closed while the recvfrom is blocking (we use a
+            // shutdown() in socket_close() to trigger this.) See
+            // bug 75705.
+
+            // Distinguish between the socket being shut down at
+            // the local or remote ends, and reads that request 0
+            // bytes to be read
+
+            // If this returns FALSE, it means the socket has been
+            // closed locally.  If it returns TRUE, but
+            // still_readable != 1 then shutdown
+            // (SHUT_RD|SHUT_RDWR) has been called locally.
+
+            if (_still_readable != 1)
+            {
+                ret = -1;
+                errno = EINTR;
+            }
+        }
+
+        if (ret == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        *len = ret;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::Send(const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
+        *len = 0;
+
+        int32_t c_flags = convert_socket_flags(flags);
+
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
+
+#if IL2CPP_USE_SEND_NOSIGNAL
+        c_flags |= MSG_NOSIGNAL;
+#endif
+
+        int32_t ret = 0;
+
+        do
+        {
+            ret = (int32_t)send(_fd, (void*)data, count, c_flags);
+        }
+        while (ret == -1 && errno == EINTR);
+
+        if (ret == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        *len = ret;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::SendArray(WSABuf *wsabufs, int32_t count, int32_t *sent, SocketFlags flags)
+    {
+        int32_t c_flags = convert_socket_flags(flags);
+
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
+
+        struct msghdr hdr = {0};
+
+        hdr.msg_iovlen = count;
+        hdr.msg_iov = (struct iovec*)malloc(sizeof(struct iovec) * count);
+
+        for (int32_t i = 0; i < count; ++i)
+        {
+            hdr.msg_iov[i].iov_base = wsabufs[i].buffer;
+            hdr.msg_iov[i].iov_len  = wsabufs[i].length;
+        }
+
+#if IL2CPP_USE_SEND_NOSIGNAL
+        c_flags |= MSG_NOSIGNAL;
+#endif
+
+        int32_t ret = 0;
+
+        do
+        {
+            ret = (int32_t)sendmsg(_fd, &hdr, c_flags);
+        }
+        while (ret == -1 && errno == EINTR);
+
+        free(hdr.msg_iov);
+
+        if (ret == -1)
+        {
+            *sent = 0;
+
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        *sent = ret;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::ReceiveArray(WSABuf *wsabufs, int32_t count, int32_t *len, SocketFlags flags)
+    {
+        const int32_t c_flags = convert_socket_flags(flags);
+
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
+
+        struct msghdr hdr = {0};
+
+        hdr.msg_iovlen = count;
+        hdr.msg_iov = (struct iovec*)malloc(sizeof(struct iovec) * count);
+
+        for (int32_t i = 0; i < count; ++i)
+        {
+            hdr.msg_iov[i].iov_base = wsabufs[i].buffer;
+            hdr.msg_iov[i].iov_len  = wsabufs[i].length;
+        }
+
+        int32_t ret = 0;
+
+        do
+        {
+            ret = (int32_t)recvmsg(_fd, &hdr, c_flags);
+        }
+        while (ret == -1 && errno == EINTR);
+
+        if (ret == 0)
+        {
+            // See SocketImpl::ReceiveFromInternal
+            if (_still_readable != 1)
+            {
+                ret = -1;
+                errno = EINTR;
+            }
+        }
+
+        free(hdr.msg_iov);
+
+        if (ret == -1)
+        {
+            *len = 0;
+
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        *len = ret;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::SendToInternal(struct sockaddr *sa, int32_t sa_size, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
+        int32_t c_flags = convert_socket_flags(flags);
+
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
+
+#if IL2CPP_USE_SEND_NOSIGNAL
+        c_flags |= MSG_NOSIGNAL;
+#endif
+
+        int32_t ret = 0;
+
+        do
+        {
+            ret = (int32_t)sendto(_fd, (void*)data, count, c_flags, sa, sa_size);
+        }
+        while (ret == -1 && errno == EINTR);
+
+        if (ret == -1)
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
+
+        *len = ret;
+
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::SendTo(uint32_t address, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
+        *len = 0;
+
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
+
+        sockaddr_from_address(htonl(address), htons(port), &sa, &sa_size);
+
+        return SendToInternal(&sa, sa_size, data, count, flags, len);
+    }
+
+    WaitStatus SocketImpl::SendTo(const char *path, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
 #if SUPPORT_UNIXSOCKETS
-	*len = 0;
+        *len = 0;
 
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_path (path, &sa, &sa_size);
+        sockaddr_from_path(path, &sa, &sa_size);
 
-	return SendToInternal(&sa, sa_size, data, count, flags, len);
+        return SendToInternal(&sa, sa_size, data, count, flags, len);
 #else
-	return kWaitStatusFailure;
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::SendTo (uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
-{
+    WaitStatus SocketImpl::SendTo(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len)
+    {
 #if IL2CPP_SUPPORT_IPV6
-	struct sockaddr_in6 sa = { 0 };
-	socklen_t sa_size = 0;
+        struct sockaddr_in6 sa = { 0 };
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
+        sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
 
-	return SendToInternal((sockaddr*)&sa, sa_size, data, count, flags, len);
+        return SendToInternal((sockaddr*)&sa, sa_size, data, count, flags, len);
 #else
-	NOT_SUPPORTED_IL2CPP(sockaddr_from_address, "IPv6 is not supported on this platform.");
-	return kWaitStatusFailure;
+        IL2CPP_VM_NOT_SUPPORTED(sockaddr_from_address, "IPv6 is not supported on this platform.");
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::RecvFrom (uint32_t address, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
-{
-	*len = 0;
+    WaitStatus SocketImpl::RecvFrom(uint32_t address, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
+    {
+        *len = 0;
 
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address (htonl (address), htons (port), &sa, &sa_size);
+        sockaddr_from_address(htonl(address), htons(port), &sa, &sa_size);
 
-	const int32_t c_flags = convert_socket_flags (flags);
+        const int32_t c_flags = convert_socket_flags(flags);
 
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
 
-	const WaitStatus status = ReceiveFromInternal (data, count, c_flags, len, &sa, (int32_t*)&sa_size);
+        const WaitStatus status = ReceiveFromInternal(data, count, c_flags, len, &sa, (int32_t*)&sa_size);
 
-	if (status != kWaitStatusSuccess)
-	{
-		ep.family = os::kAddressFamilyError;
-		return status;
-	}
+        if (status != kWaitStatusSuccess)
+        {
+            ep.family = os::kAddressFamilyError;
+            return status;
+        }
 
-	if (sa_size == 0)
-		return kWaitStatusSuccess;
+        if (sa_size == 0)
+            return kWaitStatusSuccess;
 
-	if (!socketaddr_to_endpoint_info (&sa, sa_size, ep))
-	{
-		ep.family = os::kAddressFamilyError;
-		_saved_error = kWSAeafnosupport;
-		return kWaitStatusFailure;
-	}
+        if (!socketaddr_to_endpoint_info(&sa, sa_size, ep))
+        {
+            ep.family = os::kAddressFamilyError;
+            _saved_error = kWSAeafnosupport;
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::RecvFrom (const char *path, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
-{
+    WaitStatus SocketImpl::RecvFrom(const char *path, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
+    {
 #if SUPPORT_UNIXSOCKETS
-	*len = 0;
+        *len = 0;
 
-	struct sockaddr sa = {0};
-	socklen_t sa_size = 0;
+        struct sockaddr sa = {0};
+        socklen_t sa_size = 0;
 
-	sockaddr_from_path (path, &sa, &sa_size);
+        sockaddr_from_path(path, &sa, &sa_size);
 
-	const int32_t c_flags = convert_socket_flags (flags);
+        const int32_t c_flags = convert_socket_flags(flags);
 
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
 
-	const WaitStatus status = ReceiveFromInternal (data, count, c_flags, len, &sa, (int32_t*)&sa_size);
+        const WaitStatus status = ReceiveFromInternal(data, count, c_flags, len, &sa, (int32_t*)&sa_size);
 
-	if (status != kWaitStatusSuccess)
-	{
-		ep.family = os::kAddressFamilyError;
-		return kWaitStatusFailure;
-	}
+        if (status != kWaitStatusSuccess)
+        {
+            ep.family = os::kAddressFamilyError;
+            return kWaitStatusFailure;
+        }
 
-	if (sa_size == 0)
-		return kWaitStatusSuccess;
+        if (sa_size == 0)
+            return kWaitStatusSuccess;
 
-	if (!socketaddr_to_endpoint_info (&sa, sa_size, ep))
-	{
-		ep.family = os::kAddressFamilyError;
-		_saved_error = kWSAeafnosupport;
-		return kWaitStatusFailure;
-	}
+        if (!socketaddr_to_endpoint_info(&sa, sa_size, ep))
+        {
+            ep.family = os::kAddressFamilyError;
+            _saved_error = kWSAeafnosupport;
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
+        return kWaitStatusSuccess;
 #else
-	return kWaitStatusFailure;
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::RecvFrom (uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
-{
+    WaitStatus SocketImpl::RecvFrom(uint8_t address[ipv6AddressSize], uint32_t scope, uint16_t port, const uint8_t *data, int32_t count, os::SocketFlags flags, int32_t *len, os::EndPointInfo &ep)
+    {
 #if IL2CPP_SUPPORT_IPV6
-	struct sockaddr_in6 sa = { 0 };
-	socklen_t sa_size = 0;
+        struct sockaddr_in6 sa = { 0 };
+        socklen_t sa_size = 0;
 
-	sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
+        sockaddr_from_address(address, scope, htons(port), &sa, &sa_size);
 
-	const int32_t c_flags = convert_socket_flags (flags);
+        const int32_t c_flags = convert_socket_flags(flags);
 
-	if (c_flags == -1)
-	{
-		_saved_error = kWSAeopnotsupp;
-		return kWaitStatusFailure;
-	}
+        if (c_flags == -1)
+        {
+            _saved_error = kWSAeopnotsupp;
+            return kWaitStatusFailure;
+        }
 
-	const WaitStatus status = ReceiveFromInternal (data, count, c_flags, len, (sockaddr*)&sa, (int32_t*)&sa_size);
+        const WaitStatus status = ReceiveFromInternal(data, count, c_flags, len, (sockaddr*)&sa, (int32_t*)&sa_size);
 
-	if (status != kWaitStatusSuccess)
-	{
-		ep.family = os::kAddressFamilyError;
-		return kWaitStatusFailure;
-	}
+        if (status != kWaitStatusSuccess)
+        {
+            ep.family = os::kAddressFamilyError;
+            return kWaitStatusFailure;
+        }
 
-	if (sa_size == 0)
-		return kWaitStatusSuccess;
+        if (sa_size == 0)
+            return kWaitStatusSuccess;
 
-	if (!socketaddr_to_endpoint_info ((sockaddr*)&sa, sa_size, ep))
-	{
-		ep.family = os::kAddressFamilyError;
-		_saved_error = kWSAeafnosupport;
-		return kWaitStatusFailure;
-	}
+        if (!socketaddr_to_endpoint_info((sockaddr*)&sa, sa_size, ep))
+        {
+            ep.family = os::kAddressFamilyError;
+            _saved_error = kWSAeafnosupport;
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
+        return kWaitStatusSuccess;
 #else
-	NOT_SUPPORTED_IL2CPP(sockaddr_from_address, "IPv6 is not supported on this platform.");
-	return kWaitStatusFailure;
+        IL2CPP_VM_NOT_SUPPORTED(sockaddr_from_address, "IPv6 is not supported on this platform.");
+        return kWaitStatusFailure;
 #endif
-}
+    }
 
-WaitStatus SocketImpl::Available (int32_t *amount)
-{
-	// ioctl (fd, FIONREAD, XXX) returns the size of
-	// the UDP header as well on Darwin.
-	//
-	// Use getsockopt SO_NREAD instead to get the
-	// right values for TCP and UDP.
-	//
-	// ai_canonname can be null in some cases on darwin, where the runtime assumes it will
-	// be the value of the ip buffer.
+    WaitStatus SocketImpl::Available(int32_t *amount)
+    {
+        // ioctl (fd, FIONREAD, XXX) returns the size of
+        // the UDP header as well on Darwin.
+        //
+        // Use getsockopt SO_NREAD instead to get the
+        // right values for TCP and UDP.
+        //
+        // ai_canonname can be null in some cases on darwin, where the runtime assumes it will
+        // be the value of the ip buffer.
 
-	*amount = 0;
+        *amount = 0;
 #if IL2CPP_TARGET_DARWIN
-	socklen_t optlen = sizeof (int32_t);
-	if ( getsockopt (_fd, SOL_SOCKET, SO_NREAD, amount, &optlen) == -1)
+        socklen_t optlen = sizeof(int32_t);
+        if (getsockopt(_fd, SOL_SOCKET, SO_NREAD, amount, &optlen) == -1)
 #else
-	if ( ioctl (_fd, FIONREAD, amount) == -1)
+        if (ioctl(_fd, FIONREAD, amount) == -1)
 #endif
-	{
-		StoreLastError ();
-		return kWaitStatusFailure;
-	}
+        {
+            StoreLastError();
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
+    WaitStatus SocketImpl::Ioctl(int32_t command, const uint8_t *in_data, int32_t in_len, uint8_t *out_data, int32_t out_len, int32_t *written)
+    {
+        IL2CPP_ASSERT(command != 0xC8000006 /* SIO_GET_EXTENSION_FUNCTION_POINTER */ && "SIO_GET_EXTENSION_FUNCTION_POINTER ioctl command not supported");
 
+        uint8_t *buffer = NULL;
 
-WaitStatus SocketImpl::Ioctl (int32_t command, const uint8_t *in_data, int32_t in_len, uint8_t *out_data, int32_t out_len, int32_t *written)
-{
-	assert (command != 0xC8000006 /* SIO_GET_EXTENSION_FUNCTION_POINTER */ && "SIO_GET_EXTENSION_FUNCTION_POINTER ioctl command not supported");
+        if (in_len > 0)
+        {
+            buffer = (uint8_t*)malloc(in_len);
+            memcpy(buffer, in_data, in_len);
+        }
 
-	uint8_t *buffer = NULL;
+        const int32_t ret = ioctl(_fd, command, buffer);
+        if (ret == -1)
+        {
+            StoreLastError();
 
-	if (in_len > 0)
-	{
-		buffer = (uint8_t*) malloc (in_len);
-		memcpy (buffer, in_data, in_len);
-	}
+            free(buffer);
 
-	const int32_t ret = ioctl (_fd, command, buffer);
-	if (ret == -1)
-	{
-		StoreLastError ();
+            return kWaitStatusFailure;
+        }
 
-		free (buffer);
+        if (buffer == NULL)
+        {
+            *written = 0;
+            return kWaitStatusSuccess;
+        }
 
-		return kWaitStatusFailure;
-	}
+        // We just copy the buffer to the out_data. Some ioctls
+        // don't even out_data any data, but, well ...
+        //
+        // NB: windows returns WSAEFAULT if out_len is too small
 
-	if (buffer == NULL)
-	{
-		*written = 0;
-		return kWaitStatusSuccess;
-	}
+        const int32_t len = (in_len > out_len) ? out_len : in_len;
 
-	// We just copy the buffer to the out_data. Some ioctls
-	// don't even out_data any data, but, well ...
-	//
-	// NB: windows returns WSAEFAULT if out_len is too small
+        if (len > 0 && out_data != NULL)
+            memcpy(out_data, buffer, len);
 
-	const int32_t len = (in_len > out_len) ? out_len : in_len;
+        free(buffer);
 
-	if (len > 0 && out_data != NULL)
-		memcpy (out_data, buffer, len);
+        *written = len;
 
-	free (buffer);
+        return kWaitStatusSuccess;
+    }
 
-	*written = len;
+#define     SKIP_OPTION         -2
+#define     INVALID_OPTION_NAME -1
 
-	return kWaitStatusSuccess;
-}
+    static int32_t level_and_name_to_system(SocketOptionLevel level, SocketOptionName name, int32_t *system_level, int32_t *system_name)
+    {
+        switch (level)
+        {
+            case kSocketOptionLevelSocket:
+                *system_level = SOL_SOCKET;
 
-#define		SKIP_OPTION			-2
-#define		INVALID_OPTION_NAME	-1
+                switch (name)
+                {
+                    // This is SO_LINGER, because the setsockopt
+                    // internal call maps DontLinger to SO_LINGER
+                    // with l_onoff=0
+                    case kSocketOptionNameDontLinger:
+                        *system_name = SO_LINGER;
+                        break;
+        #ifdef SO_DEBUG
+                    case kSocketOptionNameDebug:
+                        *system_name = SO_DEBUG;
+                        break;
+        #endif
+        #ifdef SO_ACCEPTCONN
+                    case kSocketOptionNameAcceptConnection:
+                        *system_name = SO_ACCEPTCONN;
+                        break;
+        #endif
+                    case kSocketOptionNameReuseAddress:
+                        *system_name = SO_REUSEADDR;
+                        break;
 
-static int32_t level_and_name_to_system (SocketOptionLevel level, SocketOptionName name, int32_t *system_level, int32_t *system_name)
-{
-	switch (level)
-	{
-		case kSocketOptionLevelSocket:
-			*system_level = SOL_SOCKET;
+                    case kSocketOptionNameKeepAlive:
+                        *system_name = SO_KEEPALIVE;
+                        break;
+        #ifdef SO_DONTROUTE
+                    case kSocketOptionNameDontRoute:
+                        *system_name = SO_DONTROUTE;
+                        break;
+        #endif
+                    case kSocketOptionNameBroadcast:
+                        *system_name = SO_BROADCAST;
+                        break;
 
-			switch(name)
-			{
-				// This is SO_LINGER, because the setsockopt
-				// internal call maps DontLinger to SO_LINGER
-				// with l_onoff=0
-				case kSocketOptionNameDontLinger:
-					*system_name = SO_LINGER;
-					break;
-		#ifdef SO_DEBUG
-				case kSocketOptionNameDebug:
-					*system_name = SO_DEBUG;
-					break;
-		#endif
-		#ifdef SO_ACCEPTCONN
-				case kSocketOptionNameAcceptConnection:
-					*system_name = SO_ACCEPTCONN;
-					break;
-		#endif
-				case kSocketOptionNameReuseAddress:
-					*system_name = SO_REUSEADDR;
-					break;
+                    case kSocketOptionNameLinger:
+                        *system_name = SO_LINGER;
+                        break;
+        #ifdef SO_OOBINLINE
+                    case kSocketOptionNameOutOfBandInline:
+                        *system_name = SO_OOBINLINE;
+                        break;
+        #endif
+                    case kSocketOptionNameSendBuffer:
+                        *system_name = SO_SNDBUF;
+                        break;
 
-				case kSocketOptionNameKeepAlive:
-					*system_name = SO_KEEPALIVE;
-					break;
-		#ifdef SO_DONTROUTE
-				case kSocketOptionNameDontRoute:
-					*system_name = SO_DONTROUTE;
-					break;
-		#endif
-				case kSocketOptionNameBroadcast:
-					*system_name = SO_BROADCAST;
-					break;
+                    case kSocketOptionNameReceiveBuffer:
+                        *system_name = SO_RCVBUF;
+                        break;
 
-				case kSocketOptionNameLinger:
-					*system_name = SO_LINGER;
-					break;
-		#ifdef SO_OOBINLINE
-				case kSocketOptionNameOutOfBandInline:
-					*system_name = SO_OOBINLINE;
-					break;
-		#endif
-				case kSocketOptionNameSendBuffer:
-					*system_name = SO_SNDBUF;
-					break;
+                    case kSocketOptionNameSendLowWater:
+                        *system_name = SO_SNDLOWAT;
+                        break;
 
-				case kSocketOptionNameReceiveBuffer:
-					*system_name = SO_RCVBUF;
-					break;
+                    case kSocketOptionNameReceiveLowWater:
+                        *system_name = SO_RCVLOWAT;
+                        break;
 
-				case kSocketOptionNameSendLowWater:
-					*system_name = SO_SNDLOWAT;
-					break;
+                    case kSocketOptionNameSendTimeout:
+                        *system_name = SO_SNDTIMEO;
+                        break;
 
-				case kSocketOptionNameReceiveLowWater:
-					*system_name = SO_RCVLOWAT;
-					break;
+                    case kSocketOptionNameReceiveTimeout:
+                        *system_name = SO_RCVTIMEO;
+                        break;
 
-				case kSocketOptionNameSendTimeout:
-					*system_name = SO_SNDTIMEO;
-					break;
+                    case kSocketOptionNameError:
+                        *system_name = SO_ERROR;
+                        break;
 
-				case kSocketOptionNameReceiveTimeout:
-					*system_name = SO_RCVTIMEO;
-					break;
+                    case kSocketOptionNameType:
+                        *system_name = SO_TYPE;
+                        break;
 
-				case kSocketOptionNameError:
-					*system_name = SO_ERROR;
-					break;
+                    case kSocketOptionNameExclusiveAddressUse:
+        #ifdef SO_EXCLUSIVEADDRUSE
+                        *system_name = SO_EXCLUSIVEADDRUSE;
+                        break;
+        #elif SO_REUSEADDR
+                        *system_name = SO_REUSEADDR;
+                        break;
+        #endif
+                    case kSocketOptionNameUseLoopback:
+        #ifdef SO_USELOOPBACK
+                        *system_name = SO_USELOOPBACK;
+                        break;
+        #endif
+                    case kSocketOptionNameMaxConnections:
+        #ifdef SO_MAXCONN
+                        *system_name = SO_MAXCONN;
+                        break;
+        #elif defined(SOMAXCONN)
+                        *system_name = SOMAXCONN;
+                        break;
+        #endif
+                    default:
+                        return INVALID_OPTION_NAME;
+                }
+                break;
 
-				case kSocketOptionNameType:
-					*system_name = SO_TYPE;
-					break;
+            case kSocketOptionLevelIP:
+        #ifdef SOL_IP
+                *system_level = SOL_IP;
+        #else
+                *system_level = IPPROTO_IP;
+        #endif
 
-				case kSocketOptionNameExclusiveAddressUse:
-		#ifdef SO_EXCLUSIVEADDRUSE
-					*system_name = SO_EXCLUSIVEADDRUSE;
-					break;
-		#elif SO_REUSEADDR
-					*system_name = SO_REUSEADDR;
-					break;
-		#endif
-				case kSocketOptionNameUseLoopback:
-		#ifdef SO_USELOOPBACK
-					*system_name = SO_USELOOPBACK;
-					break;
-		#endif
-				case kSocketOptionNameMaxConnections:
-		#ifdef SO_MAXCONN
-					*system_name = SO_MAXCONN;
-					break;
-		#elif defined(SOMAXCONN)
-					*system_name = SOMAXCONN;
-					break;
-		#endif
-				default:
-					return INVALID_OPTION_NAME;
-			}
-			break;
+                switch (name)
+                {
+        #ifdef IP_OPTIONS
+                    case kSocketOptionNameIPOptions:
+                        *system_name = IP_OPTIONS;
+                        break;
+        #endif
+        #ifdef IP_HDRINCL
+                    case kSocketOptionNameHeaderIncluded:
+                        *system_name = IP_HDRINCL;
+                        break;
+        #endif
+        #ifdef IP_TOS
+                    case kSocketOptionNameTypeOfService:
+                        *system_name = IP_TOS;
+                        break;
+        #endif
+        #ifdef IP_TTL
+                    case kSocketOptionNameIpTimeToLive:
+                        *system_name = IP_TTL;
+                        break;
+        #endif
+                    case kSocketOptionNameMulticastInterface:
+                        *system_name = IP_MULTICAST_IF;
+                        break;
 
-		case kSocketOptionLevelIP:
-		#ifdef SOL_IP
-			*system_level = SOL_IP;
-		#else
-			*system_level = IPPROTO_IP;
-		#endif
+                    case kSocketOptionNameMulticastTimeToLive:
+                        *system_name = IP_MULTICAST_TTL;
+                        break;
 
-			switch(name)
-			{
-		#ifdef IP_OPTIONS
-				case kSocketOptionNameIPOptions:
-					*system_name = IP_OPTIONS;
-					break;
-		#endif
-		#ifdef IP_HDRINCL
-				case kSocketOptionNameHeaderIncluded:
-					*system_name = IP_HDRINCL;
-					break;
-		#endif
-		#ifdef IP_TOS
-				case kSocketOptionNameTypeOfService:
-					*system_name = IP_TOS;
-					break;
-		#endif
-		#ifdef IP_TTL
-				case kSocketOptionNameIpTimeToLive:
-					*system_name = IP_TTL;
-					break;
-		#endif
-				case kSocketOptionNameMulticastInterface:
-					*system_name = IP_MULTICAST_IF;
-					break;
+                    case kSocketOptionNameMulticastLoopback:
+                        *system_name = IP_MULTICAST_LOOP;
+                        break;
 
-				case kSocketOptionNameMulticastTimeToLive:
-					*system_name = IP_MULTICAST_TTL;
-					break;
+                    case kSocketOptionNameAddMembership:
+                        *system_name = IP_ADD_MEMBERSHIP;
+                        break;
 
-				case kSocketOptionNameMulticastLoopback:
-					*system_name = IP_MULTICAST_LOOP;
-					break;
+                    case kSocketOptionNameDropMembership:
+                        *system_name = IP_DROP_MEMBERSHIP;
+                        break;
 
-				case kSocketOptionNameAddMembership:
-					*system_name = IP_ADD_MEMBERSHIP;
-					break;
+        #ifdef HAVE_IP_PKTINFO
+                    case kSocketOptionNamePacketInformation:
+                        *system_name = IP_PKTINFO;
+                        break;
+        #endif
 
-				case kSocketOptionNameDropMembership:
-					*system_name = IP_DROP_MEMBERSHIP;
-					break;
+                    case kSocketOptionNameDontFragment:
+        #ifdef IP_DONTFRAGMENT
+                        *system_name = IP_DONTFRAGMENT;
+        #elif IP_MTU_DISCOVER
+                        *system_name = IP_MTU_DISCOVER;
+        #elif IP_DONTFRAG
+                        *system_name = IP_DONTFRAG;
+        #else
+                        return SKIP_OPTION;
+        #endif
+                        break;
 
-		#ifdef HAVE_IP_PKTINFO
-				case kSocketOptionNamePacketInformation:
-					*system_name = IP_PKTINFO;
-					break;
-		#endif
+                    case kSocketOptionNameAddSourceMembership:
+                    case kSocketOptionNameDropSourceMembership:
+                    case kSocketOptionNameBlockSource:
+                    case kSocketOptionNameUnblockSource:
+                    // Can't figure out how to map these, so fall
+                    // through
+                    default:
+                        return INVALID_OPTION_NAME;
+                }
+                break;
+#if IL2CPP_SUPPORT_IPV6
+            case kSocketOptionLevelIPv6:
+        #ifdef SOL_IP
+                *system_level = SOL_IPV6;
+        #else
+                *system_level = IPPROTO_IPV6;
+        #endif
 
-				case kSocketOptionNameDontFragment:
-		#ifdef IP_DONTFRAGMENT
-					*system_name = IP_DONTFRAGMENT;
-		#elif IP_MTU_DISCOVER
-					*system_name = IP_MTU_DISCOVER;
-		#elif IP_DONTFRAG
-					*system_name = IP_DONTFRAG;
-		#else
-					return SKIP_OPTION;
-		#endif
-					break;
+                switch (name)
+                {
+                    case kSocketOptionNameMulticastInterface:
+                        *system_name = IPV6_MULTICAST_IF;
+                        break;
+                    case kSocketOptionNameMulticastTimeToLive:
+                        *system_name = IPV6_MULTICAST_HOPS;
+                        break;
+                    case kSocketOptionNameMulticastLoopback:
+                        *system_name = IPV6_MULTICAST_LOOP;
+                        break;
+                    case kSocketOptionNameAddMembership:
+                        *system_name = IPV6_JOIN_GROUP;
+                        break;
+                    case kSocketOptionNameDropMembership:
+                        *system_name = IPV6_LEAVE_GROUP;
+                        break;
+                    case kSocketOptionNamePacketInformation:
+#ifdef HAVE_IPV6_PKTINFO
+                        *system_name = IPV6_PKTINFO;
+#endif
+                        break;
+                    case kSocketOptionNameIPv6Only:
+#ifdef IPV6_V6ONLY
+                        *system_name = IPV6_V6ONLY;
+#endif
+                        break;
+                    case kSocketOptionNameHeaderIncluded:
+                    case kSocketOptionNameIPOptions:
+                    case kSocketOptionNameTypeOfService:
+                    case kSocketOptionNameDontFragment:
+                    case kSocketOptionNameAddSourceMembership:
+                    case kSocketOptionNameDropSourceMembership:
+                    case kSocketOptionNameBlockSource:
+                    case kSocketOptionNameUnblockSource:
+                    // Can't figure out how to map these, so fall
+                    // through
+                    default:
+                        return INVALID_OPTION_NAME;
+                }
+                break;
+#endif // IL2CPP_SUPPORT_IPV6
+            case kSocketOptionLevelTcp:
+        #ifdef SOL_TCP
+                *system_level = SOL_TCP;
+        #else
+                *system_level = IPPROTO_TCP;
+        #endif
 
-				case kSocketOptionNameAddSourceMembership:
-				case kSocketOptionNameDropSourceMembership:
-				case kSocketOptionNameBlockSource:
-				case kSocketOptionNameUnblockSource:
-					// Can't figure out how to map these, so fall
-					// through
-				default:
-					return INVALID_OPTION_NAME;
-			}
-			break;
+                switch (name)
+                {
+                    case kSocketOptionNameNoDelay:
+                        *system_name = TCP_NODELAY;
+                        break;
+                    default:
+                        return INVALID_OPTION_NAME;
+                }
+                break;
 
-		case kSocketOptionLevelTcp:
-		#ifdef SOL_TCP
-			*system_level = SOL_TCP;
-		#else
-			*system_level = IPPROTO_TCP;
-		#endif
+            case kSocketOptionLevelUdp:
+            default:
+                return INVALID_OPTION_NAME;
+        }
 
-			switch(name)
-			{
-				case kSocketOptionNameNoDelay:
-					*system_name = TCP_NODELAY;
-					break;
-				default:
-					return INVALID_OPTION_NAME;
-			}
-			break;
+        return 0;
+    }
 
-		case kSocketOptionLevelUdp:
-		default:
-			return INVALID_OPTION_NAME;
-	}
+    WaitStatus SocketImpl::GetSocketOption(SocketOptionLevel level, SocketOptionName name, uint8_t *buffer, int32_t *length)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
-	return 0;
-}
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-WaitStatus SocketImpl::GetSocketOption (SocketOptionLevel level, SocketOptionName name, uint8_t *buffer, int32_t *length)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
+        if (o_res == SKIP_OPTION)
+        {
+            *((int32_t*)buffer) = 0;
+            *length = sizeof(int32_t);
 
-	const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
-	
-	if (o_res == SKIP_OPTION)
-	{
-		*((int32_t *)buffer) = 0;
-		*length = sizeof (int32_t);
-		
-		return kWaitStatusSuccess;
-	}
-	
-	if (o_res == INVALID_OPTION_NAME)
-	{
-		_saved_error = kWSAenoprotoopt;
+            return kWaitStatusSuccess;
+        }
 
-		return kWaitStatusFailure;
-	}
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
 
-	struct timeval tv;
-	uint8_t *tmp_val = buffer;
+            return kWaitStatusFailure;
+        }
 
-	if (system_level == SOL_SOCKET && (system_name == SO_RCVTIMEO || system_name == SO_SNDTIMEO))
-	{
-		tmp_val = (uint8_t*)&tv;
-		*length = sizeof (tv);
-	}
+        struct timeval tv;
+        uint8_t *tmp_val = buffer;
 
-	const int32_t ret = getsockopt (_fd, system_level, system_name, tmp_val, (socklen_t*)length);
-	if (ret == -1)
-	{
-		StoreLastError ();
+        if (system_level == SOL_SOCKET && (system_name == SO_RCVTIMEO || system_name == SO_SNDTIMEO))
+        {
+            tmp_val = (uint8_t*)&tv;
+            *length = sizeof(tv);
+        }
 
-		return kWaitStatusFailure;
-	}
+        const int32_t ret = getsockopt(_fd, system_level, system_name, tmp_val, (socklen_t*)length);
+        if (ret == -1)
+        {
+            StoreLastError();
 
-	if (system_level == SOL_SOCKET && (system_name == SO_RCVTIMEO || system_name == SO_SNDTIMEO))
-	{
-		// milliseconds from microseconds
-		*((int32_t *) buffer)  = (int32_t)(tv.tv_sec * 1000 + (tv.tv_usec / 1000));
-		*length = sizeof (int32_t);
+            return kWaitStatusFailure;
+        }
 
-		return kWaitStatusSuccess;
-	}
+        if (system_level == SOL_SOCKET && (system_name == SO_RCVTIMEO || system_name == SO_SNDTIMEO))
+        {
+            // milliseconds from microseconds
+            *((int32_t*)buffer)  = (int32_t)(tv.tv_sec * 1000 + (tv.tv_usec / 1000));
+            *length = sizeof(int32_t);
 
-	if (system_name == SO_ERROR)
-	{
-		if (*((int32_t *)buffer) != 0)
-		{
-			StoreLastError (*((int32_t *)buffer));
-		} else
-		{
-			*((int32_t *)buffer) = _saved_error;
-		}
-	}
+            return kWaitStatusSuccess;
+        }
 
-	return kWaitStatusSuccess;
-}
+        if (system_name == SO_ERROR)
+        {
+            if (*((int32_t*)buffer) != 0)
+            {
+                StoreLastError(*((int32_t*)buffer));
+            }
+            else
+            {
+                *((int32_t*)buffer) = _saved_error;
+            }
+        }
 
-WaitStatus SocketImpl::GetSocketOptionFull (SocketOptionLevel level, SocketOptionName name, int32_t *first, int32_t *second)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::GetSocketOptionFull(SocketOptionLevel level, SocketOptionName name, int32_t *first, int32_t *second)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
 #if !defined(SO_EXCLUSIVEADDRUSE) && defined(SO_REUSEADDR)
-	if (level == kSocketOptionLevelSocket && name == kSocketOptionNameExclusiveAddressUse)
-	{
-		system_level = SOL_SOCKET;
-		system_name = SO_REUSEADDR;
-	} else
+        if (level == kSocketOptionLevelSocket && name == kSocketOptionNameExclusiveAddressUse)
+        {
+            system_level = SOL_SOCKET;
+            system_name = SO_REUSEADDR;
+        }
+        else
 #endif
-	{
-		const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
-		
-		if (o_res == SKIP_OPTION)
-		{
-			*first = 0;
-			*second = 0;
-			
-			return kWaitStatusSuccess;
-		}
-		
-		if (o_res == INVALID_OPTION_NAME)
-		{
-			_saved_error = kWSAenoprotoopt;
+        {
+            const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-			return kWaitStatusFailure;
-		}
-	}
+            if (o_res == SKIP_OPTION)
+            {
+                *first = 0;
+                *second = 0;
 
-	int32_t ret = -1;
+                return kWaitStatusSuccess;
+            }
 
-	switch (name)
-	{
-		case kSocketOptionNameLinger:
-			{
-				struct linger linger;
-				socklen_t lingersize = sizeof (linger);
+            if (o_res == INVALID_OPTION_NAME)
+            {
+                _saved_error = kWSAenoprotoopt;
 
-				ret = getsockopt (_fd, system_level, system_name, &linger, &lingersize);
+                return kWaitStatusFailure;
+            }
+        }
 
-				*first = linger.l_onoff;
-				*second = linger.l_linger;
-			}
-			break;
+        int32_t ret = -1;
 
-		case kSocketOptionNameDontLinger:
-			{
-				struct linger linger;
-				socklen_t lingersize = sizeof (linger);
+        switch (name)
+        {
+            case kSocketOptionNameLinger:
+            {
+                struct linger linger;
+                socklen_t lingersize = sizeof(linger);
 
-				ret = getsockopt (_fd, system_level, system_name, &linger, &lingersize);
+                ret = getsockopt(_fd, system_level, system_name, &linger, &lingersize);
 
-				*first = !linger.l_onoff;
-			}
-			break;
+                *first = linger.l_onoff;
+                *second = linger.l_linger;
+            }
+            break;
 
-		case kSocketOptionNameSendTimeout:
-		case kSocketOptionNameReceiveTimeout:
-			{
-				socklen_t time_ms_size = sizeof (*first);
-				ret = getsockopt (_fd, system_level, system_name, (char *)first, &time_ms_size);
-			}
-			break;
+            case kSocketOptionNameDontLinger:
+            {
+                struct linger linger;
+                socklen_t lingersize = sizeof(linger);
 
-		default:
-			{
-				socklen_t valsize = sizeof (*first);
-				ret = getsockopt (_fd, system_level, system_name, first, &valsize);
-			}
-			break;
-	}
+                ret = getsockopt(_fd, system_level, system_name, &linger, &lingersize);
 
-	if (ret == -1)
-	{
-		StoreLastError ();
+                *first = !linger.l_onoff;
+            }
+            break;
 
-		return kWaitStatusFailure;
-	}
+            case kSocketOptionNameSendTimeout:
+            case kSocketOptionNameReceiveTimeout:
+            {
+                socklen_t time_ms_size = sizeof(*first);
+                ret = getsockopt(_fd, system_level, system_name, (char*)first, &time_ms_size);
+            }
+            break;
+
+            default:
+            {
+                socklen_t valsize = sizeof(*first);
+                ret = getsockopt(_fd, system_level, system_name, first, &valsize);
+            }
+            break;
+        }
+
+        if (ret == -1)
+        {
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
 
 #if !defined(SO_EXCLUSIVEADDRUSE) && defined(SO_REUSEADDR)
-	if (level == kSocketOptionLevelSocket && name == kSocketOptionNameExclusiveAddressUse)
-		*first = *first ? 0 : 1;
+        if (level == kSocketOptionLevelSocket && name == kSocketOptionNameExclusiveAddressUse)
+            *first = *first ? 0 : 1;
 #endif
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::Poll (std::vector<PollRequest> &requests, int32_t timeout, int32_t *result, int32_t *error)
-{
-	const int32_t n_fd = (int32_t)requests.size ();
-	pollfd *p_fd = (pollfd*)calloc (n_fd, sizeof (pollfd));
+    WaitStatus SocketImpl::Poll(std::vector<PollRequest> &requests, int32_t count, int32_t timeout, int32_t *result, int32_t *error)
+    {
+        const int32_t n_fd = count;
+        pollfd *p_fd = (pollfd*)calloc(n_fd, sizeof(pollfd));
 
-	for (int32_t i = 0; i < n_fd; ++i)
-	{
-		if (requests[i].fd == -1)
-		{
-			p_fd[i].fd = -1;
-			p_fd[i].events = kPollFlagsNone;
-			p_fd[i].revents = kPollFlagsNone;
-		}
-		else
-		{
-			p_fd[i].fd = requests[i].fd;
-			p_fd[i].events = posix::PollFlagsToPollEvents (requests[i].events);
-			p_fd[i].revents = kPollFlagsNone;
-		}
-	}
+        for (int32_t i = 0; i < n_fd; ++i)
+        {
+            if (requests[i].fd == -1)
+            {
+                p_fd[i].fd = -1;
+                p_fd[i].events = kPollFlagsNone;
+                p_fd[i].revents = kPollFlagsNone;
+            }
+            else
+            {
+                p_fd[i].fd = requests[i].fd;
+                p_fd[i].events = posix::PollFlagsToPollEvents(requests[i].events);
+                p_fd[i].revents = kPollFlagsNone;
+            }
+        }
 
-	int32_t ret = os::posix::Poll (p_fd, n_fd, timeout);
-	*result = ret;
+        int32_t ret = os::posix::Poll(p_fd, n_fd, timeout);
+        *result = ret;
 
-	if (ret == -1)
-	{
-		free (p_fd);
+        if (ret == -1)
+        {
+            free(p_fd);
 
-		*error = SocketErrnoToErrorCode (errno);
+            *error = SocketErrnoToErrorCode(errno);
 
-		return kWaitStatusFailure;
-	}
+            return kWaitStatusFailure;
+        }
 
-	if (ret == 0)
-	{
-		free (p_fd);
+        if (ret == 0)
+        {
+            free(p_fd);
 
-		return kWaitStatusSuccess;
-	}
+            return kWaitStatusSuccess;
+        }
 
-	for (int32_t i = 0; i < n_fd; ++i)
-	{
-		requests[i].revents = posix::PollEventsToPollFlags (p_fd[i].revents);
-	}
+        for (int32_t i = 0; i < n_fd; ++i)
+        {
+            requests[i].revents = posix::PollEventsToPollFlags(p_fd[i].revents);
+        }
 
-	free (p_fd);
+        free(p_fd);
 
-	return kWaitStatusSuccess;
-}
+        return kWaitStatusSuccess;
+    }
 
-WaitStatus SocketImpl::SetSocketOption (SocketOptionLevel level, SocketOptionName name, int32_t value)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
-	
-	const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
-	
-	if (o_res == SKIP_OPTION)
-	{
-		return kWaitStatusSuccess;
-	}
-	
-	if (o_res == INVALID_OPTION_NAME)
-	{
-		_saved_error = kWSAenoprotoopt;
+    WaitStatus SocketImpl::Poll(std::vector<PollRequest> &requests, int32_t timeout, int32_t *result, int32_t *error)
+    {
+        return Poll(requests, (int32_t)requests.size(), timeout, result, error);
+    }
 
-		return kWaitStatusFailure;
-	}
+    WaitStatus SocketImpl::Poll(PollRequest& request, int32_t timeout, int32_t *result, int32_t *error)
+    {
+        std::vector<PollRequest> requests;
+        requests.push_back(request);
+        return Poll(requests, 1, timeout, result, error);
+    }
 
-	struct linger linger;
+    WaitStatus SocketImpl::SetSocketOption(SocketOptionLevel level, SocketOptionName name, int32_t value)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
-	WaitStatus ret = kWaitStatusFailure;
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-	switch (name)
-	{
-		case kSocketOptionNameDontLinger:
-			linger.l_onoff = !value;
-			linger.l_linger = 0;
-			ret = SetSocketOptionInternal (system_level, system_name, &linger, sizeof (linger));
-			break;
+        if (o_res == SKIP_OPTION)
+        {
+            return kWaitStatusSuccess;
+        }
 
-		case kSocketOptionNameDontFragment:
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
+
+            return kWaitStatusFailure;
+        }
+
+        struct linger linger;
+
+        WaitStatus ret = kWaitStatusFailure;
+
+        switch (name)
+        {
+            case kSocketOptionNameDontLinger:
+                linger.l_onoff = !value;
+                linger.l_linger = 0;
+                ret = SetSocketOptionInternal(system_level, system_name, &linger, sizeof(linger));
+                break;
+
+            case kSocketOptionNameDontFragment:
 #ifdef IP_PMTUDISC_DO
-			// Fiddle with the value slightly if we're turning DF on
-			if (value == 1)
-				value = IP_PMTUDISC_DO;
+                // Fiddle with the value slightly if we're turning DF on
+                if (value == 1)
+                    value = IP_PMTUDISC_DO;
 #endif
-			ret = SetSocketOptionInternal (system_level, system_name, (char *) &value, sizeof (value));
-			break;
+                ret = SetSocketOptionInternal(system_level, system_name, (char*)&value, sizeof(value));
+                break;
 
-		default:
-			ret = SetSocketOptionInternal (system_level, system_name, (char *) &value, sizeof (value));
-			break;
-	}
+            default:
+                ret = SetSocketOptionInternal(system_level, system_name, (char*)&value, sizeof(value));
+                break;
+        }
 
-	return ret;
-}
+        return ret;
+    }
 
-WaitStatus SocketImpl::SetSocketOptionLinger (SocketOptionLevel level, SocketOptionName name, bool enabled, int32_t seconds)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
+    WaitStatus SocketImpl::SetSocketOptionLinger(SocketOptionLevel level, SocketOptionName name, bool enabled, int32_t seconds)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
-	const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
-	
-	if (o_res == SKIP_OPTION)
-	{
-		return kWaitStatusSuccess;
-	}
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-	if (o_res == INVALID_OPTION_NAME)
-	{
-		_saved_error = kWSAenoprotoopt;
+        if (o_res == SKIP_OPTION)
+        {
+            return kWaitStatusSuccess;
+        }
 
-		return kWaitStatusFailure;
-	}
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
 
-	struct linger linger;
+            return kWaitStatusFailure;
+        }
 
-	linger.l_onoff = enabled;
-	linger.l_linger = seconds;
+        struct linger linger;
 
-	return SetSocketOptionInternal (system_level, system_name, &linger, sizeof (linger));
-}
+        linger.l_onoff = enabled;
+        linger.l_linger = seconds;
 
-WaitStatus SocketImpl::SetSocketOptionArray (SocketOptionLevel level, SocketOptionName name, const uint8_t *buffer, int32_t length)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
+        return SetSocketOptionInternal(system_level, system_name, &linger, sizeof(linger));
+    }
 
-	const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
+    WaitStatus SocketImpl::SetSocketOptionArray(SocketOptionLevel level, SocketOptionName name, const uint8_t *buffer, int32_t length)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
-	if (o_res == SKIP_OPTION)
-	{
-		return kWaitStatusSuccess;
-	}
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-	if (o_res == INVALID_OPTION_NAME)
-	{
-		_saved_error = kWSAenoprotoopt;
+        if (o_res == SKIP_OPTION)
+        {
+            return kWaitStatusSuccess;
+        }
 
-		return kWaitStatusFailure;
-	}
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
 
-	struct linger linger;
+            return kWaitStatusFailure;
+        }
 
-	WaitStatus ret = kWaitStatusFailure;
+        struct linger linger;
 
-	switch (name)
-	{
-		case kSocketOptionNameDontLinger:
-			if (length == 1)
-			{
-				linger.l_linger = 0;
-				linger.l_onoff = (*((char*)buffer)) ? 0 : 1;
+        WaitStatus ret = kWaitStatusFailure;
 
-				ret = SetSocketOptionInternal (system_level, system_name, &linger, sizeof (linger));
-			} else {
-				_saved_error = kWSAeinval;
+        switch (name)
+        {
+            case kSocketOptionNameDontLinger:
+                if (length == 1)
+                {
+                    linger.l_linger = 0;
+                    linger.l_onoff = (*((char*)buffer)) ? 0 : 1;
 
-				return kWaitStatusFailure;
-			}
-			break;
+                    ret = SetSocketOptionInternal(system_level, system_name, &linger, sizeof(linger));
+                }
+                else
+                {
+                    _saved_error = kWSAeinval;
 
-		default:
-			ret = SetSocketOptionInternal (system_level, system_name, buffer, length);
-			break;
-	}
+                    return kWaitStatusFailure;
+                }
+                break;
 
-	return ret;
-}
+            default:
+                ret = SetSocketOptionInternal(system_level, system_name, buffer, length);
+                break;
+        }
 
-WaitStatus SocketImpl::SetSocketOptionMembership (SocketOptionLevel level, SocketOptionName name, uint32_t group_address, uint32_t local_address)
-{
-	int32_t system_level = 0;
-	int32_t system_name = 0;
-	
-	const int32_t o_res = level_and_name_to_system (level, name, &system_level, &system_name);
-	
-	if (o_res == SKIP_OPTION)
-	{
-		return kWaitStatusSuccess;
-	}
-	
-	if (o_res == INVALID_OPTION_NAME)
-	{
-		_saved_error = kWSAenoprotoopt;
+        return ret;
+    }
 
-		return kWaitStatusFailure;
-	}
+    WaitStatus SocketImpl::SetSocketOptionMembership(SocketOptionLevel level, SocketOptionName name, uint32_t group_address, uint32_t local_address)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
 
-	struct ip_mreqn mreq = {{0}};
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
 
-	mreq.imr_multiaddr.s_addr = group_address;
-	mreq.imr_address.s_addr = local_address;
+        if (o_res == SKIP_OPTION)
+        {
+            return kWaitStatusSuccess;
+        }
 
-	return SetSocketOptionInternal (system_level, system_name, &mreq, sizeof (mreq));
-}
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
 
-WaitStatus SocketImpl::SetSocketOptionInternal (int32_t level, int32_t name, const void *value, int32_t len)
-{
-	const void *real_val = value;
+            return kWaitStatusFailure;
+        }
 
-	if (level == SOL_SOCKET && (name == SO_RCVTIMEO || name == SO_SNDTIMEO))
-	{
-		struct timeval tv;
+        struct ip_mreqn mreq = {{0}};
 
-		const int32_t ms = *((int32_t *) value);
+        mreq.imr_multiaddr.s_addr = group_address;
+        mreq.imr_address.s_addr = local_address;
 
-		tv.tv_sec = ms / 1000;
-		tv.tv_usec = (ms % 1000) * 1000;
-		real_val = &tv;
-
-		len = sizeof (tv);
-	}
-
-	const int32_t ret = setsockopt (_fd, level, name, real_val, (socklen_t)len);
-
-	if (ret == -1)
-	{
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-#if defined (SO_REUSEPORT)
-	// BSD's and MacOS X multicast sockets also need SO_REUSEPORT when SO_REUSEADDR is requested.
-	if (level == SOL_SOCKET && name == SO_REUSEADDR)
-	{
-		int32_t type;
-		socklen_t type_len = sizeof (type);
-
-		if (!getsockopt (_fd, level, SO_TYPE, &type, &type_len))
-		{
-			if (type == SOCK_DGRAM)
-				setsockopt (_fd, level, SO_REUSEPORT, real_val, len);
-		}
-	}
-#endif
-
-	return kWaitStatusSuccess;
-}
-
-
-WaitStatus SocketImpl::SendFile (const char *filename, TransmitFileBuffers *buffers, TransmitFileOptions options)
-{
-	int32_t file = open (filename, O_RDONLY);
-
-	if (file == -1)
-	{
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-	int32_t ret;
-
-	// Write the header
-	if (buffers != NULL && buffers->head != NULL && buffers->head_length > 0)
-	{
-		do {
-			ret = (int32_t)send (_fd, (void*)buffers->head, buffers->head_length, 0);
-		} while (ret == -1 && errno == EINTR);
-
-		if (ret == -1)
-		{
-			StoreLastError ();
-
-			SOCK_CLOSE(file);
-
-			return kWaitStatusFailure;
-		}
-	}
-
-	struct stat statbuf;
-
-	ret = fstat (file, &statbuf);
-	if (ret == -1)
-	{
-		StoreLastError ();
-
-		return kWaitStatusFailure;
-	}
-
-	do {
+        return SetSocketOptionInternal(system_level, system_name, &mreq, sizeof(mreq));
+    }
 
 #if IL2CPP_TARGET_DARWIN
-		ret = sendfile (file, _fd, 0, &statbuf.st_size, NULL, 0);
-#else
-		ret = sendfile (_fd, file, NULL, statbuf.st_size);
+    #include <sys/types.h>
+    #include <ifaddrs.h>
+    #include <sys/socket.h>
+    #include <net/if.h>
+    static int get_local_interface_id(int family)
+    {
+        struct ifaddrs *ifap = NULL, *ptr;
+        int idx = 0;
+        if (getifaddrs(&ifap))
+            return 0;
+
+        for (ptr = ifap; ptr; ptr = ptr->ifa_next)
+        {
+            if (!ptr->ifa_addr || !ptr->ifa_name)
+                continue;
+            if (ptr->ifa_addr->sa_family != family)
+                continue;
+            if ((ptr->ifa_flags & IFF_LOOPBACK) != 0)
+                continue;
+            if ((ptr->ifa_flags & IFF_MULTICAST) == 0)
+                continue;
+
+            idx = if_nametoindex(ptr->ifa_name);
+            break;
+        }
+
+        freeifaddrs(ifap);
+        return idx;
+    }
+
+#endif // IL2CPP_TARGET_DARWIN
+
+#if IL2CPP_SUPPORT_IPV6
+    WaitStatus SocketImpl::SetSocketOptionMembership(SocketOptionLevel level, SocketOptionName name, IPv6Address ipv6, uint64_t interfaceOffset)
+    {
+        int32_t system_level = 0;
+        int32_t system_name = 0;
+
+        const int32_t o_res = level_and_name_to_system(level, name, &system_level, &system_name);
+        if (o_res == SKIP_OPTION)
+        {
+            return kWaitStatusSuccess;
+        }
+
+        if (o_res == INVALID_OPTION_NAME)
+        {
+            _saved_error = kWSAenoprotoopt;
+
+            return kWaitStatusFailure;
+        }
+
+        struct ipv6_mreq mreq6 = {{0}};
+        struct in6_addr in6addr;
+        for (int i = 0; i < 16; ++i)
+            in6addr.s6_addr[i] = ipv6.addr[i];
+        mreq6.ipv6mr_multiaddr = in6addr;
+
+#if IL2CPP_TARGET_DARWIN
+        if (interfaceOffset == 0)
+            interfaceOffset = get_local_interface_id(AF_INET6);
 #endif
-	} while (ret != -1 && (errno == EINTR || errno == EAGAIN));
+        mreq6.ipv6mr_interface = interfaceOffset;
 
-	if (ret == -1)
-	{
-		StoreLastError ();
+        return SetSocketOptionInternal(system_level, system_name, &mreq6, sizeof(mreq6));
+    }
 
-		SOCK_CLOSE(file);
+#endif
 
-		return kWaitStatusFailure;
-	}
+    WaitStatus SocketImpl::SetSocketOptionInternal(int32_t level, int32_t name, const void *value, int32_t len)
+    {
+        const void *real_val = value;
+        struct timeval tv;
 
-	// Write the tail
-	if (buffers != NULL && buffers->tail != NULL && buffers->tail_length > 0)
-	{
-		do {
-			ret = (int32_t)send (_fd, (void*)buffers->tail, buffers->tail_length, 0);
-		} while (ret == -1 && errno == EINTR);
+        if (level == SOL_SOCKET && (name == SO_RCVTIMEO || name == SO_SNDTIMEO))
+        {
+            const int32_t ms = *((int32_t*)value);
 
-		if (ret == -1)
-		{
-			StoreLastError ();
+            tv.tv_sec = ms / 1000;
+            tv.tv_usec = (ms % 1000) * 1000;
+            real_val = &tv;
 
-			SOCK_CLOSE(file);
+            len = sizeof(tv);
+        }
 
-			return kWaitStatusFailure;
-		}
-	}
+        const int32_t ret = setsockopt(_fd, level, name, real_val, (socklen_t)len);
 
-	if (SOCK_CLOSE(file) == -1)
-	{
-		StoreLastError ();
+        if (ret == -1)
+        {
+            StoreLastError();
 
-		return kWaitStatusFailure;
-	}
+            return kWaitStatusFailure;
+        }
 
-	return kWaitStatusSuccess;
-}
+#if defined(SO_REUSEPORT)
+        // BSD's and MacOS X multicast sockets also need SO_REUSEPORT when SO_REUSEADDR is requested.
+        if (level == SOL_SOCKET && name == SO_REUSEADDR)
+        {
+            int32_t type;
+            socklen_t type_len = sizeof(type);
 
+            if (!getsockopt(_fd, level, SO_TYPE, &type, &type_len))
+            {
+                if (type == SOCK_DGRAM)
+                    setsockopt(_fd, level, SO_REUSEPORT, real_val, len);
+            }
+        }
+#endif
 
+        return kWaitStatusSuccess;
+    }
+
+    WaitStatus SocketImpl::SendFile(const char *filename, TransmitFileBuffers *buffers, TransmitFileOptions options)
+    {
+        int32_t file = open(filename, O_RDONLY);
+
+        if (file == -1)
+        {
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        int32_t ret;
+
+        // Write the header
+        if (buffers != NULL && buffers->head != NULL && buffers->head_length > 0)
+        {
+            do
+            {
+                ret = (int32_t)send(_fd, (void*)buffers->head, buffers->head_length, 0);
+            }
+            while (ret == -1 && errno == EINTR);
+
+            if (ret == -1)
+            {
+                StoreLastError();
+
+                SOCK_CLOSE(file);
+
+                return kWaitStatusFailure;
+            }
+        }
+
+        struct stat statbuf;
+
+        ret = fstat(file, &statbuf);
+        if (ret == -1)
+        {
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        do
+        {
+#if IL2CPP_TARGET_DARWIN
+            ret = sendfile(file, _fd, 0, &statbuf.st_size, NULL, 0);
+#else
+            ret = sendfile(_fd, file, NULL, statbuf.st_size);
+#endif
+        }
+        while (ret != -1 && (errno == EINTR || errno == EAGAIN));
+
+        if (ret == -1)
+        {
+            StoreLastError();
+
+            SOCK_CLOSE(file);
+
+            return kWaitStatusFailure;
+        }
+
+        // Write the tail
+        if (buffers != NULL && buffers->tail != NULL && buffers->tail_length > 0)
+        {
+            do
+            {
+                ret = (int32_t)send(_fd, (void*)buffers->tail, buffers->tail_length, 0);
+            }
+            while (ret == -1 && errno == EINTR);
+
+            if (ret == -1)
+            {
+                StoreLastError();
+
+                SOCK_CLOSE(file);
+
+                return kWaitStatusFailure;
+            }
+        }
+
+        if (SOCK_CLOSE(file) == -1)
+        {
+            StoreLastError();
+
+            return kWaitStatusFailure;
+        }
+
+        return kWaitStatusSuccess;
+    }
 }
 }
 #endif

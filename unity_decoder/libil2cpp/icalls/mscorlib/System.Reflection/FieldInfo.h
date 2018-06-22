@@ -16,15 +16,16 @@ namespace System
 {
 namespace Reflection
 {
-
-class LIBIL2CPP_CODEGEN_API FieldInfo
-{
-public:
-	static Il2CppReflectionMarshal* GetUnmanagedMarshal (Il2CppReflectionField* field);
-	static Il2CppReflectionField* internal_from_handle_type (Il2CppIntPtr field_handle, Il2CppIntPtr type_handle);
-	static Il2CppArray* GetTypeModifiers (Il2CppReflectionField* field, bool optional);
-};
-	
+    class LIBIL2CPP_CODEGEN_API FieldInfo
+    {
+    public:
+        static Il2CppReflectionMarshal* GetUnmanagedMarshal(Il2CppReflectionField* field);
+        static Il2CppReflectionField* internal_from_handle_type(Il2CppIntPtr field_handle, Il2CppIntPtr type_handle);
+        static Il2CppArray* GetTypeModifiers(Il2CppReflectionField* field, bool optional);
+#if NET_4_0
+        static Il2CppObject* get_marshal_info(Il2CppObject* _this);
+#endif
+    };
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

@@ -12,16 +12,14 @@ namespace il2cpp
 {
 namespace os
 {
+    class EventImpl : public posix::PosixWaitObject
+    {
+    public:
+        EventImpl(bool manualReset = false, bool signaled = false);
 
-class EventImpl : public posix::PosixWaitObject
-{
-public:
-	EventImpl (bool manualReset = false, bool signaled = false);
-
-	ErrorCode Set ();
-	ErrorCode Reset ();
-};
-
+        ErrorCode Set();
+        ErrorCode Reset();
+    };
 }
 }
 

@@ -16,13 +16,11 @@ namespace Reflection
 {
 namespace Emit
 {
-
-class LIBIL2CPP_CODEGEN_API MethodBuilder
-{
-public:
-	static Il2CppReflectionMethod* MakeGenericMethod(Il2CppReflectionMethod*, Il2CppArray*);
-};
-	
+    class LIBIL2CPP_CODEGEN_API MethodBuilder
+    {
+    public:
+        static Il2CppReflectionMethod* MakeGenericMethod(Il2CppReflectionMethod*, Il2CppArray*);
+    };
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

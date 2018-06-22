@@ -26,13 +26,11 @@ namespace System
 {
 namespace IO
 {
-
-class LIBIL2CPP_CODEGEN_API Path
-{
-public:
-	static Il2CppString* get_temp_path ();
-};
-
+    class LIBIL2CPP_CODEGEN_API Path
+    {
+    public:
+        static Il2CppString* get_temp_path();
+    };
 } /* namespace IO */
 } /* namespace System */
 } /* namespace mscorlib */

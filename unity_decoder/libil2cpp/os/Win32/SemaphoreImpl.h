@@ -12,19 +12,17 @@ namespace il2cpp
 {
 namespace os
 {
-
-class SemaphoreImpl : public il2cpp::utils::NonCopyable
-{
-public:
-	SemaphoreImpl (int32_t initialValue, int32_t maximumValue);
-	~SemaphoreImpl ();
-	bool Post (int32_t releaseCount, int32_t* previousCount = NULL);
-	WaitStatus Wait(bool interruptible);
-	WaitStatus Wait(uint32_t ms, bool interruptible);
-private:
-	HANDLE m_Handle;
-};
-
+    class SemaphoreImpl : public il2cpp::utils::NonCopyable
+    {
+    public:
+        SemaphoreImpl(int32_t initialValue, int32_t maximumValue);
+        ~SemaphoreImpl();
+        bool Post(int32_t releaseCount, int32_t* previousCount = NULL);
+        WaitStatus Wait(bool interruptible);
+        WaitStatus Wait(uint32_t ms, bool interruptible);
+    private:
+        HANDLE m_Handle;
+    };
 }
 }
 

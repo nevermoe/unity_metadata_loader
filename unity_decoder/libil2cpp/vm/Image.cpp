@@ -11,8 +11,9 @@
 #include "vm/StackTrace.h"
 #include "vm/Type.h"
 #include "utils/HashUtils.h"
-#include "utils/StdUnorderedMap.h"
+#include "utils/Il2CppHashMap.h"
 #include "utils/StringUtils.h"
+#include "vm-utils/VmStringUtils.h"
 
 using il2cpp::utils::HashUtils;
 using il2cpp::utils::StringUtils;
@@ -20,305 +21,336 @@ using il2cpp::utils::StringUtils;
 
 struct NamespaceAndNamePairHash
 {
-	size_t operator() (const std::pair<const char*, const char*>& pair) const
-	{
-		return HashUtils::Combine (StringUtils::Hash (pair.first), StringUtils::Hash (pair.second));
-	}
+    size_t operator()(const std::pair<const char*, const char*>& pair) const
+    {
+        return HashUtils::Combine(StringUtils::Hash(pair.first), StringUtils::Hash(pair.second));
+    }
 };
 
 struct NamespaceAndNamePairEquals
 {
-	bool operator() (const std::pair<const char*, const char*>& p1, const std::pair<const char*, const char*>& p2) const
-	{
-		return !strcmp (p1.first, p2.first) && !strcmp (p1.second, p2.second);
-	}
+    bool operator()(const std::pair<const char*, const char*>& p1, const std::pair<const char*, const char*>& p2) const
+    {
+        return !strcmp(p1.first, p2.first) && !strcmp(p1.second, p2.second);
+    }
 };
 
 struct NamespaceAndNamePairLess
 {
-	bool operator() (const std::pair<const char*, const char*>& p1, const std::pair<const char*, const char*>& p2) const
-	{
-		int namespaceCompare = strcmp (p1.first, p2.first);
+    bool operator()(const std::pair<const char*, const char*>& p1, const std::pair<const char*, const char*>& p2) const
+    {
+        int namespaceCompare = strcmp(p1.first, p2.first);
 
-		if (namespaceCompare < 0)
-			return true;
+        if (namespaceCompare < 0)
+            return true;
 
-		if (namespaceCompare > 0)
-			return false;
+        if (namespaceCompare > 0)
+            return false;
 
-		return strcmp (p1.second, p2.second) < 0;
-	}
+        return strcmp(p1.second, p2.second) < 0;
+    }
 };
 
-struct Il2CppNameToTypeDefinitionIndexHashTable : public unordered_map<std::pair<const char*, const char*>, TypeDefinitionIndex,
-#if IL2CPP_HAS_UNORDERED_CONTAINER
-	NamespaceAndNamePairHash, NamespaceAndNamePairEquals
-#else
-	NamespaceAndNamePairLess
-#endif
->
+struct Il2CppNameToTypeDefinitionIndexHashTable : public Il2CppHashMap<std::pair<const char*, const char*>, TypeDefinitionIndex, NamespaceAndNamePairHash, NamespaceAndNamePairEquals>
 {
-
+    typedef Il2CppHashMap<std::pair<const char*, const char*>, TypeDefinitionIndex, NamespaceAndNamePairHash, NamespaceAndNamePairEquals> Base;
+    Il2CppNameToTypeDefinitionIndexHashTable() : Base()
+    {
+    }
 };
 
 namespace il2cpp
 {
 namespace vm
 {
+    const Il2CppAssembly* Image::GetAssembly(const Il2CppImage* image)
+    {
+        return MetadataCache::GetAssemblyFromIndex(image->assemblyIndex);
+    }
 
-const Il2CppAssembly* Image::GetAssembly (const Il2CppImage* image)
-{
-	return MetadataCache::GetAssemblyFromIndex (image->assemblyIndex);
-}
+    typedef il2cpp::vm::StackFrames::const_reverse_iterator StackReverseIterator;
 
-typedef il2cpp::vm::StackFrames::const_reverse_iterator StackReverseIterator;
+    static bool IsSystemType(Il2CppClass* klass)
+    {
+        return strcmp(klass->namespaze, "System") == 0 && strcmp(klass->name, "Type") == 0;
+    }
 
-static bool IsSystemType(Il2CppClass* klass)
-{
-	return strcmp(klass->namespaze, "System") == 0 && strcmp(klass->name, "Type") == 0;
-}
+    static bool IsSystemReflectionAssembly(Il2CppClass* klass)
+    {
+        return strcmp(klass->namespaze, "System.Reflection") == 0 && strcmp(klass->name, "Assembly") == 0;
+    }
 
-static bool IsSystemReflectionAssembly(Il2CppClass* klass)
-{
-	return strcmp(klass->namespaze, "System.Reflection") == 0 && strcmp(klass->name, "Assembly") == 0;
-}
+    static StackReverseIterator GetNextImageFromStack(StackReverseIterator first, StackReverseIterator last)
+    {
+        for (StackReverseIterator it = first; it != last; it++)
+        {
+            Il2CppClass* klass = it->method->declaring_type;
+            if (klass->image != NULL && !IsSystemType(klass) && !IsSystemReflectionAssembly(klass))
+            {
+                return it;
+            }
+        }
 
-static StackReverseIterator GetNextImageFromStack(StackReverseIterator first, StackReverseIterator last)
-{
-	for (StackReverseIterator it = first; it != last; it++)
-	{
-		Il2CppClass* klass = it->method->declaring_type;
-		if (klass->image != NULL && !IsSystemType(klass) && !IsSystemReflectionAssembly(klass))
-		{
-			return it;
-		}
-	}
+        return last;
+    }
 
-	return last;
-}
+    const Il2CppImage* Image::GetExecutingImage()
+    {
+        const il2cpp::vm::StackFrames& stack = *StackTrace::GetStackFrames();
+        StackReverseIterator imageIt = GetNextImageFromStack(stack.rbegin(), stack.rend());
 
-const Il2CppImage* Image::GetExecutingImage()
-{
-	const il2cpp::vm::StackFrames& stack = *StackTrace::GetStackFrames();
-	StackReverseIterator imageIt = GetNextImageFromStack(stack.rbegin(), stack.rend());
-	
-	if (imageIt != stack.rend())
-	{
-		return imageIt->method->declaring_type->image;
-	}
+        if (imageIt != stack.rend())
+        {
+            return imageIt->method->declaring_type->image;
+        }
 
-	// Fallback to corlib if no image is found
-	return const_cast<Il2CppImage*>(Image::GetCorlib());
-}
+        // Fallback to corlib if no image is found
+        return const_cast<Il2CppImage*>(Image::GetCorlib());
+    }
 
-const Il2CppImage* Image::GetCallingImage()
-{
-	const il2cpp::vm::StackFrames& stack = *StackTrace::GetStackFrames();
-	StackReverseIterator imageIt = GetNextImageFromStack(stack.rbegin(), stack.rend());
+    const Il2CppImage* Image::GetCallingImage()
+    {
+        const il2cpp::vm::StackFrames& stack = *StackTrace::GetStackFrames();
+        StackReverseIterator imageIt = GetNextImageFromStack(stack.rbegin(), stack.rend());
 
-	if (imageIt != stack.rend())
-	{
-		imageIt = GetNextImageFromStack(++imageIt, stack.rend());
+        if (imageIt != stack.rend())
+        {
+            imageIt = GetNextImageFromStack(++imageIt, stack.rend());
 
-		if (imageIt != stack.rend())
-		{
-			return imageIt->method->declaring_type->image;
-		}
-	}
+            if (imageIt != stack.rend())
+            {
+                return imageIt->method->declaring_type->image;
+            }
+        }
 
-	// Fallback to corlib if no image is found
-	return const_cast<Il2CppImage*>(Image::GetCorlib());
-}
+        // Fallback to corlib if no image is found
+        return const_cast<Il2CppImage*>(Image::GetCorlib());
+    }
 
-const char * Image::GetName (const Il2CppImage* image)
-{
-	return image->name;
-}
+    const char * Image::GetName(const Il2CppImage* image)
+    {
+        return image->name;
+    }
 
-const char * Image::GetFileName (const Il2CppImage* image)
-{
-	return image->name;
-}
+    const char * Image::GetFileName(const Il2CppImage* image)
+    {
+        return image->name;
+    }
 
-const MethodInfo* Image::GetEntryPoint (const Il2CppImage* image)
-{
-	if (image->entryPointIndex == -1)
-		return NULL;
-	return MetadataCache::GetMethodInfoFromMethodDefinitionIndex (image->entryPointIndex);
-}
+    const MethodInfo* Image::GetEntryPoint(const Il2CppImage* image)
+    {
+        if (image->entryPointIndex == -1)
+            return NULL;
+        return MetadataCache::GetMethodInfoFromMethodDefinitionIndex(image->entryPointIndex);
+    }
 
-Il2CppImage* Image::GetCorlib ()
-{
-	return il2cpp_defaults.corlib;
-}
+    Il2CppImage* Image::GetCorlib()
+    {
+        return il2cpp_defaults.corlib;
+    }
 
-static os::FastMutex s_ClassFromNameMutex;
+    static os::FastMutex s_ClassFromNameMutex;
 
-Il2CppClass* Image::ClassFromName (const Il2CppImage* image, const char* namespaze, const char *name)
-{
-	if (!image->nameToClassHashTable)
-	{
-		os::FastAutoLock lock (&s_ClassFromNameMutex);
-		if (!image->nameToClassHashTable)
-		{
-			image->nameToClassHashTable = new Il2CppNameToTypeDefinitionIndexHashTable ();
-			for (uint32_t index = 0; index < image->typeCount; index++)
-			{
-				TypeDefinitionIndex typeIndex = image->typeStart + index;
-				const Il2CppTypeDefinition* typeDefinition = MetadataCache::GetTypeDefinitionFromIndex (typeIndex);
+// This must be called when the s_ClassFromNameMutex is held.
+    static void AddTypeToNametoClassHashTable(Il2CppNameToTypeDefinitionIndexHashTable* hashTable, TypeDefinitionIndex typeIndex)
+    {
+        const Il2CppTypeDefinition* typeDefinition = MetadataCache::GetTypeDefinitionFromIndex(typeIndex);
+        // don't add nested types
+        if (typeDefinition->declaringTypeIndex != kTypeIndexInvalid)
+            return;
 
-				// don't add nested types
-				if (typeDefinition->declaringTypeIndex != kTypeIndexInvalid)
-					continue;
+        hashTable->insert(std::make_pair(std::make_pair(MetadataCache::GetStringFromIndex(typeDefinition->namespaceIndex), MetadataCache::GetStringFromIndex(typeDefinition->nameIndex)), typeIndex));
+    }
 
-				image->nameToClassHashTable->insert (std::make_pair (std::make_pair (MetadataCache::GetStringFromIndex (typeDefinition->namespaceIndex), MetadataCache::GetStringFromIndex (typeDefinition->nameIndex)), typeIndex));
-			}
-		}
-	}
+    Il2CppClass* Image::ClassFromName(const Il2CppImage* image, const char* namespaze, const char *name)
+    {
+        if (!image->nameToClassHashTable)
+        {
+            os::FastAutoLock lock(&s_ClassFromNameMutex);
+            if (!image->nameToClassHashTable)
+            {
+                image->nameToClassHashTable = new Il2CppNameToTypeDefinitionIndexHashTable();
+                for (uint32_t index = 0; index < image->typeCount; index++)
+                {
+                    TypeDefinitionIndex typeIndex = image->typeStart + index;
+                    AddTypeToNametoClassHashTable(image->nameToClassHashTable, typeIndex);
+                }
 
-	Il2CppNameToTypeDefinitionIndexHashTable::const_iterator iter = image->nameToClassHashTable->find (std::make_pair (namespaze, name));
-	if (iter != image->nameToClassHashTable->end ())
-		return MetadataCache::GetTypeInfoFromTypeDefinitionIndex (iter->second);
+                for (uint32_t index = 0; index < image->exportedTypeCount; index++)
+                {
+                    TypeDefinitionIndex typeIndex = MetadataCache::GetExportedTypeFromIndex(image->exportedTypeStart + index);
+                    if (typeIndex != kTypeIndexInvalid)
+                        AddTypeToNametoClassHashTable(image->nameToClassHashTable, typeIndex);
+                }
+            }
+        }
 
-	return NULL;
-}
+        Il2CppNameToTypeDefinitionIndexHashTable::const_iterator iter = image->nameToClassHashTable->find(std::make_pair(namespaze, name));
+        if (iter != image->nameToClassHashTable->end())
+            return MetadataCache::GetTypeInfoFromTypeDefinitionIndex(iter->second);
 
-void Image::GetTypes (const Il2CppImage* image, bool exportedOnly, TypeVector* target)
-{
-	size_t typeCount = Image::GetNumTypes (image);
+        return NULL;
+    }
 
-	for (size_t sourceIndex = 0; sourceIndex < typeCount; sourceIndex++)
-	{
-		const Il2CppClass* type = Image::GetType (image, sourceIndex);
-		if (strcmp (type->name, "<Module>") == 0)
-		{
-			continue;
-		}
+    void Image::GetTypes(const Il2CppImage* image, bool exportedOnly, TypeVector* target)
+    {
+        size_t typeCount = Image::GetNumTypes(image);
 
-		target->push_back(type);
-	}
-}
+        for (size_t sourceIndex = 0; sourceIndex < typeCount; sourceIndex++)
+        {
+            const Il2CppClass* type = Image::GetType(image, sourceIndex);
+            if (strcmp(type->name, "<Module>") == 0)
+            {
+                continue;
+            }
 
-size_t Image::GetNumTypes(const Il2CppImage* image)
-{
-	return image->typeCount;
-}
+            target->push_back(type);
+        }
+    }
 
-const Il2CppClass* Image::GetType(const Il2CppImage* image, size_t index)
-{
-	size_t typeDefinitionIndex = image->typeStart + index;
-	assert(typeDefinitionIndex <= static_cast<size_t>(std::numeric_limits<TypeDefinitionIndex>::max()));
-	return MetadataCache::GetTypeInfoFromTypeDefinitionIndex (static_cast<TypeDefinitionIndex>(typeDefinitionIndex));
-}
+    size_t Image::GetNumTypes(const Il2CppImage* image)
+    {
+        return image->typeCount;
+    }
 
-static bool StringsMatch(const char* left, const char* right, bool ignoreCase)
-{
-	if (!ignoreCase)
-	{
-		return strcmp(left, right) == 0;
-	}
-	else
-	{
-		utils::StringUtils::CaseInsensitiveComparer comparer;
-		return comparer(left, right);
-	}
-}
+    const Il2CppClass* Image::GetType(const Il2CppImage* image, size_t index)
+    {
+        size_t typeDefinitionIndex = image->typeStart + index;
+        IL2CPP_ASSERT(typeDefinitionIndex <= static_cast<size_t>(std::numeric_limits<TypeDefinitionIndex>::max()));
+        return MetadataCache::GetTypeInfoFromTypeDefinitionIndex(static_cast<TypeDefinitionIndex>(typeDefinitionIndex));
+    }
 
-static Il2CppClass* FindClassMatching (const Il2CppImage* image, const char* namespaze, const char *name, Il2CppClass* declaringType, bool ignoreCase)
-{
-	for (uint32_t i = 0; i < image->typeCount; i++)
-	{
-		Il2CppClass* type = MetadataCache::GetTypeInfoFromTypeDefinitionIndex (image->typeStart + i);
-		if (type->declaringType == declaringType && StringsMatch(namespaze, type->namespaze, ignoreCase) && StringsMatch(name, type->name, ignoreCase))
-		{
-			return type;
-		}
-	}
+    static bool StringsMatch(const char* left, const char* right, bool ignoreCase)
+    {
+        if (!ignoreCase)
+        {
+            return strcmp(left, right) == 0;
+        }
+        else
+        {
+            utils::VmStringUtils::CaseInsensitiveComparer comparer;
+            return comparer(left, right);
+        }
+    }
 
-	return NULL;
-}
+    static Il2CppClass* FindClassMatching(const Il2CppImage* image, const char* namespaze, const char *name, Il2CppClass* declaringType, bool ignoreCase)
+    {
+        for (uint32_t i = 0; i < image->typeCount; i++)
+        {
+            Il2CppClass* type = MetadataCache::GetTypeInfoFromTypeDefinitionIndex(image->typeStart + i);
+            if (type->declaringType == declaringType && StringsMatch(namespaze, type->namespaze, ignoreCase) && StringsMatch(name, type->name, ignoreCase))
+            {
+                return type;
+            }
+        }
 
-static Il2CppClass* FindNestedType (Il2CppClass* klass, const char* name)
-{
-	void* iter = NULL;
-	while (Il2CppClass* nestedType = Class::GetNestedTypes (klass, &iter))
-	{
-		if (!strcmp (name, nestedType->name))
-			return nestedType;
-	}
+        return NULL;
+    }
 
-	return NULL;
-}
+    static Il2CppClass* FindExportedClassMatching(const Il2CppImage* image, const char* namespaze, const char *name, Il2CppClass* declaringType, bool ignoreCase)
+    {
+        for (uint32_t i = 0; i < image->exportedTypeCount; i++)
+        {
+            TypeDefinitionIndex typeIndex = MetadataCache::GetExportedTypeFromIndex(image->exportedTypeStart + i);
+            if (typeIndex != kTypeIndexInvalid)
+            {
+                Il2CppClass* type = MetadataCache::GetTypeInfoFromTypeDefinitionIndex(typeIndex);
+                if (type->declaringType == declaringType && StringsMatch(namespaze, type->namespaze, ignoreCase) && StringsMatch(name, type->name, ignoreCase))
+                {
+                    return type;
+                }
+            }
+        }
 
-Il2CppClass* Image::FromTypeNameParseInfo (const Il2CppImage* image, const TypeNameParseInfo &info, bool ignoreCase)
-{
-	Il2CppClass *parent_class = FindClassMatching (image, info.ns().c_str(), info.name().c_str(), NULL, ignoreCase);
+        return NULL;
+    }
 
-	if (parent_class == NULL)
-		return NULL;
+    static Il2CppClass* FindNestedType(Il2CppClass* klass, const char* name)
+    {
+        void* iter = NULL;
+        while (Il2CppClass* nestedType = Class::GetNestedTypes(klass, &iter))
+        {
+            if (!strcmp(name, nestedType->name))
+                return nestedType;
+        }
 
-	std::vector<std::string>::const_iterator it = info.nested ().begin ();
+        return NULL;
+    }
 
-	while (it != info.nested ().end ())
-	{
-		parent_class = FindNestedType (parent_class, (*it).c_str ());
+    Il2CppClass* Image::FromTypeNameParseInfo(const Il2CppImage* image, const TypeNameParseInfo &info, bool ignoreCase)
+    {
+        const char* ns = info.ns().c_str();
+        const char* name = info.name().c_str();
+        Il2CppClass *parent_class = FindClassMatching(image, ns, name, NULL, ignoreCase);
 
-		if (parent_class == NULL)
-			return NULL;
+        if (parent_class == NULL)
+        {
+            parent_class = FindExportedClassMatching(image, ns, name, NULL, ignoreCase);
+            if (parent_class == NULL)
+                return NULL;
+        }
 
-		++it;
-	}
+        std::vector<std::string>::const_iterator it = info.nested().begin();
 
-	return parent_class;
-}
+        while (it != info.nested().end())
+        {
+            parent_class = FindNestedType(parent_class, (*it).c_str());
 
-static os::FastMutex s_Mutex;
-static std::vector<Image::EmbeddedResourceData> s_CachedResourceData;
-static std::map<Il2CppReflectionAssembly*, void*> s_CachedMemoryMappedResourceFiles;
+            if (parent_class == NULL)
+                return NULL;
 
-void Image::CacheMemoryMappedResourceFile(Il2CppReflectionAssembly* assembly, void* memoryMappedFile)
-{
-	os::FastAutoLock lock(&s_Mutex);
-	s_CachedMemoryMappedResourceFiles[assembly] = memoryMappedFile;
-}
+            ++it;
+        }
 
-void* Image::GetCachedMemoryMappedResourceFile(Il2CppReflectionAssembly* assembly)
-{
-	os::FastAutoLock lock(&s_Mutex);
-	std::map<Il2CppReflectionAssembly*, void*>::iterator entry = s_CachedMemoryMappedResourceFiles.find(assembly);
-	if (entry != s_CachedMemoryMappedResourceFiles.end())
-		return entry->second;
+        return parent_class;
+    }
 
-	return NULL;
-}
+    static os::FastMutex s_Mutex;
+    static std::vector<Image::EmbeddedResourceData> s_CachedResourceData;
+    static std::map<Il2CppReflectionAssembly*, void*> s_CachedMemoryMappedResourceFiles;
 
-void Image::CacheResourceData(EmbeddedResourceRecord record, void* data)
-{
-	os::FastAutoLock lock(&s_Mutex);
-	s_CachedResourceData.push_back(EmbeddedResourceData(record, data));
-}
+    void Image::CacheMemoryMappedResourceFile(Il2CppReflectionAssembly* assembly, void* memoryMappedFile)
+    {
+        os::FastAutoLock lock(&s_Mutex);
+        s_CachedMemoryMappedResourceFiles[assembly] = memoryMappedFile;
+    }
 
-void* Image::GetCachedResourceData(const Il2CppImage* image, const std::string& name)
-{
-	os::FastAutoLock lock(&s_Mutex);
-	for (std::vector<EmbeddedResourceData>::iterator it = s_CachedResourceData.begin(); it != s_CachedResourceData.end(); ++it)
-	{
-		if (it->record.image == image && it->record.name == name)
-			return it->data;
-	}
+    void* Image::GetCachedMemoryMappedResourceFile(Il2CppReflectionAssembly* assembly)
+    {
+        os::FastAutoLock lock(&s_Mutex);
+        std::map<Il2CppReflectionAssembly*, void*>::iterator entry = s_CachedMemoryMappedResourceFiles.find(assembly);
+        if (entry != s_CachedMemoryMappedResourceFiles.end())
+            return entry->second;
 
-	return NULL;
-}
+        return NULL;
+    }
 
-void Image::ClearCachedResourceData()
-{
-	os::FastAutoLock lock(&s_Mutex);
-	for (std::map<Il2CppReflectionAssembly*, void*>::iterator i = s_CachedMemoryMappedResourceFiles.begin(); i != s_CachedMemoryMappedResourceFiles.end(); ++i)
-		os::MemoryMappedFile::Unmap(i->second);
+    void Image::CacheResourceData(EmbeddedResourceRecord record, void* data)
+    {
+        os::FastAutoLock lock(&s_Mutex);
+        s_CachedResourceData.push_back(EmbeddedResourceData(record, data));
+    }
 
-	s_CachedMemoryMappedResourceFiles.clear();
-	s_CachedResourceData.clear();
-}
+    void* Image::GetCachedResourceData(const Il2CppImage* image, const std::string& name)
+    {
+        os::FastAutoLock lock(&s_Mutex);
+        for (std::vector<EmbeddedResourceData>::iterator it = s_CachedResourceData.begin(); it != s_CachedResourceData.end(); ++it)
+        {
+            if (it->record.image == image && it->record.name == name)
+                return it->data;
+        }
 
+        return NULL;
+    }
+
+    void Image::ClearCachedResourceData()
+    {
+        os::FastAutoLock lock(&s_Mutex);
+        for (std::map<Il2CppReflectionAssembly*, void*>::iterator i = s_CachedMemoryMappedResourceFiles.begin(); i != s_CachedMemoryMappedResourceFiles.end(); ++i)
+            os::MemoryMappedFile::Unmap(i->second);
+
+        s_CachedMemoryMappedResourceFiles.clear();
+        s_CachedResourceData.clear();
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

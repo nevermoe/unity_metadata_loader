@@ -1,9 +1,9 @@
 /*
 * Define the system and runtime performance counters.
 * Each category is defined with the macro:
-* 	PERFCTR_CAT(catid, name, help, type, instances, first_counter_id)
+*       PERFCTR_CAT(catid, name, help, type, instances, first_counter_id)
 * and after that follows the counters inside the category, defined by the macro:
-* 	PERFCTR_COUNTER(counter_id, name, help, type, field)
+*       PERFCTR_COUNTER(counter_id, name, help, type, field)
 * field is the field inside MonoPerfCounters per predefined counters.
 * Note we set it to unused for unrelated counters: it is unused
 * in those cases.

@@ -12,12 +12,10 @@ namespace System
 {
 namespace Diagnostics
 {
-
-int64_t Stopwatch::GetTimestamp()
-{
-	return il2cpp::os::Time::GetTicks100NanosecondsMonotonic ();
-}
-
+    int64_t Stopwatch::GetTimestamp()
+    {
+        return il2cpp::os::Time::GetTicks100NanosecondsMonotonic();
+    }
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace mscorlib */

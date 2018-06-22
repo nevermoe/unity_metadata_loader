@@ -247,9 +247,6 @@
     <ClCompile Include="debugger\variant.cpp">
       <Filter>debugger</Filter>
     </ClCompile>
-    <ClCompile Include="vm\Environment.cpp">
-      <Filter>vm</Filter>
-    </ClCompile>
     <ClCompile Include="os\Posix\Directory.cpp">
       <Filter>os\Posix</Filter>
     </ClCompile>
@@ -362,9 +359,6 @@
       <Filter>icalls\System\System.IO</Filter>
     </ClCompile>
     <ClCompile Include="icalls\System\System.IO\InotifyWatcher.cpp">
-      <Filter>icalls\System\System.IO</Filter>
-    </ClCompile>
-    <ClCompile Include="icalls\System\System.IO\MonoIO.cpp">
       <Filter>icalls\System\System.IO</Filter>
     </ClCompile>
     <ClCompile Include="icalls\System\System.Net\Dns.cpp">
@@ -577,23 +571,8 @@
     <ClCompile Include="utils\Memory.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="metadata\Il2CppGenericMethodLess.cpp">
-      <Filter>metadata</Filter>
-    </ClCompile>
     <ClCompile Include="vm\MemoryInformation.cpp">
       <Filter>vm</Filter>
-    </ClCompile>
-    <ClCompile Include="metadata\Il2CppGenericClassLess.cpp">
-      <Filter>metadata</Filter>
-    </ClCompile>
-    <ClCompile Include="metadata\Il2CppGenericContextLess.cpp">
-      <Filter>metadata</Filter>
-    </ClCompile>
-    <ClCompile Include="metadata\Il2CppGenericInstLess.cpp">
-      <Filter>metadata</Filter>
-    </ClCompile>
-    <ClCompile Include="metadata\Il2CppTypeLess.cpp">
-      <Filter>metadata</Filter>
     </ClCompile>
     <ClCompile Include="os\Win32\Image.cpp">
       <Filter>os\Win32</Filter>
@@ -631,9 +610,6 @@
     <ClCompile Include="os\WinRT\Locale.cpp">
       <Filter>os\WinRT</Filter>
     </ClCompile>
-    <ClCompile Include="os\WinRT\WinRTImpl.cpp">
-      <Filter>os\WinRT</Filter>
-    </ClCompile>
     <ClCompile Include="os\WinRT\Environment.cpp">
       <Filter>os\WinRT</Filter>
     </ClCompile>
@@ -646,17 +622,11 @@
     <ClCompile Include="os\Win32\Process.cpp">
       <Filter>os\Win32</Filter>
     </ClCompile>
-    <ClCompile Include="os\Posix\Process.cpp">
-      <Filter>os</Filter>
-    </ClCompile>
     <ClCompile Include="os\WinRT\Process.cpp">
       <Filter>os\WinRT</Filter>
     </ClCompile>
     <ClCompile Include="vm\Parameter.cpp">
       <Filter>vm</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\BlobReader.cpp">
-      <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="utils\DirectoryUtils.cpp">
       <Filter>utils</Filter>
@@ -710,8 +680,229 @@
     <ClCompile Include="os\Generic\WindowsRuntime.cpp">
       <Filter>os\Generic</Filter>
     </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Diagnostics\Assert.cpp">
+      <Filter>icalls\mscorlib\System.Diagnostics</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\CLRConfig.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\Exception.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\RuntimeFieldHandle.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\RuntimeType.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\RuntimeTypeHandle.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\TimeSpan.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\MissingMemberException.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System\Number.cpp">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Globalization\CalendarData.cpp">
+      <Filter>icalls\mscorlib\System.Globalization</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Globalization\CultureData.cpp">
+      <Filter>icalls\mscorlib\System.Globalization</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Reflection\RtFieldInfo.cpp">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Reflection\CustomAttributeData.cpp">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\SymbolType.cpp">
+      <Filter>icalls\mscorlib\System.Reflection.Emit</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Contexts\Context.cpp">
+      <Filter>icalls\mscorlib\System.Runtime.Remoting.Contexts</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\AsyncResult.cpp">
+      <Filter>icalls\mscorlib\System.Runtime.Remoting.Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Versioning\VersioningHelper.cpp">
+      <Filter>icalls\mscorlib\System.Runtime.Versioning</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Text\Normalization.cpp">
+      <Filter>icalls\mscorlib\System.Text</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Text\EncodingHelper.cpp">
+      <Filter>icalls\mscorlib\System.Text</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Threading\InternalThread.cpp">
+      <Filter>icalls\mscorlib\System.Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Threading\Timer.cpp">
+      <Filter>icalls\mscorlib\System.Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System.Configuration\System.Configuration\InternalConfigurationHost.cpp">
+      <Filter>icalls\System.Configuration\System.Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System.Core\System.IO.MemoryMappedFiles\MemoryMapImpl.cpp">
+      <Filter>icalls\System.Core\System.IO.MemoryMappedFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System\System.Net.NetworkInformation\MacOsIPInterfaceProperties.cpp">
+      <Filter>icalls\System\System.Net.NetworkInformation</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System\System\IOSelector.cpp">
+      <Filter>icalls\System\System</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System\System.IO\KqueueMonitor.cpp">
+      <Filter>icalls\System\System.IO</Filter>
+    </ClCompile>
+    <ClCompile Include="vm\Enum.cpp">
+      <Filter>vm</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\System\Microsoft.Win32\NativeMethods.cpp">
+      <Filter>icalls\System\Microsoft.Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Win32\NativeMethods.cpp">
+      <Filter>os\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Posix\NativeMethods.cpp">
+      <Filter>os\Posix</Filter>
+    </ClCompile>
     <ClCompile Include="os\OSX\Process.cpp">
       <Filter>os\OSX</Filter>
+    </ClCompile>
+    <ClCompile Include="metadata\Il2CppSignatureCompare.cpp">
+      <Filter>metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="metadata\Il2CppSignatureHash.cpp">
+      <Filter>metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Output.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Posix\Process.cpp">
+      <Filter>os\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="os\WinRT\Win32ApiSharedEmulation.cpp">
+      <Filter>os\WinRT</Filter>
+    </ClCompile>
+    <ClCompile Include="os\WinRT\Win32ApiWinRTEmulation.cpp">
+      <Filter>os\WinRT</Filter>
+    </ClCompile>
+    <ClCompile Include="os\WinRT\File.cpp">
+      <Filter>os\WinRT</Filter>
+    </ClCompile>
+    <ClCompile Include="os\ConditionVariable.cpp">
+      <Filter>os</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Win32\ConditionVariableImpl.cpp">
+      <Filter>os\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Posix\ConditionVariableImpl.cpp">
+      <Filter>os\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="vm\Random.cpp">
+      <Filter>vm</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Win32\CpuInfo.cpp">
+      <Filter>os\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Posix\CpuInfo.cpp">
+      <Filter>os\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Logging.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Win32\Initialize.cpp">
+      <Filter>os\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeClassHandle.cpp">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeGPtrArrayHandle.cpp">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeMarshal.cpp">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\Mono\SafeStringMarshal.cpp">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Reflection\EventInfo.cpp">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="icalls\mscorlib\System.Reflection\PropertyInfo.cpp">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="mono-structs.cpp" />
+    <ClCompile Include="vm\ThreadPoolMs.cpp">
+      <Filter>vm</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\MarshalingUtils.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="mono-runtime\il2cpp-callbacks.cpp" />
+    <ClCompile Include="mono-runtime\il2cpp-mono-support.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms-io-poll.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms-io.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms.cpp" />
+    <ClCompile Include="mono\ThreadPool\ThreadPoolMonitorThread.cpp" />
+    <ClCompile Include="mono\ThreadPool\ThreadPoolWorkerThread.cpp" />
+    <ClCompile Include="icalls\System\System.Net.NetworkInformation\LinuxNetworkInterface.cpp">
+      <Filter>icalls\System\System.Net.NetworkInformation</Filter>
+    </ClCompile>
+    <ClCompile Include="external\xamarin-android\xamarin_getifaddrs.c">
+      <Filter>external\xamarin-android</Filter>
+    </ClCompile>
+    <ClCompile Include="vm\Path.cpp">
+      <Filter>vm</Filter>
+    </ClCompile>
+    <ClCompile Include="os\Android\StackTrace.cpp">
+      <Filter>os\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Runtime.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Exception.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\File.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\NativeMethods.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\Path.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\Process.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\Time.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\TimeZone.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="os\c-api\Allocator.cpp">
+      <Filter>os\c-api</Filter>
+    </ClCompile>
+    <ClCompile Include="vm-utils\NativeSymbol.cpp">
+      <Filter>vm-utils</Filter>
+    </ClCompile>
+    <ClCompile Include="vm-utils\BlobReader.cpp">
+      <Filter>vm-utils</Filter>
+    </ClCompile>
+    <ClCompile Include="vm-utils\NativeDelegateMethodCache.cpp">
+      <Filter>vm-utils</Filter>
+    </ClCompile>
+    <ClCompile Include="vm-utils\VmStringUtils.cpp">
+      <Filter>vm-utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Environment.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1016,9 +1207,6 @@
     <ClInclude Include="icalls\System\System.IO\InotifyWatcher.h">
       <Filter>icalls\System\System.IO</Filter>
     </ClInclude>
-    <ClInclude Include="icalls\System\System.IO\MonoIO.h">
-      <Filter>icalls\System\System.IO</Filter>
-    </ClInclude>
     <ClInclude Include="icalls\System\System.Net\Dns.h">
       <Filter>icalls\System\System.Net</Filter>
     </ClInclude>
@@ -1076,7 +1264,6 @@
     <ClInclude Include="icalls\System\System.Threading\Semaphore.h">
       <Filter>icalls\System\System.Threading</Filter>
     </ClInclude>
-    <ClInclude Include="types.h" />
     <ClInclude Include="os\Console.h">
       <Filter>os</Filter>
     </ClInclude>
@@ -1188,12 +1375,6 @@
     <ClInclude Include="metadata\Il2CppTypeVector.h">
       <Filter>metadata</Filter>
     </ClInclude>
-    <ClInclude Include="utils\StdUnorderedSet.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\StdUnorderedMap.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="metadata\Il2CppGenericMethodCompare.h">
       <Filter>metadata</Filter>
     </ClInclude>
@@ -1247,21 +1428,6 @@
     <ClInclude Include="os\MemoryMappedFile.h">
       <Filter>os</Filter>
     </ClInclude>
-    <ClInclude Include="metadata\Il2CppGenericMethodLess.h">
-      <Filter>metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="metadata\Il2CppGenericClassLess.h">
-      <Filter>metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="metadata\Il2CppGenericContextLess.h">
-      <Filter>metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="metadata\Il2CppGenericInstLess.h">
-      <Filter>metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="metadata\Il2CppTypeLess.h">
-      <Filter>metadata</Filter>
-    </ClInclude>
     <ClInclude Include="os\Image.h">
       <Filter>os</Filter>
     </ClInclude>
@@ -1277,9 +1443,6 @@
     <ClInclude Include="vm\GenericContainer.h">
       <Filter>vm</Filter>
     </ClInclude>
-    <ClInclude Include="os\WinRT\WinRTImpl.h">
-      <Filter>os\WinRT</Filter>
-    </ClInclude>
     <ClInclude Include="os\WinRT\SynchronousOperation.h">
       <Filter>os\WinRT</Filter>
     </ClInclude>
@@ -1291,9 +1454,6 @@
     </ClInclude>
     <ClInclude Include="vm\Parameter.h">
       <Filter>vm</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\BlobReader.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="utils\CallOnce.h">
       <Filter>utils</Filter>
@@ -1357,6 +1517,264 @@
       <Filter>gc</Filter>
     </ClInclude>
     <ClInclude Include="vm\GC.h" />
+    <ClInclude Include="icalls\System\System.Diagnostics\perfcounters-def.h" />
+    <ClInclude Include="icalls\System\System.Diagnostics\PerformanceCounterUtils.h" />
+    <ClInclude Include="utils\StringView.h" />
+    <ClInclude Include="utils\StringViewStream.h" />
+    <ClInclude Include="icalls\mscorlib\System.Diagnostics\Assert.h">
+      <Filter>icalls\mscorlib\System.Diagnostics</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\CLRConfig.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\Exception.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\Number.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\RuntimeFieldHandle.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\RuntimeType.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\RuntimeTypeHandle.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\TimeSpan.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\MissingMemberException.h">
+      <Filter>icalls\mscorlib\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Globalization\CultureData.h">
+      <Filter>icalls\mscorlib\System.Globalization</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Globalization\CalendarData.h">
+      <Filter>icalls\mscorlib\System.Globalization</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Reflection\CustomAttributeData.h">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Reflection\RtFieldInfo.h">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\SymbolType.h">
+      <Filter>icalls\mscorlib\System.Reflection.Emit</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Contexts\Context.h">
+      <Filter>icalls\mscorlib\System.Runtime.Remoting.Contexts</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\AsyncResult.h">
+      <Filter>icalls\mscorlib\System.Runtime.Remoting.Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Versioning\VersioningHelper.h">
+      <Filter>icalls\mscorlib\System.Runtime.Versioning</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Text\EncodingHelper.h">
+      <Filter>icalls\mscorlib\System.Text</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Text\Normalization.h">
+      <Filter>icalls\mscorlib\System.Text</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Threading\Timer.h">
+      <Filter>icalls\mscorlib\System.Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Threading\InternalThread.h">
+      <Filter>icalls\mscorlib\System.Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System.Configuration\System.Configuration\InternalConfigurationHost.h">
+      <Filter>icalls\System.Configuration\System.Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System.Core\System.IO.MemoryMappedFiles\MemoryMapImpl.h">
+      <Filter>icalls\System.Core\System.IO.MemoryMappedFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System\System.Net.NetworkInformation\MacOsIPInterfaceProperties.h">
+      <Filter>icalls\System\System.Net.NetworkInformation</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System\System\IOSelector.h">
+      <Filter>icalls\System\System</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System\System.IO\KqueueMonitor.h">
+      <Filter>icalls\System\System.IO</Filter>
+    </ClInclude>
+    <ClInclude Include="vm\Enum.h">
+      <Filter>vm</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\System\Microsoft.Win32\NativeMethods.h">
+      <Filter>icalls\System\Microsoft.Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\NativeMethods.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="metadata\Il2CppSignatureCompare.h">
+      <Filter>metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="metadata\Il2CppSignatureHash.h">
+      <Filter>metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="external\google\sparsehash\dense_hash_map.h">
+      <Filter>external\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="external\google\sparsehash\densehashtable.h">
+      <Filter>external\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="external\google\sparsehash\type_traits.h">
+      <Filter>external\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="external\google\sparsehash\dense_hash_set.h">
+      <Filter>external\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Output.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Il2CppHashMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Il2CppHashSet.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\KeyWrapper.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="os\WinRT\Win32ApiSharedEmulation.h">
+      <Filter>os\WinRT</Filter>
+    </ClInclude>
+    <ClInclude Include="os\WinRT\Win32ApiWinRTEmulation.h">
+      <Filter>os\WinRT</Filter>
+    </ClInclude>
+    <ClInclude Include="os\ConditionVariable.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="os\Win32\ConditionVariableImpl.h">
+      <Filter>os\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\Posix\ConditionVariableImpl.h">
+      <Filter>os\Posix</Filter>
+    </ClInclude>
+    <ClInclude Include="icallincludes.h" />
+    <ClInclude Include="vm\Random.h">
+      <Filter>vm</Filter>
+    </ClInclude>
+    <ClInclude Include="codegen\il2cpp-codegen-mono.h">
+      <Filter>codegen</Filter>
+    </ClInclude>
+    <ClInclude Include="os\CpuInfo.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="il2cpp-string-types.h" />
+    <ClInclude Include="gc\AppendOnlyGCHashMap.h">
+      <Filter>gc</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeClassHandle.h">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeGPtrArrayHandle.h">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeMarshal.h">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\Mono\SafeStringMarshal.h">
+      <Filter>icalls\mscorlib\Mono</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Reflection\EventInfo.h">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System.Reflection\PropertyInfo.h">
+      <Filter>icalls\mscorlib\System.Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="mono-structs.h" />
+    <ClInclude Include="vm\ThreadPoolMs.h">
+      <Filter>vm</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Logging.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="icalls\mscorlib\System\TimeZoneInfo.h" />
+    <ClInclude Include="il2cpp-vm-support.h" />
+    <ClInclude Include="mono-runtime\il2cpp-callbacks.h" />
+    <ClInclude Include="mono-runtime\il2cpp-mapping.h" />
+    <ClInclude Include="mono-runtime\il2cpp-mono-support.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolDataStructures.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms-io-poll.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms-io.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolMacros.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolMonitorThread.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolWorkerThread.h" />
+    <ClInclude Include="utils\MarshalingUtils.h" />
+    <ClInclude Include="utils\NativeSymbol.h" />
+    <ClInclude Include="vm\CachedCCWBase.h" />
+    <ClInclude Include="vm\NonCachedCCWBase.h" />
+    <ClInclude Include="icalls\System\System.Net.NetworkInformation\LinuxNetworkInterface.h">
+      <Filter>icalls\System\System.Net.NetworkInformation</Filter>
+    </ClInclude>
+    <ClInclude Include="external\xamarin-android\logger.h">
+      <Filter>external\xamarin-android</Filter>
+    </ClInclude>
+    <ClInclude Include="external\xamarin-android\monodroid.h">
+      <Filter>external\xamarin-android</Filter>
+    </ClInclude>
+    <ClInclude Include="external\xamarin-android\xamarin_getifaddrs.h">
+      <Filter>external\xamarin-android</Filter>
+    </ClInclude>
+    <ClInclude Include="vm\Path.h">
+      <Filter>vm</Filter>
+    </ClInclude>
+    <ClInclude Include="codegen\il2cpp-codegen-common.h">
+      <Filter>codegen</Filter>
+    </ClInclude>
+    <ClInclude Include="codegen\il2cpp-codegen-il2cpp.h">
+      <Filter>codegen</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Runtime.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Exception.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\File-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\NativeMethods-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\Path-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\Process-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\Time-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\TimeZone-c-api.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="os\c-api\Allocator.h">
+      <Filter>os\c-api</Filter>
+    </ClInclude>
+    <ClInclude Include="vm-utils\NativeSymbol.h">
+      <Filter>vm-utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vm-utils\BlobReader.h">
+      <Filter>vm-utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vm-utils\NativeDelegateMethodCache.h">
+      <Filter>vm-utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vm-utils\VmStringUtils.h">
+      <Filter>vm-utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vm-utils\BlobReader.h" />
+    <ClInclude Include="vm-utils\NativeDelegateMethodCache.h" />
+    <ClInclude Include="vm-utils\NativeSymbol.h" />
+    <ClInclude Include="vm-utils\VmStringUtils.h" />
+    <ClInclude Include="utils\Environment.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="blob.h" />
@@ -1624,9 +2042,6 @@
     </ClInclude>
     <ClInclude Include="debugger\variant.h">
       <Filter>debugger</Filter>
-    </ClInclude>
-    <ClInclude Include="vm\Environment.h">
-      <Filter>vm</Filter>
     </ClInclude>
     <ClInclude Include="os\Environment.h">
       <Filter>os</Filter>
@@ -2076,6 +2491,57 @@
     </Filter>
     <Filter Include="os\Unity">
       <UniqueIdentifier>{0430df54-ee7b-4738-bea9-75626c882575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\mscorlib\System.Runtime.Remoting.Contexts">
+      <UniqueIdentifier>{1cb9ee6f-bcb5-4532-85fb-a0d143f92f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\mscorlib\System.Runtime.Versioning">
+      <UniqueIdentifier>{63befc8d-e21a-4298-833c-7fee92721959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System.Configuration">
+      <UniqueIdentifier>{2caaeb5d-64a8-4a7a-b7d6-f3a34f6518ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System.Configuration\System.Configuration">
+      <UniqueIdentifier>{275c89c7-b7c2-44f1-9ef9-8a1ee72d4be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System.Core">
+      <UniqueIdentifier>{a0b052a6-7577-438c-b228-ec9aa944aa34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System.Core\System.IO.MemoryMappedFiles">
+      <UniqueIdentifier>{95cd4b03-aecf-40eb-bc1e-fbce3595ca45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System\System.Net.NetworkInformation">
+      <UniqueIdentifier>{2917f620-4eeb-4519-8c89-b41c2acc1f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System\System">
+      <UniqueIdentifier>{9d8ad3a4-09bc-495c-b303-141f8391e497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icalls\System\Microsoft.Win32">
+      <UniqueIdentifier>{c5851c1d-3fab-4248-a54a-05bbd5690c37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mono">
+      <UniqueIdentifier>{31d18c78-b7d7-4ffd-ac5b-afc9849ed2b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\google">
+      <UniqueIdentifier>{cb9dfdd5-8359-4a4b-a94c-d6bcb85032e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\google\sparsehash">
+      <UniqueIdentifier>{b4723b4d-6f82-47d4-a565-c63585dc3646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mono\ThreadPool">
+      <UniqueIdentifier>{1f2821fc-c40c-40c8-ad24-200ee6b123fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\xamarin-android">
+      <UniqueIdentifier>{4862e90c-23f0-4fcf-a14b-787c976f6083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="os\Android">
+      <UniqueIdentifier>{9b67d9fa-cf50-45a7-93fc-b2e25ac4e73a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="os\c-api">
+      <UniqueIdentifier>{af05b2ca-3dde-4659-8af7-c9655f11d420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vm-utils">
+      <UniqueIdentifier>{282f089e-e7a0-494c-8a4b-f56ca071fb01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

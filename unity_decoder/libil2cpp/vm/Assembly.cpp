@@ -3,12 +3,11 @@
 #include "vm/AssemblyName.h"
 #include "vm/MetadataCache.h"
 #include "vm/Runtime.h"
-#include <sstream>
 #include "tabledefs.h"
 #include "class-internals.h"
 
 #if IL2CPP_DEBUGGER_ENABLED
-	#include "il2cpp-debugger.h"
+    #include "il2cpp-debugger.h"
 #endif
 
 #include <vector>
@@ -18,111 +17,109 @@ namespace il2cpp
 {
 namespace vm
 {
-static AssemblyVector s_Assemblies;
+    static AssemblyVector s_Assemblies;
 
-AssemblyVector* Assembly::GetAllAssemblies()
-{
-	return &s_Assemblies;
-}
+    AssemblyVector* Assembly::GetAllAssemblies()
+    {
+        return &s_Assemblies;
+    }
 
-const Il2CppAssembly* Assembly::GetLoadedAssembly(const char* name)
-{
-	for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
-	{
-		if (strcmp(MetadataCache::GetStringFromIndex ((*assembly)->aname.nameIndex), name) == 0)
-			return *assembly;
-	}
+    const Il2CppAssembly* Assembly::GetLoadedAssembly(const char* name)
+    {
+        for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
+        {
+            if (strcmp(MetadataCache::GetStringFromIndex((*assembly)->aname.nameIndex), name) == 0)
+                return *assembly;
+        }
 
-	return NULL;
-}
+        return NULL;
+    }
 
-Il2CppImage* Assembly::GetImage (const Il2CppAssembly* assembly)
-{
-	return MetadataCache::GetImageFromIndex (assembly->imageIndex);
-}
+    Il2CppImage* Assembly::GetImage(const Il2CppAssembly* assembly)
+    {
+        return MetadataCache::GetImageFromIndex(assembly->imageIndex);
+    }
 
+    void Assembly::GetReferencedAssemblies(const Il2CppAssembly* assembly, AssemblyNameVector* target)
+    {
+        for (int32_t sourceIndex = 0; sourceIndex < assembly->referencedAssemblyCount; sourceIndex++)
+        {
+            int32_t indexIntoMainAssemblyTable = MetadataCache::GetReferenceAssemblyIndexIntoAssemblyTable(assembly->referencedAssemblyStart + sourceIndex);
+            const Il2CppAssembly* refAssembly = MetadataCache::GetAssemblyFromIndex(indexIntoMainAssemblyTable);
 
+            target->push_back(&refAssembly->aname);
+        }
+    }
 
-void Assembly::GetReferencedAssemblies (const Il2CppAssembly* assembly, AssemblyNameVector* target)
-{
-	for (int32_t sourceIndex = 0; sourceIndex < assembly->referencedAssemblyCount; sourceIndex++)
-	{
-		int32_t indexIntoMainAssemblyTable = MetadataCache::GetReferenceAssemblyIndexIntoAssemblyTable (assembly->referencedAssemblyStart + sourceIndex);
-		const Il2CppAssembly* refAssembly = MetadataCache::GetAssemblyFromIndex (indexIntoMainAssemblyTable);
+    static bool ends_with(const char *str, const char *suffix)
+    {
+        if (!str || !suffix)
+            return false;
 
-		target->push_back (&refAssembly->aname);
-	}
-}
+        const size_t lenstr = strlen(str);
+        const size_t lensuffix = strlen(suffix);
+        if (lensuffix >  lenstr)
+            return false;
 
-static bool ends_with(const char *str, const char *suffix)
-{
-	if (!str || !suffix)
-		return false;
+        return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+    }
 
-	const size_t lenstr = strlen (str);
-	const size_t lensuffix = strlen (suffix);
-	if (lensuffix >  lenstr)
-		return false;
+    const Il2CppAssembly* Assembly::Load(const char* name)
+    {
+        const size_t len = strlen(name);
 
-	return strncmp (str + lenstr - lensuffix, suffix, lensuffix) == 0;
-}
+        for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
+        {
+            if (strcmp(name, MetadataCache::GetStringFromIndex((*assembly)->aname.nameIndex)) == 0)
+                return *assembly;
+        }
 
-const Il2CppAssembly* Assembly::Load (const char* name)
-{
-	const size_t len = strlen (name);
+        if (!ends_with(name, ".dll") && !ends_with(name, ".exe"))
+        {
+            char *tmp = new char[len + 5];
 
-	for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
-	{
-		if (strcmp(name, MetadataCache::GetStringFromIndex ((*assembly)->aname.nameIndex)) == 0)
-			return *assembly;
-	}
+            memset(tmp, 0, len + 5);
 
-	if (!ends_with (name, ".dll") && !ends_with (name, ".exe"))
-	{
-		char *tmp = new char[len + 5];
+            memcpy(tmp, name, len);
+            memcpy(tmp + len, ".dll", 4);
 
-		memset (tmp, 0, len + 5);
+            const Il2CppAssembly* result = Load(tmp);
 
-		memcpy (tmp, name, len);
-		memcpy (tmp + len, ".dll", 4);
+            if (!result)
+            {
+                memcpy(tmp + len, ".exe", 4);
+                result = Load(tmp);
+            }
 
-		const Il2CppAssembly* result = Load (tmp);
+            delete[] tmp;
 
-		if (!result)
-		{
-			memcpy (tmp + len, ".exe", 4);
-			result = Load (tmp);
-		}
+            return result;
+        }
+        else
+        {
+            for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
+            {
+                if (!strcmp(name, MetadataCache::GetImageFromIndex((*assembly)->imageIndex)->name))
+                    return *assembly;
+            }
 
-		delete[] tmp;
+            return NULL;
+        }
+    }
 
-		return result;
-	} else
-	{
-		for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
-		{
-			if (!strcmp(name, MetadataCache::GetImageFromIndex ((*assembly)->imageIndex)->name))
-				return *assembly;
-		}
+    void Assembly::Register(const Il2CppAssembly* assembly)
+    {
+        s_Assemblies.push_back(assembly);
+    }
 
-		return NULL;
-	}
-}
-
-void Assembly::Register (const Il2CppAssembly* assembly)
-{
-	s_Assemblies.push_back(assembly);
-}
-
-void Assembly::Initialize ()
-{
-	for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
-	{
+    void Assembly::Initialize()
+    {
+        for (AssemblyVector::const_iterator assembly = s_Assemblies.begin(); assembly != s_Assemblies.end(); ++assembly)
+        {
 #if IL2CPP_DEBUGGER_ENABLED
-		il2cpp_debugger_notify_assembly_load(*assembly);
+            il2cpp_debugger_notify_assembly_load(*assembly);
 #endif
-	}
-}
-
+        }
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

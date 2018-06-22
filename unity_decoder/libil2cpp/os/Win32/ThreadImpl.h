@@ -9,54 +9,58 @@
 
 #include "WindowsHeaders.h"
 
-#define IL2CPP_DEFAULT_STACK_SIZE ( 1 * 1024 * 1024)			// default .NET stacksize is 1mb
+#define IL2CPP_DEFAULT_STACK_SIZE ( 1 * 1024 * 1024)            // default .NET stacksize is 1mb
 
 namespace il2cpp
 {
 namespace os
 {
+    class ThreadImpl : public il2cpp::utils::NonCopyable
+    {
+    public:
+        ThreadImpl();
+        ~ThreadImpl();
 
-class ThreadImpl : public il2cpp::utils::NonCopyable
-{
-public:
-	ThreadImpl();
-	~ThreadImpl();
+        uint64_t Id();
+        ErrorCode Run(Thread::StartFunc func, void* arg);
+        void SetName(const std::string& name);
+        void SetPriority(ThreadPriority priority);
+        ThreadPriority GetPriority();
 
-	uint64_t Id ();
-	ErrorCode Run (Thread::StartFunc func, void* arg);
-	void SetName (const std::string& name);
-	void SetPriority (ThreadPriority priority);
-	
-	void SetStackSize(size_t newsize)
-	{
-		// only makes sense if it's called BEFORE the thread has been created
-		assert(m_ThreadHandle == NULL);
-		// if newsize is zero we use the per-platform default value for size of stack
-		if (newsize == 0)
-		{
-			newsize = IL2CPP_DEFAULT_STACK_SIZE;
-		}
-		m_StackSize = newsize;
-	}
-	
-	void QueueUserAPC (Thread::APCFunc func, void* context);
+        void SetStackSize(size_t newsize)
+        {
+            // only makes sense if it's called BEFORE the thread has been created
+            IL2CPP_ASSERT(m_ThreadHandle == NULL);
+            // if newsize is zero we use the per-platform default value for size of stack
+            if (newsize == 0)
+            {
+                newsize = IL2CPP_DEFAULT_STACK_SIZE;
+            }
+            m_StackSize = newsize;
+        }
 
-	ApartmentState GetApartment();
-	ApartmentState GetExplicitApartment();
-	ApartmentState SetApartment(ApartmentState state);
-	void SetExplicitApartment(ApartmentState state);
+        void QueueUserAPC(Thread::APCFunc func, void* context);
 
-	static void Sleep (uint32_t ms, bool interruptible);
-	static uint64_t CurrentThreadId ();
-	static ThreadImpl* CreateForCurrentThread ();
+        ApartmentState GetApartment();
+        ApartmentState GetExplicitApartment();
+        ApartmentState SetApartment(ApartmentState state);
+        void SetExplicitApartment(ApartmentState state);
 
-private:
-	HANDLE m_ThreadHandle;
-	volatile DWORD m_ThreadId;
-	SIZE_T m_StackSize;
-	ApartmentState m_ApartmentState;
-};
+        static void Sleep(uint32_t ms, bool interruptible);
+        static uint64_t CurrentThreadId();
+        static ThreadImpl* CreateForCurrentThread();
 
+#if NET_4_0
+        static bool YieldInternal();
+#endif
+
+    private:
+        HANDLE m_ThreadHandle;
+        volatile DWORD m_ThreadId;
+        SIZE_T m_StackSize;
+        ApartmentState m_ApartmentState;
+        ThreadPriority m_Priority;
+    };
 }
 }
 

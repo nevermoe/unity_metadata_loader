@@ -26,13 +26,11 @@ namespace System
 {
 namespace Diagnostics
 {
-
-class LIBIL2CPP_CODEGEN_API DefaultTraceListener
-{
-public:
-	static void WriteWindowsDebugString (Il2CppString* message);
-};
-
+    class LIBIL2CPP_CODEGEN_API DefaultTraceListener
+    {
+    public:
+        static void WriteWindowsDebugString(Il2CppString* message);
+    };
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace System */

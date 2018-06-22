@@ -14,15 +14,17 @@ namespace System
 {
 namespace Reflection
 {
+    class LIBIL2CPP_CODEGEN_API MonoMethodInfo
+    {
+    public:
+        static void get_method_info(Il2CppIntPtr methodPtr, Il2CppMethodInfo* info);
+        static void* /* System.Reflection.Emit.UnmanagedMarshal */ get_retval_marshal(Il2CppIntPtr handle);
+        static Il2CppArray* get_parameter_info(Il2CppIntPtr methodPtr, Il2CppReflectionMethod* member);
 
-class LIBIL2CPP_CODEGEN_API MonoMethodInfo
-{
-public:
-	static void get_method_info (Il2CppIntPtr methodPtr, Il2CppMethodInfo* info);
-	static void* /* System.Reflection.Emit.UnmanagedMarshal */ get_retval_marshal (Il2CppIntPtr handle);
-	static Il2CppArray* get_parameter_info (Il2CppIntPtr methodPtr, Il2CppReflectionMethod* member);
-};
-	
+#if NET_4_0
+        static int32_t get_method_attributes(Il2CppIntPtr methodPtr);
+#endif
+    };
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

@@ -1,6 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug45|ARM">
+      <Configuration>Debug45</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug45|Win32">
+      <Configuration>Debug45</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug45|x64">
+      <Configuration>Debug45</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug_Tests|ARM">
       <Configuration>Debug_Tests</Configuration>
       <Platform>ARM</Platform>
@@ -25,6 +37,18 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release45|ARM">
+      <Configuration>Release45</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release45|Win32">
+      <Configuration>Release45</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release45|x64">
+      <Configuration>Release45</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|ARM">
       <Configuration>Release</Configuration>
       <Platform>ARM</Platform>
@@ -37,6 +61,18 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Debug45|ARM">
+      <Configuration>WinRT-UWP-Debug45</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Debug45|Win32">
+      <Configuration>WinRT-UWP-Debug45</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Debug45|x64">
+      <Configuration>WinRT-UWP-Debug45</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="WinRT-UWP-Debug|ARM">
       <Configuration>WinRT-UWP-Debug</Configuration>
       <Platform>ARM</Platform>
@@ -47,6 +83,18 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="WinRT-UWP-Debug|x64">
       <Configuration>WinRT-UWP-Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Release45|ARM">
+      <Configuration>WinRT-UWP-Release45</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Release45|Win32">
+      <Configuration>WinRT-UWP-Release45</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WinRT-UWP-Release45|x64">
+      <Configuration>WinRT-UWP-Release45</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="WinRT-UWP-Release|ARM">
@@ -77,12 +125,29 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -96,12 +161,31 @@
     <PlatformToolset>v140</PlatformToolset>
     <WindowsAppContainer>true</WindowsAppContainer>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -129,13 +213,33 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -151,7 +255,21 @@
     <PlatformToolset>v140</PlatformToolset>
     <WindowsAppContainer>true</WindowsAppContainer>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -165,25 +283,51 @@
     <PlatformToolset>v140</PlatformToolset>
     <WindowsAppContainer>true</WindowsAppContainer>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Tests|Win32'" Label="PropertySheets">
@@ -198,19 +342,37 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release45|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release45|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release45|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -218,7 +380,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|ARM'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -226,7 +396,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|ARM'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|ARM'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -234,7 +412,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|ARM'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -242,7 +428,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|ARM'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|ARM'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -254,7 +448,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|x64'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -262,7 +464,15 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release45|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|x64'">
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -272,8 +482,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -295,8 +528,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|ARM'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -318,8 +574,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -341,8 +620,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|ARM'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -364,8 +666,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug45|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -387,8 +712,31 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Debug45|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=0;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -410,8 +758,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -433,8 +781,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -456,8 +804,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;IL2CPP_DEBUGGER_ENABLED=1;IL2CPP_DEBUGGER_LOG=1;IL2CPP_UNIT_TESTS_ENABLED=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -481,8 +829,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release45|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -503,8 +873,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release45|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -525,8 +917,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -547,8 +961,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -569,8 +1005,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release45|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -591,8 +1049,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WinRT-UWP-Release45|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;NDEBUG;_LIB;NET_4_0=1;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\..\external\boehmgc\include;.\;..\libmono</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/we4002 %(AdditionalOptions)</AdditionalOptions>
@@ -609,6 +1089,9 @@
     <ClInclude Include="blob.h" />
     <ClInclude Include="char-conversions.h" />
     <ClInclude Include="class-internals.h" />
+    <ClInclude Include="codegen\il2cpp-codegen-common.h" />
+    <ClInclude Include="codegen\il2cpp-codegen-il2cpp.h" />
+    <ClInclude Include="codegen\il2cpp-codegen-mono.h" />
     <ClInclude Include="codegen\il2cpp-codegen.h" />
     <ClInclude Include="debugger\agent.h" />
     <ClInclude Include="debugger\command-line-parser.h" />
@@ -642,21 +1125,37 @@
     <ClInclude Include="debugger\transport.h" />
     <ClInclude Include="debugger\variant.h" />
     <ClInclude Include="externals\MonoPosixHelper.h" />
+    <ClInclude Include="external\google\sparsehash\densehashtable.h" />
+    <ClInclude Include="external\google\sparsehash\dense_hash_map.h" />
+    <ClInclude Include="external\google\sparsehash\dense_hash_set.h" />
+    <ClInclude Include="external\google\sparsehash\type_traits.h" />
+    <ClInclude Include="external\xamarin-android\logger.h" />
+    <ClInclude Include="external\xamarin-android\monodroid.h" />
+    <ClInclude Include="external\xamarin-android\xamarin_getifaddrs.h" />
     <ClInclude Include="gc\Allocator.h" />
+    <ClInclude Include="gc\AppendOnlyGCHashMap.h" />
     <ClInclude Include="gc\GarbageCollector.h" />
     <ClInclude Include="gc\GarbageCollectorImpl.h" />
     <ClInclude Include="gc\GCHandle.h" />
     <ClInclude Include="gc\gc_wrapper.h" />
     <ClInclude Include="gc\WriteBarrier.h" />
+    <ClInclude Include="icallincludes.h" />
     <ClInclude Include="icalls\mscorlib\Mono.Globalization.Unicode\Normalization.h" />
     <ClInclude Include="icalls\mscorlib\Mono.Interop\ComInteropProxy.h" />
     <ClInclude Include="icalls\mscorlib\Mono.Security.Cryptography\KeyPairPersistence.h" />
     <ClInclude Include="icalls\mscorlib\Mono\Runtime.h" />
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeClassHandle.h" />
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeGPtrArrayHandle.h" />
+    <ClInclude Include="icalls\mscorlib\Mono\RuntimeMarshal.h" />
+    <ClInclude Include="icalls\mscorlib\Mono\SafeStringMarshal.h" />
+    <ClInclude Include="icalls\mscorlib\System.Diagnostics\Assert.h" />
     <ClInclude Include="icalls\mscorlib\System.Diagnostics\Debugger.h" />
     <ClInclude Include="icalls\mscorlib\System.Diagnostics\StackFrame.h" />
     <ClInclude Include="icalls\mscorlib\System.Diagnostics\StackTrace.h" />
+    <ClInclude Include="icalls\mscorlib\System.Globalization\CalendarData.h" />
     <ClInclude Include="icalls\mscorlib\System.Globalization\CompareInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Globalization\CompareOptions.h" />
+    <ClInclude Include="icalls\mscorlib\System.Globalization\CultureData.h" />
     <ClInclude Include="icalls\mscorlib\System.Globalization\CultureInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Globalization\CultureInfoInternals.h" />
     <ClInclude Include="icalls\mscorlib\System.Globalization\CultureInfoTables.h" />
@@ -673,9 +1172,12 @@
     <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\MethodBuilder.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\ModuleBuilder.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\SignatureHelper.h" />
+    <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\SymbolType.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection.Emit\TypeBuilder.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\Assembly.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\AssemblyName.h" />
+    <ClInclude Include="icalls\mscorlib\System.Reflection\CustomAttributeData.h" />
+    <ClInclude Include="icalls\mscorlib\System.Reflection\EventInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\FieldInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\MemberInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\MethodBase.h" />
@@ -690,13 +1192,18 @@
     <ClInclude Include="icalls\mscorlib\System.Reflection\MonoMethodInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\MonoPropertyInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Reflection\ParameterInfo.h" />
+    <ClInclude Include="icalls\mscorlib\System.Reflection\PropertyInfo.h" />
+    <ClInclude Include="icalls\mscorlib\System.Reflection\RtFieldInfo.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.CompilerServices\RuntimeHelpers.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.InteropServices\GCHandle.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.InteropServices\Marshal.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Activation\ActivationServices.h" />
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Contexts\Context.h" />
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\AsyncResult.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\MonoMethodMessage.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting.Proxies\RealProxy.h" />
     <ClInclude Include="icalls\mscorlib\System.Runtime.Remoting\RemotingServices.h" />
+    <ClInclude Include="icalls\mscorlib\System.Runtime.Versioning\VersioningHelper.h" />
     <ClInclude Include="icalls\mscorlib\System.Security.Cryptography\RNGCryptoServiceProvider.h" />
     <ClInclude Include="icalls\mscorlib\System.Security.Policy\Evidence.h" />
     <ClInclude Include="icalls\mscorlib\System.Security.Principal\WindowsIdentity.h" />
@@ -705,12 +1212,16 @@
     <ClInclude Include="icalls\mscorlib\System.Security\SecurityFrame.h" />
     <ClInclude Include="icalls\mscorlib\System.Security\SecurityManager.h" />
     <ClInclude Include="icalls\mscorlib\System.Text\Encoding.h" />
+    <ClInclude Include="icalls\mscorlib\System.Text\EncodingHelper.h" />
+    <ClInclude Include="icalls\mscorlib\System.Text\Normalization.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\Interlocked.h" />
+    <ClInclude Include="icalls\mscorlib\System.Threading\InternalThread.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\Monitor.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\Mutex.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\NativeEventCalls.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\Thread.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\ThreadPool.h" />
+    <ClInclude Include="icalls\mscorlib\System.Threading\Timer.h" />
     <ClInclude Include="icalls\mscorlib\System.Threading\WaitHandle.h" />
     <ClInclude Include="icalls\mscorlib\System\Activator.h" />
     <ClInclude Include="icalls\mscorlib\System\AppDomain.h" />
@@ -718,6 +1229,7 @@
     <ClInclude Include="icalls\mscorlib\System\Array.h" />
     <ClInclude Include="icalls\mscorlib\System\Buffer.h" />
     <ClInclude Include="icalls\mscorlib\System\Char.h" />
+    <ClInclude Include="icalls\mscorlib\System\CLRConfig.h" />
     <ClInclude Include="icalls\mscorlib\System\ConsoleDriver.h" />
     <ClInclude Include="icalls\mscorlib\System\Convert.h" />
     <ClInclude Include="icalls\mscorlib\System\CurrentSystemTimeZone.h" />
@@ -727,19 +1239,30 @@
     <ClInclude Include="icalls\mscorlib\System\Double.h" />
     <ClInclude Include="icalls\mscorlib\System\Enum.h" />
     <ClInclude Include="icalls\mscorlib\System\Environment.h" />
+    <ClInclude Include="icalls\mscorlib\System\Exception.h" />
     <ClInclude Include="icalls\mscorlib\System\GC.h" />
     <ClInclude Include="icalls\mscorlib\System\Math.h" />
+    <ClInclude Include="icalls\mscorlib\System\MissingMemberException.h" />
     <ClInclude Include="icalls\mscorlib\System\MonoCustomAttrs.h" />
     <ClInclude Include="icalls\mscorlib\System\MonoEnumInfo.h" />
     <ClInclude Include="icalls\mscorlib\System\MonoType.h" />
+    <ClInclude Include="icalls\mscorlib\System\Number.h" />
     <ClInclude Include="icalls\mscorlib\System\NumberFormatter.h" />
     <ClInclude Include="icalls\mscorlib\System\Object.h" />
+    <ClInclude Include="icalls\mscorlib\System\RuntimeFieldHandle.h" />
     <ClInclude Include="icalls\mscorlib\System\RuntimeMethodHandle.h" />
+    <ClInclude Include="icalls\mscorlib\System\RuntimeType.h" />
+    <ClInclude Include="icalls\mscorlib\System\RuntimeTypeHandle.h" />
     <ClInclude Include="icalls\mscorlib\System\String.h" />
+    <ClInclude Include="icalls\mscorlib\System\TimeSpan.h" />
+    <ClInclude Include="icalls\mscorlib\System\TimeZoneInfo.h" />
     <ClInclude Include="icalls\mscorlib\System\Type.h" />
     <ClInclude Include="icalls\mscorlib\System\TypedReference.h" />
     <ClInclude Include="icalls\mscorlib\System\ValueType.h" />
     <ClInclude Include="icalls\mscorlib\System\__ComObject.h" />
+    <ClInclude Include="icalls\System.Configuration\System.Configuration\InternalConfigurationHost.h" />
+    <ClInclude Include="icalls\System.Core\System.IO.MemoryMappedFiles\MemoryMapImpl.h" />
+    <ClInclude Include="icalls\System\Microsoft.Win32\NativeMethods.h" />
     <ClInclude Include="icalls\System\System.ComponentModel\Win32Exception.h" />
     <ClInclude Include="icalls\System\System.Configuration\DefaultConfig.h" />
     <ClInclude Include="icalls\System\System.Configuration\InternalConfigurationHost.h" />
@@ -754,17 +1277,22 @@
     <ClInclude Include="icalls\System\System.IO\FAMWatcher.h" />
     <ClInclude Include="icalls\System\System.IO\FileSystemWatcher.h" />
     <ClInclude Include="icalls\System\System.IO\InotifyWatcher.h" />
-    <ClInclude Include="icalls\System\System.IO\MonoIO.h" />
+    <ClInclude Include="icalls\System\System.IO\KqueueMonitor.h" />
+    <ClInclude Include="icalls\System\System.Net.NetworkInformation\LinuxNetworkInterface.h" />
+    <ClInclude Include="icalls\System\System.Net.NetworkInformation\MacOsIPInterfaceProperties.h" />
     <ClInclude Include="icalls\System\System.Net.Sockets\Socket.h" />
     <ClInclude Include="icalls\System\System.Net.Sockets\SocketException.h" />
     <ClInclude Include="icalls\System\System.Net\Dns.h" />
     <ClInclude Include="icalls\System\System.Threading\Semaphore.h" />
+    <ClInclude Include="icalls\System\System\IOSelector.h" />
     <ClInclude Include="il2cpp-api-functions.h" />
     <ClInclude Include="il2cpp-api-types.h" />
     <ClInclude Include="il2cpp-api.h" />
     <ClInclude Include="il2cpp-config.h" />
     <ClInclude Include="il2cpp-debugger.h" />
     <ClInclude Include="il2cpp-metadata.h" />
+    <ClInclude Include="il2cpp-string-types.h" />
+    <ClInclude Include="il2cpp-vm-support.h" />
     <ClInclude Include="metadata.h" />
     <ClInclude Include="metadata\ArrayMetadata.h" />
     <ClInclude Include="metadata\FieldLayout.h" />
@@ -773,25 +1301,42 @@
     <ClInclude Include="metadata\GenericSharing.h" />
     <ClInclude Include="metadata\Il2CppGenericClassCompare.h" />
     <ClInclude Include="metadata\Il2CppGenericClassHash.h" />
-    <ClInclude Include="metadata\Il2CppGenericClassLess.h" />
     <ClInclude Include="metadata\Il2CppGenericContextCompare.h" />
     <ClInclude Include="metadata\Il2CppGenericContextHash.h" />
-    <ClInclude Include="metadata\Il2CppGenericContextLess.h" />
     <ClInclude Include="metadata\Il2CppGenericInstCompare.h" />
     <ClInclude Include="metadata\Il2CppGenericInstHash.h" />
-    <ClInclude Include="metadata\Il2CppGenericInstLess.h" />
     <ClInclude Include="metadata\Il2CppGenericMethodCompare.h" />
     <ClInclude Include="metadata\Il2CppGenericMethodHash.h" />
-    <ClInclude Include="metadata\Il2CppGenericMethodLess.h" />
+    <ClInclude Include="metadata\Il2CppSignatureCompare.h" />
+    <ClInclude Include="metadata\Il2CppSignatureHash.h" />
     <ClInclude Include="metadata\Il2CppTypeCompare.h" />
     <ClInclude Include="metadata\Il2CppTypeHash.h" />
-    <ClInclude Include="metadata\Il2CppTypeLess.h" />
     <ClInclude Include="metadata\Il2CppTypeVector.h" />
+    <ClInclude Include="mono-structs.h" />
+    <ClInclude Include="mono-runtime\il2cpp-callbacks.h" />
+    <ClInclude Include="mono-runtime\il2cpp-mapping.h" />
+    <ClInclude Include="mono-runtime\il2cpp-mono-support.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolDataStructures.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms-io-poll.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms-io.h" />
+    <ClInclude Include="mono\ThreadPool\threadpool-ms.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolMacros.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolMonitorThread.h" />
+    <ClInclude Include="mono\ThreadPool\ThreadPoolWorkerThread.h" />
     <ClInclude Include="normalization-tables.h" />
     <ClInclude Include="number-formatter.h" />
     <ClInclude Include="object-internals.h" />
     <ClInclude Include="os\Atomic.h" />
+    <ClInclude Include="os\c-api\File-c-api.h" />
+    <ClInclude Include="os\c-api\Allocator.h" />
+    <ClInclude Include="os\c-api\NativeMethods-c-api.h" />
+    <ClInclude Include="os\c-api\Path-c-api.h" />
+    <ClInclude Include="os\c-api\Process-c-api.h" />
+    <ClInclude Include="os\c-api\Time-c-api.h" />
+    <ClInclude Include="os\c-api\TimeZone-c-api.h" />
+    <ClInclude Include="os\ConditionVariable.h" />
     <ClInclude Include="os\Console.h" />
+    <ClInclude Include="os\CpuInfo.h" />
     <ClInclude Include="os\Cryptography.h" />
     <ClInclude Include="os\Debug.h" />
     <ClInclude Include="os\Directory.h" />
@@ -814,7 +1359,9 @@
     <ClInclude Include="os\MemoryMappedFile.h" />
     <ClInclude Include="os\Messages.h" />
     <ClInclude Include="os\Mutex.h" />
+    <ClInclude Include="os\NativeMethods.h" />
     <ClInclude Include="os\Path.h" />
+    <ClInclude Include="os\Posix\ConditionVariableImpl.h" />
     <ClInclude Include="os\Posix\EventImpl.h" />
     <ClInclude Include="os\Posix\MutexImpl.h" />
     <ClInclude Include="os\Posix\PosixHelpers.h" />
@@ -836,6 +1383,7 @@
     <ClInclude Include="os\TimeZone.h" />
     <ClInclude Include="os\WaitStatus.h" />
     <ClInclude Include="os\Win32\AtomicImpl.h" />
+    <ClInclude Include="os\Win32\ConditionVariableImpl.h" />
     <ClInclude Include="os\Win32\EventImpl.h" />
     <ClInclude Include="os\Win32\MutexImpl.h" />
     <ClInclude Include="os\Win32\SemaphoreImpl.h" />
@@ -856,24 +1404,31 @@
     <ClInclude Include="external\zlib\zutil.h" />
     <ClInclude Include="os\WindowsRuntime.h" />
     <ClInclude Include="os\WinRT\SynchronousOperation.h" />
-    <ClInclude Include="os\WinRT\WinRTImpl.h" />
+    <ClInclude Include="os\WinRT\Win32ApiSharedEmulation.h" />
+    <ClInclude Include="os\WinRT\Win32ApiWinRTEmulation.h" />
     <ClInclude Include="tabledefs.h" />
-    <ClInclude Include="types.h" />
-    <ClInclude Include="utils\BlobReader.h" />
     <ClInclude Include="utils\CallOnce.h" />
     <ClInclude Include="utils\Collections.h" />
     <ClInclude Include="utils\DirectoryUtils.h" />
     <ClInclude Include="utils\dynamic_array.h" />
+    <ClInclude Include="utils\Environment.h" />
+    <ClInclude Include="utils\Exception.h" />
+    <ClInclude Include="utils\Il2CppHashMap.h" />
+    <ClInclude Include="utils\Il2CppHashSet.h" />
     <ClInclude Include="utils\Functional.h" />
     <ClInclude Include="utils\HashUtils.h" />
     <ClInclude Include="utils\Il2CppHStringReference.h" />
+    <ClInclude Include="utils\KeyWrapper.h" />
+    <ClInclude Include="utils\Logging.h" />
+    <ClInclude Include="utils\MarshalingUtils.h" />
     <ClInclude Include="utils\MathUtils.h" />
     <ClInclude Include="utils\Memory.h" />
     <ClInclude Include="utils\MemoryPool.h" />
+    <ClInclude Include="utils\NativeSymbol.h" />
     <ClInclude Include="utils\NonCopyable.h" />
+    <ClInclude Include="utils\Output.h" />
     <ClInclude Include="utils\RegisterRuntimeInitializeAndCleanup.h" />
-    <ClInclude Include="utils\StdUnorderedMap.h" />
-    <ClInclude Include="utils\StdUnorderedSet.h" />
+    <ClInclude Include="utils\Runtime.h" />
     <ClInclude Include="utils\StringUtils.h" />
     <ClInclude Include="utils\PathUtils.h" />
     <ClInclude Include="utils\StringView.h" />
@@ -882,17 +1437,22 @@
     <ClInclude Include="utils\MemoryRead.h" />
     <ClInclude Include="utils\utf8-cpp\source\utf8\core.h" />
     <ClInclude Include="utils\utf8-cpp\source\utf8\unchecked.h" />
+    <ClInclude Include="vm-utils\BlobReader.h" />
+    <ClInclude Include="vm-utils\NativeDelegateMethodCache.h" />
+    <ClInclude Include="vm-utils\NativeSymbol.h" />
+    <ClInclude Include="vm-utils\VmStringUtils.h" />
     <ClInclude Include="vm\Array.h" />
     <ClInclude Include="vm\Assembly.h" />
     <ClInclude Include="vm\AssemblyName.h" />
     <ClInclude Include="vm\Atomic.h" />
+    <ClInclude Include="vm\CachedCCWBase.h" />
     <ClInclude Include="vm\CCW.h" />
     <ClInclude Include="vm\Class.h" />
     <ClInclude Include="vm\COM.h" />
     <ClInclude Include="vm\ComUtils.h" />
     <ClInclude Include="vm\Debug.h" />
     <ClInclude Include="vm\Domain.h" />
-    <ClInclude Include="vm\Environment.h" />
+    <ClInclude Include="vm\Enum.h" />
     <ClInclude Include="vm\Event.h" />
     <ClInclude Include="vm\Exception.h" />
     <ClInclude Include="vm\Field.h" />
@@ -913,11 +1473,14 @@
     <ClInclude Include="vm\Method.h" />
     <ClInclude Include="vm\Module.h" />
     <ClInclude Include="vm\Monitor.h" />
+    <ClInclude Include="vm\NonCachedCCWBase.h" />
     <ClInclude Include="vm\Object.h" />
     <ClInclude Include="vm\Parameter.h" />
+    <ClInclude Include="vm\Path.h" />
     <ClInclude Include="vm\PlatformInvoke.h" />
     <ClInclude Include="vm\Profiler.h" />
     <ClInclude Include="vm\Property.h" />
+    <ClInclude Include="vm\Random.h" />
     <ClInclude Include="vm\RCW.h" />
     <ClInclude Include="vm\Reflection.h" />
     <ClInclude Include="vm\Runtime.h" />
@@ -925,6 +1488,7 @@
     <ClInclude Include="vm\String.h" />
     <ClInclude Include="vm\Thread.h" />
     <ClInclude Include="vm\ThreadPool.h" />
+    <ClInclude Include="vm\ThreadPoolMs.h" />
     <ClInclude Include="vm\Type.h" />
     <ClInclude Include="vm\WaitHandle.h" />
     <ClInclude Include="vm\WindowsRuntime.h" />
@@ -973,16 +1537,24 @@
     <ClCompile Include="debugger\transport-tcp.cpp" />
     <ClCompile Include="debugger\variant.cpp" />
     <ClCompile Include="externals\MonoPosixHelper.cpp" />
+    <ClCompile Include="external\xamarin-android\xamarin_getifaddrs.c" />
     <ClCompile Include="gc\GarbageCollector.cpp" />
     <ClCompile Include="gc\WriteBarrier.cpp" />
     <ClCompile Include="icalls\mscorlib\Mono.Globalization.Unicode\Normalization.cpp" />
     <ClCompile Include="icalls\mscorlib\Mono.Interop\ComInteropProxy.cpp" />
     <ClCompile Include="icalls\mscorlib\Mono.Security.Cryptography\KeyPairPersistence.cpp" />
     <ClCompile Include="icalls\mscorlib\Mono\Runtime.cpp" />
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeClassHandle.cpp" />
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeGPtrArrayHandle.cpp" />
+    <ClCompile Include="icalls\mscorlib\Mono\RuntimeMarshal.cpp" />
+    <ClCompile Include="icalls\mscorlib\Mono\SafeStringMarshal.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Diagnostics\Assert.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Diagnostics\Debugger.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Diagnostics\StackFrame.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Diagnostics\StackTrace.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Globalization\CalendarData.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Globalization\CompareInfo.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Globalization\CultureData.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Globalization\CultureInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Globalization\RegionInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.IO\DriveInfo.cpp" />
@@ -997,9 +1569,12 @@
     <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\MethodBuilder.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\ModuleBuilder.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\SignatureHelper.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\SymbolType.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection.Emit\TypeBuilder.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\Assembly.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\AssemblyName.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Reflection\CustomAttributeData.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Reflection\EventInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\FieldInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\MemberInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\MethodBase.cpp" />
@@ -1014,13 +1589,18 @@
     <ClCompile Include="icalls\mscorlib\System.Reflection\MonoMethodInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\MonoPropertyInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Reflection\ParameterInfo.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Reflection\PropertyInfo.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Reflection\RtFieldInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.CompilerServices\RuntimeHelpers.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.InteropServices\GCHandle.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.InteropServices\Marshal.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Activation\ActivationServices.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Contexts\Context.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\AsyncResult.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Messaging\MonoMethodMessage.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting.Proxies\RealProxy.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Runtime.Remoting\RemotingServices.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Runtime.Versioning\VersioningHelper.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Security.Cryptography\RNGCryptoServiceProvider.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Security.Policy\Evidence.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Security.Principal\WindowsIdentity.cpp" />
@@ -1029,12 +1609,16 @@
     <ClCompile Include="icalls\mscorlib\System.Security\SecurityFrame.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Security\SecurityManager.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Text\Encoding.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Text\EncodingHelper.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Text\Normalization.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\Interlocked.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Threading\InternalThread.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\Monitor.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\Mutex.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\NativeEventCalls.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\Thread.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\ThreadPool.cpp" />
+    <ClCompile Include="icalls\mscorlib\System.Threading\Timer.cpp" />
     <ClCompile Include="icalls\mscorlib\System.Threading\WaitHandle.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Activator.cpp" />
     <ClCompile Include="icalls\mscorlib\System\AppDomain.cpp" />
@@ -1042,6 +1626,7 @@
     <ClCompile Include="icalls\mscorlib\System\Array.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Buffer.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Char.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\CLRConfig.cpp" />
     <ClCompile Include="icalls\mscorlib\System\ConsoleDriver.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Convert.cpp" />
     <ClCompile Include="icalls\mscorlib\System\CurrentSystemTimeZone.cpp" />
@@ -1051,19 +1636,29 @@
     <ClCompile Include="icalls\mscorlib\System\Double.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Enum.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Environment.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\Exception.cpp" />
     <ClCompile Include="icalls\mscorlib\System\GC.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Math.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\MissingMemberException.cpp" />
     <ClCompile Include="icalls\mscorlib\System\MonoCustomAttrs.cpp" />
     <ClCompile Include="icalls\mscorlib\System\MonoEnumInfo.cpp" />
     <ClCompile Include="icalls\mscorlib\System\MonoType.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\Number.cpp" />
     <ClCompile Include="icalls\mscorlib\System\NumberFormatter.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Object.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\RuntimeFieldHandle.cpp" />
     <ClCompile Include="icalls\mscorlib\System\RuntimeMethodHandle.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\RuntimeType.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\RuntimeTypeHandle.cpp" />
     <ClCompile Include="icalls\mscorlib\System\String.cpp" />
+    <ClCompile Include="icalls\mscorlib\System\TimeSpan.cpp" />
     <ClCompile Include="icalls\mscorlib\System\Type.cpp" />
     <ClCompile Include="icalls\mscorlib\System\TypedReference.cpp" />
     <ClCompile Include="icalls\mscorlib\System\ValueType.cpp" />
     <ClCompile Include="icalls\mscorlib\System\__ComObject.cpp" />
+    <ClCompile Include="icalls\System.Configuration\System.Configuration\InternalConfigurationHost.cpp" />
+    <ClCompile Include="icalls\System.Core\System.IO.MemoryMappedFiles\MemoryMapImpl.cpp" />
+    <ClCompile Include="icalls\System\Microsoft.Win32\NativeMethods.cpp" />
     <ClCompile Include="icalls\System\System.ComponentModel\Win32Exception.cpp" />
     <ClCompile Include="icalls\System\System.Configuration\DefaultConfig.cpp" />
     <ClCompile Include="icalls\System\System.Configuration\InternalConfigurationHost.cpp" />
@@ -1077,11 +1672,14 @@
     <ClCompile Include="icalls\System\System.IO\FAMWatcher.cpp" />
     <ClCompile Include="icalls\System\System.IO\FileSystemWatcher.cpp" />
     <ClCompile Include="icalls\System\System.IO\InotifyWatcher.cpp" />
-    <ClCompile Include="icalls\System\System.IO\MonoIO.cpp" />
+    <ClCompile Include="icalls\System\System.IO\KqueueMonitor.cpp" />
+    <ClCompile Include="icalls\System\System.Net.NetworkInformation\LinuxNetworkInterface.cpp" />
+    <ClCompile Include="icalls\System\System.Net.NetworkInformation\MacOsIPInterfaceProperties.cpp" />
     <ClCompile Include="icalls\System\System.Net.Sockets\Socket.cpp" />
     <ClCompile Include="icalls\System\System.Net.Sockets\SocketException.cpp" />
     <ClCompile Include="icalls\System\System.Net\Dns.cpp" />
     <ClCompile Include="icalls\System\System.Threading\Semaphore.cpp" />
+    <ClCompile Include="icalls\System\System\IOSelector.cpp" />
     <ClCompile Include="il2cpp-debugger.cpp" />
     <ClCompile Include="gc\BoehmGC.cpp" />
     <ClCompile Include="gc\GCHandle.cpp" />
@@ -1094,19 +1692,33 @@
     <ClCompile Include="metadata\GenericSharing.cpp" />
     <ClCompile Include="metadata\Il2CppGenericClassCompare.cpp" />
     <ClCompile Include="metadata\Il2CppGenericClassHash.cpp" />
-    <ClCompile Include="metadata\Il2CppGenericClassLess.cpp" />
     <ClCompile Include="metadata\Il2CppGenericContextCompare.cpp" />
     <ClCompile Include="metadata\Il2CppGenericContextHash.cpp" />
-    <ClCompile Include="metadata\Il2CppGenericContextLess.cpp" />
     <ClCompile Include="metadata\Il2CppGenericInstCompare.cpp" />
     <ClCompile Include="metadata\Il2CppGenericInstHash.cpp" />
-    <ClCompile Include="metadata\Il2CppGenericInstLess.cpp" />
     <ClCompile Include="metadata\Il2CppGenericMethodCompare.cpp" />
     <ClCompile Include="metadata\Il2CppGenericMethodHash.cpp" />
-    <ClCompile Include="metadata\Il2CppGenericMethodLess.cpp" />
+    <ClCompile Include="metadata\Il2CppSignatureCompare.cpp" />
+    <ClCompile Include="metadata\Il2CppSignatureHash.cpp" />
     <ClCompile Include="metadata\Il2CppTypeCompare.cpp" />
     <ClCompile Include="metadata\Il2CppTypeHash.cpp" />
-    <ClCompile Include="metadata\Il2CppTypeLess.cpp" />
+    <ClCompile Include="mono-structs.cpp" />
+    <ClCompile Include="mono-runtime\il2cpp-callbacks.cpp" />
+    <ClCompile Include="mono-runtime\il2cpp-mono-support.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms-io-poll.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms-io.cpp" />
+    <ClCompile Include="mono\ThreadPool\threadpool-ms.cpp" />
+    <ClCompile Include="mono\ThreadPool\ThreadPoolMonitorThread.cpp" />
+    <ClCompile Include="mono\ThreadPool\ThreadPoolWorkerThread.cpp" />
+    <ClCompile Include="os\Android\StackTrace.cpp" />
+    <ClCompile Include="os\c-api\Allocator.cpp" />
+    <ClCompile Include="os\ConditionVariable.cpp" />
+    <ClCompile Include="os\c-api\File.cpp" />
+    <ClCompile Include="os\c-api\NativeMethods.cpp" />
+    <ClCompile Include="os\c-api\Path.cpp" />
+    <ClCompile Include="os\c-api\Process.cpp" />
+    <ClCompile Include="os\c-api\Time.cpp" />
+    <ClCompile Include="os\c-api\TimeZone.cpp" />
     <ClCompile Include="os\Debug.cpp" />
     <ClCompile Include="os\Error.cpp" />
     <ClCompile Include="os\Event.cpp" />
@@ -1120,7 +1732,9 @@
     <ClCompile Include="os\OSX\Image.cpp" />
     <ClCompile Include="os\OSX\Process.cpp" />
     <ClCompile Include="os\Path.cpp" />
+    <ClCompile Include="os\Posix\ConditionVariableImpl.cpp" />
     <ClCompile Include="os\Posix\Console.cpp" />
+    <ClCompile Include="os\Posix\CpuInfo.cpp" />
     <ClCompile Include="os\Posix\Cryptography.cpp" />
     <ClCompile Include="os\Posix\Directory.cpp" />
     <ClCompile Include="os\Posix\Environment.cpp" />
@@ -1131,13 +1745,16 @@
     <ClCompile Include="os\Posix\MarshalAlloc.cpp" />
     <ClCompile Include="os\Posix\Memory.cpp" />
     <ClCompile Include="os\Posix\MemoryMappedFile.cpp" />
+    <ClCompile Include="os\Posix\NativeMethods.cpp" />
     <ClCompile Include="os\Posix\Path.cpp" />
     <ClCompile Include="os\Posix\PosixWaitObject.cpp" />
     <ClCompile Include="os\Posix\Process.cpp" />
     <ClCompile Include="os\Posix\SocketImpl.cpp" />
     <ClCompile Include="os\Socket.cpp" />
     <ClCompile Include="os\Win32\COM.cpp" />
+    <ClCompile Include="os\Win32\ConditionVariableImpl.cpp" />
     <ClCompile Include="os\Win32\Console.cpp" />
+    <ClCompile Include="os\Win32\CpuInfo.cpp" />
     <ClCompile Include="os\Win32\Debug.cpp" />
     <ClCompile Include="os\Win32\Directory.cpp" />
     <ClCompile Include="os\Posix\File.cpp" />
@@ -1149,6 +1766,7 @@
     <ClCompile Include="os\Win32\File.cpp" />
     <ClCompile Include="os\Posix\Locale.cpp" />
     <ClCompile Include="os\Win32\Image.cpp" />
+    <ClCompile Include="os\Win32\Initialize.cpp" />
     <ClCompile Include="os\Win32\LastError.cpp" />
     <ClCompile Include="os\Win32\LibraryLoader.cpp" />
     <ClCompile Include="os\Win32\Locale.cpp" />
@@ -1168,6 +1786,7 @@
     <ClCompile Include="os\Win32\Memory.cpp" />
     <ClCompile Include="os\Win32\MemoryMappedFile.cpp" />
     <ClCompile Include="os\Win32\MutexImpl.cpp" />
+    <ClCompile Include="os\Win32\NativeMethods.cpp" />
     <ClCompile Include="os\Win32\Path.cpp" />
     <ClCompile Include="os\Win32\Process.cpp" />
     <ClCompile Include="os\Win32\SemaphoreImpl.cpp" />
@@ -1193,17 +1812,28 @@
     <ClCompile Include="os\Win32\WindowsRuntime.cpp" />
     <ClCompile Include="os\WinRT\Cryptography.cpp" />
     <ClCompile Include="os\WinRT\Environment.cpp" />
+    <ClCompile Include="os\WinRT\File.cpp" />
     <ClCompile Include="os\WinRT\Initialize.cpp" />
     <ClCompile Include="os\WinRT\Locale.cpp" />
     <ClCompile Include="os\WinRT\Process.cpp" />
-    <ClCompile Include="os\WinRT\WinRTImpl.cpp" />
-    <ClCompile Include="utils\BlobReader.cpp" />
+    <ClCompile Include="os\WinRT\Win32ApiSharedEmulation.cpp" />
+    <ClCompile Include="os\WinRT\Win32ApiWinRTEmulation.cpp" />
     <ClCompile Include="utils\DirectoryUtils.cpp" />
+    <ClCompile Include="utils\Environment.cpp" />
+    <ClCompile Include="utils\Exception.cpp" />
+    <ClCompile Include="utils\Logging.cpp" />
+    <ClCompile Include="utils\MarshalingUtils.cpp" />
     <ClCompile Include="utils\Memory.cpp" />
     <ClCompile Include="utils\MemoryPool.cpp" />
+    <ClCompile Include="utils\Output.cpp" />
     <ClCompile Include="utils\RegisterRuntimeInitializeAndCleanup.cpp" />
+    <ClCompile Include="utils\Runtime.cpp" />
     <ClCompile Include="utils\StringUtils.cpp" />
     <ClCompile Include="utils\PathUtils.cpp" />
+    <ClCompile Include="vm-utils\BlobReader.cpp" />
+    <ClCompile Include="vm-utils\NativeDelegateMethodCache.cpp" />
+    <ClCompile Include="vm-utils\NativeSymbol.cpp" />
+    <ClCompile Include="vm-utils\VmStringUtils.cpp" />
     <ClCompile Include="vm\Array.cpp" />
     <ClCompile Include="vm\Assembly.cpp" />
     <ClCompile Include="vm\AssemblyName.cpp" />
@@ -1213,7 +1843,7 @@
     <ClCompile Include="vm\COM.cpp" />
     <ClCompile Include="vm\Debug.cpp" />
     <ClCompile Include="vm\Domain.cpp" />
-    <ClCompile Include="vm\Environment.cpp" />
+    <ClCompile Include="vm\Enum.cpp" />
     <ClCompile Include="vm\Event.cpp" />
     <ClCompile Include="vm\Exception.cpp" />
     <ClCompile Include="vm\Field.cpp" />
@@ -1234,9 +1864,11 @@
     <ClCompile Include="vm\Monitor.cpp" />
     <ClCompile Include="vm\Object.cpp" />
     <ClCompile Include="vm\Parameter.cpp" />
+    <ClCompile Include="vm\Path.cpp" />
     <ClCompile Include="vm\PlatformInvoke.cpp" />
     <ClCompile Include="vm\Profiler.cpp" />
     <ClCompile Include="vm\Property.cpp" />
+    <ClCompile Include="vm\Random.cpp" />
     <ClCompile Include="vm\RCW.cpp" />
     <ClCompile Include="vm\Reflection.cpp" />
     <ClCompile Include="vm\Runtime.cpp" />
@@ -1244,6 +1876,7 @@
     <ClCompile Include="vm\String.cpp" />
     <ClCompile Include="vm\Thread.cpp" />
     <ClCompile Include="vm\ThreadPool.cpp" />
+    <ClCompile Include="vm\ThreadPoolMs.cpp" />
     <ClCompile Include="vm\Type.cpp" />
     <ClCompile Include="vm\WaitHandle.cpp" />
     <ClCompile Include="vm\WindowsRuntime.cpp" />

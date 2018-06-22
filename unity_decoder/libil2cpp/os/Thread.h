@@ -10,120 +10,124 @@ namespace il2cpp
 {
 namespace os
 {
+    class ThreadImpl;
 
-class ThreadImpl;
+    enum ThreadPriority
+    {
+        kThreadPriorityLowest = 0,
+        kThreadPriorityLow = 1,
+        kThreadPriorityNormal = 2,
+        kThreadPriorityHigh = 3,
+        kThreadPriorityHighest = 4
+    };
 
-enum ThreadPriority
-{
-	kThreadPriorityNormal,
-	kThreadPriorityLow,
-	kThreadPriorityHigh
-};
+    enum ApartmentState
+    {
+        kApartmentStateInSTA = 0,
+        kApartmentStateInMTA = 1,
+        kApartmentStateUnknown = 2,
+        kApartmentStateCoInitialized = 4,
+    };
 
-enum ApartmentState
-{
-	kApartmentStateInSTA = 0,
-	kApartmentStateInMTA = 1,
-	kApartmentStateUnknown = 2,
-	kApartmentStateCoInitialized = 4,
-};
+    class Thread : public il2cpp::utils::NonCopyable
+    {
+    public:
+        Thread();
+        ~Thread();
 
-class Thread : public il2cpp::utils::NonCopyable
-{
-public:
-	Thread();
-	~Thread();
+        typedef void (*StartFunc) (void* arg);
+        // Use STDCALL calling convention on Windows, as it will be called back directly from the OS. This is defined as nothing on other platforms.
+        typedef void (STDCALL * APCFunc)(void* context);
+        typedef uint64_t ThreadId;
+        typedef void (*CleanupFunc) (void* arg);
 
-	typedef void (*StartFunc) (void* arg);
-	// Use STDCALL calling convention on Windows, as it will be called back directly from the OS. This is defined as nothing on other platforms.
-	typedef void (STDCALL *APCFunc) (void* context);
-	typedef uint64_t ThreadId;
-	typedef void (*CleanupFunc) (void* arg);
+        /// Initialize/Shutdown thread subsystem. Must be called on main thread.
+        static void Init();
+        static void Shutdown();
 
-	/// Initialize/Shutdown thread subsystem. Must be called on main thread.
-	static void Init ();
-	static void Shutdown ();
+        ErrorCode Run(StartFunc func, void* arg);
+        ThreadId Id();
 
-	ErrorCode Run (StartFunc func, void* arg);
-	ThreadId Id ();
+        /// Set thread name for debugging purposes. Won't do anything if not supported
+        /// by platform.
+        void SetName(const std::string& name);
 
-	/// Set thread name for debugging purposes. Won't do anything if not supported
-	/// by platform.
-	void SetName (const std::string& name);
+        void SetPriority(ThreadPriority priority);
+        ThreadPriority GetPriority();
 
-	void SetPriority (ThreadPriority priority);
+        void SetStackSize(size_t stackSize);
 
-	void SetStackSize (size_t stackSize);
+        void SetCleanupFunction(CleanupFunc cleanupFunc, void* arg)
+        {
+            m_CleanupFunc = cleanupFunc;
+            m_CleanupFuncArg = arg;
+        }
 
-	void SetCleanupFunction (CleanupFunc cleanupFunc, void* arg)
-	{
-		m_CleanupFunc = cleanupFunc;
-		m_CleanupFuncArg = arg;
-	}
+        /// Interruptible, infinite wait join.
+        WaitStatus Join();
 
-	/// Interruptible, infinite wait join.
-	WaitStatus Join ();
+        /// Interruptible, timed wait join.
+        WaitStatus Join(uint32_t ms);
 
-	/// Interruptible, timed wait join.
-	WaitStatus Join (uint32_t ms);
+        /// Execute the given function on the thread the next time the thread executes
+        /// an interruptible blocking operation.
+        /// NOTE: The APC is allowed to raise exceptions!
+        void QueueUserAPC(APCFunc func, void* context);
 
-	/// Execute the given function on the thread the next time the thread executes
-	/// an interruptible blocking operation.
-	/// NOTE: The APC is allowed to raise exceptions!
-	void QueueUserAPC (APCFunc func, void* context);
+        // Explicit versions modify state without actually changing COM state.
+        // Used to set thread state before it's started.
+        ApartmentState GetApartment();
+        ApartmentState GetExplicitApartment();
+        ApartmentState SetApartment(ApartmentState state);
+        void SetExplicitApartment(ApartmentState state);
 
-	// Explicit versions modify state without actually changing COM state.
-	// Used to set thread state before it's started.
-	ApartmentState GetApartment();
-	ApartmentState GetExplicitApartment();
-	ApartmentState SetApartment(ApartmentState state);
-	void SetExplicitApartment(ApartmentState state);
+        /// Interruptible, timed sleep.
+        static void Sleep(uint32_t ms, bool interruptible = false);
 
-	/// Interruptible, timed sleep.
-	static void Sleep (uint32_t ms, bool interruptible = false);
+        static ThreadId CurrentThreadId();
+        static Thread* GetCurrentThread();
+        static Thread* GetOrCreateCurrentThread();
+        static void DetachCurrentThread();
 
-	static ThreadId CurrentThreadId ();
-	static Thread* GetCurrentThread ();
-	static Thread* GetOrCreateCurrentThread ();
-	static void DetachCurrentThread ();
-
-#if IL2CPP_HAS_NATIVE_THREAD_CLEANUP
-	typedef void (*ThreadCleanupFunc) (void* arg);
-	static void SetNativeThreadCleanup(ThreadCleanupFunc cleanupFunction);
-	static void RegisterCurrentThreadForCleanup (void* arg);
-	static void UnregisterCurrentThreadForCleanup ();
+#if NET_4_0
+        static bool YieldInternal();
 #endif
 
-	static const uint64_t kInvalidThreadId = 0;
+#if IL2CPP_HAS_NATIVE_THREAD_CLEANUP
+        typedef void (*ThreadCleanupFunc) (void* arg);
+        static void SetNativeThreadCleanup(ThreadCleanupFunc cleanupFunction);
+        static void RegisterCurrentThreadForCleanup(void* arg);
+        static void UnregisterCurrentThreadForCleanup();
+#endif
 
-private:
+        static const uint64_t kInvalidThreadId = 0;
 
-	enum ThreadState
-	{
-		kThreadCreated,
-		kThreadRunning,
-		kThreadWaiting,
-		kThreadExited
-	};
+    private:
 
-	ThreadState m_State;
+        enum ThreadState
+        {
+            kThreadCreated,
+            kThreadRunning,
+            kThreadWaiting,
+            kThreadExited
+        };
 
-	friend class ThreadImpl; // m_Thread
+        ThreadState m_State;
 
-	ThreadImpl* m_Thread;
+        friend class ThreadImpl; // m_Thread
 
-	/// Event that the thread signals when it finishes execution. Used for joins.
-	/// Supports interruption.
-	Event m_ThreadExitedEvent;
+        ThreadImpl* m_Thread;
 
-	CleanupFunc m_CleanupFunc;
-	void* m_CleanupFuncArg;
+        /// Event that the thread signals when it finishes execution. Used for joins.
+        /// Supports interruption.
+        Event m_ThreadExitedEvent;
 
-	Thread (ThreadImpl* thread)
-		: m_Thread (thread) {}
+        CleanupFunc m_CleanupFunc;
+        void* m_CleanupFuncArg;
 
-	static void RunWrapper (void* arg);
-};
+        Thread(ThreadImpl* thread);
 
+        static void RunWrapper(void* arg);
+    };
 }
 }

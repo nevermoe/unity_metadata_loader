@@ -18,14 +18,12 @@ namespace Remoting
 {
 namespace Activation
 {
-
-class LIBIL2CPP_CODEGEN_API ActivationServices
-{
-public:
-	static void EnableProxyActivation (Il2CppReflectionType*, bool);
-	static Il2CppObject * AllocateUninitializedClassInstance(Il2CppReflectionType*);
-};
-
+    class LIBIL2CPP_CODEGEN_API ActivationServices
+    {
+    public:
+        static void EnableProxyActivation(Il2CppReflectionType*, bool);
+        static Il2CppObject * AllocateUninitializedClassInstance(Il2CppReflectionType*);
+    };
 } /* namespace Activation */
 } /* namespace Remoting */
 } /* namespace Runtime */

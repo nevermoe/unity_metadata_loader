@@ -9,36 +9,34 @@ namespace il2cpp
 {
 namespace metadata
 {
+    bool GenericSharing::IsShareable(Il2CppGenericClass* gclass)
+    {
+        const Il2CppGenericInst* classInst = gclass->context.class_inst;
+        if (classInst)
+        {
+            for (uint32_t i = 0; i < classInst->type_argc; ++i)
+            {
+                if (!Type::IsReference(classInst->type_argv[i]))
+                    return false;
+            }
+        }
 
-	bool GenericSharing::IsShareable (Il2CppGenericClass* gclass)
-{
-	const Il2CppGenericInst* classInst = gclass->context.class_inst;
-	if (classInst)
-	{
-		for (uint32_t i = 0; i < classInst->type_argc; ++i)
-		{
-			if (!Type::IsReference (classInst->type_argv[i]))
-				return false;
-		}
-	}
+        return true;
+    }
 
-	return true;
-}
+    bool GenericSharing::IsShareable(Il2CppGenericMethod* gmethod)
+    {
+        const Il2CppGenericInst* methodInst = gmethod->context.method_inst;
+        if (methodInst)
+        {
+            for (uint32_t i = 0; i < methodInst->type_argc; ++i)
+            {
+                if (!Type::IsReference(methodInst->type_argv[i]))
+                    return false;
+            }
+        }
 
-bool GenericSharing::IsShareable (Il2CppGenericMethod* gmethod)
-{
-	const Il2CppGenericInst* methodInst = gmethod->context.method_inst;
-	if (methodInst)
-	{
-		for (uint32_t i = 0; i < methodInst->type_argc; ++i)
-		{
-			if (!Type::IsReference (methodInst->type_argv[i]))
-				return false;
-		}
-	}
-
-	return true;
-}
-
+        return true;
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

@@ -1,7 +1,5 @@
 #include "il2cpp-config.h"
 
-#include <cassert>
-
 #include "icalls/mscorlib/System/ConsoleDriver.h"
 #include "class-internals.h"
 #include "os/Console.h"
@@ -18,48 +16,46 @@ namespace mscorlib
 {
 namespace System
 {
-
 // Used in .NET 2.0 System.Console -> CStreamReader/CStreamWriter -> TermInfoDriver -> ConsoleDriver -> icalls
 
-bool ConsoleDriver::Isatty (Il2CppIntPtr handle)
-{
-	il2cpp::os::FileHandle* fileHandle = (il2cpp::os::FileHandle*)handle.m_value;
-	return os::File::Isatty(fileHandle);
-}
+    bool ConsoleDriver::Isatty(Il2CppIntPtr handle)
+    {
+        il2cpp::os::FileHandle* fileHandle = (il2cpp::os::FileHandle*)handle.m_value;
+        return os::File::Isatty(fileHandle);
+    }
 
-int32_t ConsoleDriver::InternalKeyAvailable (int32_t ms_timeout)
-{
-	return il2cpp::os::Console::InternalKeyAvailable (ms_timeout);
-}
+    int32_t ConsoleDriver::InternalKeyAvailable(int32_t ms_timeout)
+    {
+        return il2cpp::os::Console::InternalKeyAvailable(ms_timeout);
+    }
 
-bool ConsoleDriver::TtySetup (Il2CppString* keypadXmit, Il2CppString* teardown, Il2CppArray** control_characters, int32_t** size)
-{
-	const std::string keypadXmitString(keypadXmit ? il2cpp::utils::StringUtils::Utf16ToUtf8 (keypadXmit->chars) : "");
-	const std::string teardownString(teardown ? il2cpp::utils::StringUtils::Utf16ToUtf8 (teardown->chars) : "");
+    bool ConsoleDriver::TtySetup(Il2CppString* keypadXmit, Il2CppString* teardown, Il2CppArray** control_characters, int32_t** size)
+    {
+        const std::string keypadXmitString(keypadXmit ? il2cpp::utils::StringUtils::Utf16ToUtf8(keypadXmit->chars) : "");
+        const std::string teardownString(teardown ? il2cpp::utils::StringUtils::Utf16ToUtf8(teardown->chars) : "");
 
-	uint8_t controlChars[17];
+        uint8_t controlChars[17];
 
-	const bool ret = il2cpp::os::Console::TtySetup(keypadXmitString, teardownString, controlChars, size);
+        const bool ret = il2cpp::os::Console::TtySetup(keypadXmitString, teardownString, controlChars, size);
 
-	*control_characters = vm::Array::New (il2cpp_defaults.byte_class, 17);
-	// mono_gc_wbarrier_generic_store (data, Array::New (il2cpp_defaults.byte_class, 17));
+        *control_characters = vm::Array::New(il2cpp_defaults.byte_class, 17);
+        // mono_gc_wbarrier_generic_store (data, Array::New (il2cpp_defaults.byte_class, 17));
 
-	if(ret)
-		memcpy(il2cpp_array_addr(*control_characters, uint8_t, 0), controlChars, 17);
+        if (ret)
+            memcpy(il2cpp_array_addr(*control_characters, uint8_t, 0), controlChars, 17);
 
-	return true;
-}
+        return true;
+    }
 
-bool ConsoleDriver::SetEcho (bool wantEcho)
-{
-	return il2cpp::os::Console::SetEcho (wantEcho);
-}
+    bool ConsoleDriver::SetEcho(bool wantEcho)
+    {
+        return il2cpp::os::Console::SetEcho(wantEcho);
+    }
 
-bool ConsoleDriver::SetBreak (bool wantBreak)
-{
-	return il2cpp::os::Console::SetBreak (wantBreak);
-}
-
+    bool ConsoleDriver::SetBreak(bool wantBreak)
+    {
+        return il2cpp::os::Console::SetBreak(wantBreak);
+    }
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

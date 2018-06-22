@@ -1,5 +1,4 @@
 #include "il2cpp-config.h"
-#include <cassert>
 #include <string>
 #include <algorithm>
 #include "il2cpp-api.h"
@@ -9,42 +8,12 @@
 #include "utils/StringUtils.h"
 #include "vm/Array.h"
 #include "vm/Exception.h"
+#include "vm/String.h"
 #include "os/Locale.h"
 #include "icalls/mscorlib/System.Globalization/CultureInfo.h"
 #include "CultureInfoInternals.h"
 #include "CultureInfoTables.h"
 
-namespace il2cpp
-{
-namespace icalls
-{
-namespace mscorlib
-{
-namespace System
-{
-namespace Globalization
-{
-
-static Il2CppArray* create_names_array_idx(const uint16_t* names, int max)
-{
-	if (names == NULL)
-		return NULL;
-
-	int len = 0;
-	for (int i = 0; i < max; i++)
-	{
-		if (names[i] == 0)
-			break;
-		len++;
-	}
-
-	Il2CppArray* ret = il2cpp_array_new_specific(il2cpp_array_class_get(il2cpp_defaults.string_class, 1), len);
-
-	for (int i = 0; i < len; i++)
-		il2cpp_array_setref(ret, i, il2cpp_string_new(idx2string(names[i])));
-
-	return ret;
-}
 
 /*
 * The following methods is modified from the ICU source code. (http://oss.software.ibm.com/icu)
@@ -108,24 +77,73 @@ static std::string get_current_locale_name(void)
 	return result;
 }
 
+
+namespace il2cpp
+{
+namespace icalls
+{
+namespace mscorlib
+{
+namespace System
+{
+namespace Globalization
+{
+
+static Il2CppArray* create_names_array_idx(const uint16_t* names, int max)
+{
+	if (names == NULL)
+		return NULL;
+
+	int len = 0;
+	for (int i = 0; i < max; i++)
+	{
+		if (names[i] == 0)
+			break;
+		len++;
+	}
+
+	Il2CppArray* ret = il2cpp_array_new_specific(il2cpp_array_class_get(il2cpp_defaults.string_class, 1), len);
+
+	for (int i = 0; i < len; i++)
+		il2cpp_array_setref(ret, i, il2cpp_string_new(idx2string(names[i])));
+
+	return ret;
+}
+
 static bool construct_culture(Il2CppCultureInfo* cultureInfo, const CultureInfoEntry *ci)
 {
 	cultureInfo->lcid = ci->lcid;
 	IL2CPP_OBJECT_SETREF(cultureInfo, name, il2cpp_string_new(idx2string(ci->name)));
+#if !NET_4_0
 	IL2CPP_OBJECT_SETREF(cultureInfo, icu_name, il2cpp_string_new(idx2string(ci->icu_name)));
 	IL2CPP_OBJECT_SETREF(cultureInfo, displayname, il2cpp_string_new(idx2string(ci->displayname)));
+#endif
 	IL2CPP_OBJECT_SETREF(cultureInfo, englishname, il2cpp_string_new(idx2string(ci->englishname)));
 	IL2CPP_OBJECT_SETREF(cultureInfo, nativename, il2cpp_string_new(idx2string(ci->nativename)));
 	IL2CPP_OBJECT_SETREF(cultureInfo, win3lang, il2cpp_string_new(idx2string(ci->win3lang)));
 	IL2CPP_OBJECT_SETREF(cultureInfo, iso3lang, il2cpp_string_new(idx2string(ci->iso3lang)));
 	IL2CPP_OBJECT_SETREF(cultureInfo, iso2lang, il2cpp_string_new(idx2string(ci->iso2lang)));
+
+#if !NET_4_0
 	IL2CPP_OBJECT_SETREF(cultureInfo, territory, il2cpp_string_new(idx2string(ci->territory)));
+#else
+	// It's null for neutral cultures
+	if(ci->territory > 0)
+		IL2CPP_OBJECT_SETREF(cultureInfo, territory, il2cpp_string_new(idx2string(ci->territory)));
+#endif
 	cultureInfo->parent_lcid = ci->parent_lcid;
+#if !NET_4_0
 	cultureInfo->specific_lcid = ci->specific_lcid;
+	cultureInfo->calendar_data = ci->calendar_data;
+#endif
 	cultureInfo->datetime_index = ci->datetime_format_index;
 	cultureInfo->number_index = ci->number_format_index;
-	cultureInfo->calendar_data = ci->calendar_data;
 	cultureInfo->text_info_data = &ci->text_info;
+
+#if NET_4_0
+	IL2CPP_OBJECT_SETREF(cultureInfo, native_calendar_names, create_names_array_idx(ci->native_calendar_names, NUM_OPT_CALS));
+	cultureInfo->default_calendar_type = ci->calendar_type;
+#endif
 
 	return true;
 }
@@ -156,6 +174,7 @@ static const CultureInfoEntry* culture_info_entry_from_lcid(int lcid)
 	return (const CultureInfoEntry*)bsearch(&key, culture_entries, NUM_CULTURE_ENTRIES, sizeof(CultureInfoEntry), culture_lcid_locator);
 }
 
+#if !NET_4_0
 static bool construct_culture_from_specific_name(Il2CppCultureInfo* cultureInfo, const char *name)
 {
 	const CultureInfoNameEntry* ne = (const CultureInfoNameEntry *)bsearch(name, culture_name_entries, NUM_CULTURE_ENTRIES, sizeof(CultureInfoNameEntry), culture_name_locator);
@@ -174,6 +193,7 @@ static bool construct_culture_from_specific_name(Il2CppCultureInfo* cultureInfo,
 	else
 		return false;
 }
+#endif
 
 static Il2CppArray* create_group_sizes_array(const int *gs, int ml)
 {
@@ -193,9 +213,10 @@ static Il2CppArray* create_group_sizes_array(const int *gs, int ml)
 	return ret;
 }
 
+#if !NET_4_0
 void CultureInfo::construct_datetime_format(Il2CppCultureInfo* cultureInfo)
 {
-	assert(cultureInfo->datetime_index >= 0);
+	IL2CPP_ASSERT(cultureInfo->datetime_index >= 0);
 
 	Il2CppDateTimeFormatInfo* datetime = cultureInfo->datetime_format;
 	const DateTimeFormatEntry* dfe = &datetime_format_entries[cultureInfo->datetime_index];
@@ -226,7 +247,7 @@ void CultureInfo::construct_datetime_format(Il2CppCultureInfo* cultureInfo)
 
 bool CultureInfo::construct_internal_locale_from_current_locale(Il2CppCultureInfo* cultureInfo)
 {
-	std::string locale = get_current_locale_name();
+	std::string locale = ::get_current_locale_name();
 	if (locale.empty())
 		return false;
 
@@ -236,6 +257,7 @@ bool CultureInfo::construct_internal_locale_from_current_locale(Il2CppCultureInf
 
 	return status;
 }
+#endif
 
 bool CultureInfo::construct_internal_locale_from_lcid(Il2CppCultureInfo* cultureInfo, int lcid)
 {
@@ -257,9 +279,10 @@ bool CultureInfo::construct_internal_locale_from_name(Il2CppCultureInfo* culture
 	return construct_culture(cultureInfo, &culture_entries[ne->culture_entry_index]);
 }
 
+#if !NET_4_0
 void CultureInfo::construct_number_format(Il2CppCultureInfo* cultureInfo)
 {
-	assert(cultureInfo->number_format != 0);
+	IL2CPP_ASSERT(cultureInfo->number_format != 0);
 
 	if (cultureInfo->number_index < 0)
 		return;
@@ -300,10 +323,15 @@ bool CultureInfo::construct_internal_locale_from_specific_name (Il2CppCultureInf
 	std::string cultureName = il2cpp::utils::StringUtils::Utf16ToUtf8 (name->chars);
 	return construct_culture_from_specific_name (cultureInfo, cultureName.c_str());
 }
+#endif
 
 static bool IsMatchingCultureInfoEntry (const CultureInfoEntry& entry, bool neutral, bool specific, bool installed)
 {
+#if !NET_4_0
 	const bool isNeutral = ((entry.lcid & 0xff00) == 0) || (entry.specific_lcid == 0);
+#else
+	const bool isNeutral = entry.territory == 0;
+#endif
 	return ((neutral && isNeutral) || (specific && !isNeutral));
 }
 
@@ -353,6 +381,11 @@ bool CultureInfo::internal_is_lcid_neutral (int32_t lcid, bool* is_neutral)
 	NOT_SUPPORTED_IL2CPP (CultureInfo::internal_is_lcid_neutral, "This icall is not supported by il2cpp.");
 	
 	return false;
+}
+
+Il2CppString* CultureInfo::get_current_locale_name()
+{
+	return vm::String::New(::get_current_locale_name().c_str());
 }
 
 } /* namespace Globalization */

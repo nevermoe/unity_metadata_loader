@@ -6,9 +6,9 @@ UNITY_PLATFORM_BEGIN_NAMESPACE;
 
 enum memory_order_relaxed_t { memory_order_relaxed = 0 };
 enum memory_order_acquire_t { memory_order_acquire = 2, memory_order_consume = memory_order_acquire };
-enum memory_order_release_t	{ memory_order_release = 3 };
-enum memory_order_acq_rel_t	{ memory_order_acq_rel = 4 };
-enum memory_order_seq_cst_t	{ memory_order_seq_cst = 5 };
+enum memory_order_release_t { memory_order_release = 3 };
+enum memory_order_acq_rel_t { memory_order_acq_rel = 4 };
+enum memory_order_seq_cst_t { memory_order_seq_cst = 5 };
 
 /*
     Available atomic functions:
@@ -26,7 +26,7 @@ enum memory_order_seq_cst_t	{ memory_order_seq_cst = 5 };
 
     // atomic compare exchange (strong), returns if the operation succeeded and update *oldval with the previous value
     bool atomic_compare_exchange (volatile atomic_word* p, atomic_word* oldval, atomic_word newval);
-    
+
     // atomic fetch then add, returns previous value
     atomic_word atomic_fetch_add (volatile atomic_word *p, atomic_word val);
 
@@ -68,9 +68,9 @@ enum memory_order_seq_cst_t	{ memory_order_seq_cst = 5 };
 
     // extensions to the C++0x11 standard:
 
-	// spinning hint for the processor
-	void atomic_pause ();
-	
+    // spinning hint for the processor
+    void atomic_pause ();
+
     // atomic increment with relaxed semantic
     void atomic_retain (volatile int *p);
 
@@ -78,10 +78,10 @@ enum memory_order_seq_cst_t	{ memory_order_seq_cst = 5 };
     bool atomic_release (volatile int *p);
 
     // on platforms with double word compare exchange (ABA safe atomic pointers):
-    
+
     // atomic load
     atomic_word2 atomic_load_explicit (const volatile atomic_word2* p, memory_order_t mo);
-    
+
     // atomic store
     void atomic_store_explicit (volatile atomic_word2* p, atomic_word2 v, memory_order_t mo);
 
@@ -94,125 +94,118 @@ enum memory_order_seq_cst_t	{ memory_order_seq_cst = 5 };
 
 #if IL2CPP_TARGET_HAS_EXTENDED_ATOMICS
 
-#	include "os/ExtendedAtomicOps.h"
+#   include "os/ExtendedAtomicOps.h"
 
-#elif defined (__x86_64__) || defined (_M_X64)
+#elif defined(__x86_64__) || defined(_M_X64)
 
-#	include "ExtendedAtomicOps-x86-64.h"
-#	define UNITY_ATOMIC_INT_OVERLOAD
+#   include "ExtendedAtomicOps-x86-64.h"
+#   define UNITY_ATOMIC_INT_OVERLOAD
 
-#elif defined (__x86__) || defined (__i386__) || defined (_M_IX86)
+#elif defined(__x86__) || defined(__i386__) || defined(_M_IX86)
 
-#	include "ExtendedAtomicOps-x86.h"
+#   include "ExtendedAtomicOps-x86.h"
 
-#elif defined (__arm64__) && (defined(__clang__) || defined(__GNUC__))
+#elif defined(__arm64__) && (defined(__clang__) || defined(__GNUC__))
 
-#	include "ExtendedAtomicOps-arm64.h"
-#	define UNITY_ATOMIC_INT_OVERLOAD
+#   include "ExtendedAtomicOps-arm64.h"
+#   define UNITY_ATOMIC_INT_OVERLOAD
 
-#elif IL2CPP_TARGET_TIZEN
-#   include "os/Tizen/ExtendedAtomicOps.h"
+#elif defined(_M_ARM) || (defined(__arm__) && (defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)) && (!UNITY_STV_API) && (defined(__clang__) || defined(__GNUC__)))
 
-#elif defined (_M_ARM) || (defined (__arm__) && (defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)) && (!UNITY_STV_API) && (!IL2CPP_TARGET_TIZEN) && (defined (__clang__) || defined (__GNUC__)))
+#   include "ExtendedAtomicOps-arm.h"
 
-#	include "ExtendedAtomicOps-arm.h"
+#elif PLATFORM_WIIU
 
-#elif UNITY_PS3 || UNITY_WIIU
+#   include "ExtendedAtomicOps-ppc.h"
 
-#	include "ExtendedAtomicOps-ppc.h"
+#elif PLATFORM_PSVITA
 
-#elif UNITY_XENON
+#   include "PlatformExtendedAtomicOps.h"
 
-#	include "PlatformDependent/Xbox360/Source/Threads/ExtendedAtomicOps-xenon.h"
+#elif (defined(__ppc64__) || defined(_ARCH_PPC64)) && (defined(__clang__) || defined(__GNUC__))
 
-#elif UNITY_PSP2
-
-#	include "PlatformDependent/PSP2Player/Source/Threads/ExtendedAtomicOps-psp2.h"
-
-#elif (defined (__ppc64__) || defined (_ARCH_PPC64)) && (defined (__clang__) || defined (__GNUC__))
-
-#	include "ExtendedAtomicOps-ppc64.h"
-#	define UNITY_ATOMIC_INT_OVERLOAD
+#   include "ExtendedAtomicOps-ppc64.h"
+#   define UNITY_ATOMIC_INT_OVERLOAD
 
 //#elif defined (__ppc__) && (defined (__clang__) || defined (__GNUC__))
 
-//#	include "Runtime/Threads/ExtendedAtomicOps-ppc.h"
+//# include "Runtime/Threads/ExtendedAtomicOps-ppc.h"
 #else
 
     #define UNITY_NO_ATOMIC_OPS
 
-	static inline atomic_word atomic_load_explicit (const volatile atomic_word* p, memory_order_relaxed_t)
-	{
-		return *p;
-	}
+static inline atomic_word atomic_load_explicit(const volatile atomic_word* p, memory_order_relaxed_t)
+{
+    return *p;
+}
 
-	static inline void atomic_store_explicit (volatile atomic_word* p, atomic_word v, memory_order_relaxed_t)
-	{
-		*p = v;
-	}
+static inline void atomic_store_explicit(volatile atomic_word* p, atomic_word v, memory_order_relaxed_t)
+{
+    *p = v;
+}
 
 #endif
 
 #ifndef UNITY_NO_ATOMIC_OPS
 
-    // non-explicit versions, use sequential consistency semantic
+// non-explicit versions, use sequential consistency semantic
 
-    static inline void atomic_thread_fence ()
-    {
-        atomic_thread_fence (memory_order_seq_cst);
-    }
+static inline void atomic_thread_fence()
+{
+    atomic_thread_fence(memory_order_seq_cst);
+}
 
-    static inline atomic_word atomic_load (const volatile atomic_word* p)
-    {
-        return atomic_load_explicit (p, memory_order_seq_cst);
-    }
+static inline atomic_word atomic_load(const volatile atomic_word* p)
+{
+    return atomic_load_explicit(p, memory_order_seq_cst);
+}
 
-    static inline void atomic_store (volatile atomic_word* p, atomic_word val)
-    {
-        atomic_store_explicit (p, val, memory_order_seq_cst);
-    }
+static inline void atomic_store(volatile atomic_word* p, atomic_word val)
+{
+    atomic_store_explicit(p, val, memory_order_seq_cst);
+}
 
-    static inline atomic_word atomic_exchange (volatile atomic_word* p, atomic_word val)
-    {
-        return atomic_exchange_explicit (p, val, memory_order_seq_cst);
-    }
+static inline atomic_word atomic_exchange(volatile atomic_word* p, atomic_word val)
+{
+    return atomic_exchange_explicit(p, val, memory_order_seq_cst);
+}
 
-    static inline bool atomic_compare_exchange (volatile atomic_word* p, atomic_word* oldval, atomic_word newval)
-    {
-        return atomic_compare_exchange_strong_explicit (p, oldval, newval, memory_order_seq_cst, memory_order_seq_cst);
-    }
+static inline bool atomic_compare_exchange(volatile atomic_word* p, atomic_word* oldval, atomic_word newval)
+{
+    return atomic_compare_exchange_strong_explicit(p, oldval, newval, memory_order_seq_cst, memory_order_seq_cst);
+}
 
-    static inline atomic_word atomic_fetch_add (volatile atomic_word *p, atomic_word val)
-    {
-        return atomic_fetch_add_explicit (p, val, memory_order_seq_cst);
-    }
+static inline atomic_word atomic_fetch_add(volatile atomic_word *p, atomic_word val)
+{
+    return atomic_fetch_add_explicit(p, val, memory_order_seq_cst);
+}
 
-    static inline atomic_word atomic_fetch_sub (volatile atomic_word *p, atomic_word val)
-    {
-        return atomic_fetch_sub_explicit (p, val, memory_order_seq_cst);
-    }
+static inline atomic_word atomic_fetch_sub(volatile atomic_word *p, atomic_word val)
+{
+    return atomic_fetch_sub_explicit(p, val, memory_order_seq_cst);
+}
 
-#if defined (UNITY_ATOMIC_INT_OVERLOAD)
+#if defined(UNITY_ATOMIC_INT_OVERLOAD)
 
-    static inline int atomic_load (const volatile int* p)
-    {
-        return atomic_load_explicit (p, memory_order_seq_cst);
-    }
+static inline int atomic_load(const volatile int* p)
+{
+    return atomic_load_explicit(p, memory_order_seq_cst);
+}
 
-    static inline void atomic_store (volatile int* p, int val)
-    {
-        atomic_store_explicit (p, val, memory_order_seq_cst);
-    }
+static inline void atomic_store(volatile int* p, int val)
+{
+    atomic_store_explicit(p, val, memory_order_seq_cst);
+}
 
-    static inline int atomic_fetch_add (volatile int *p, int val)
-    {
-        return static_cast<int>(atomic_fetch_add_explicit (p, val, memory_order_seq_cst));
-    }
+static inline int atomic_fetch_add(volatile int *p, int val)
+{
+    return static_cast<int>(atomic_fetch_add_explicit(p, val, memory_order_seq_cst));
+}
 
-    static inline int atomic_fetch_sub (volatile int *p, int val)
-    {
-        return static_cast<int>(atomic_fetch_sub_explicit (p, val, memory_order_seq_cst));
-    }
+static inline int atomic_fetch_sub(volatile int *p, int val)
+{
+    return static_cast<int>(atomic_fetch_sub_explicit(p, val, memory_order_seq_cst));
+}
 
 #endif
 

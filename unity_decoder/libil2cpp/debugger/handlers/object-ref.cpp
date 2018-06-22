@@ -12,62 +12,62 @@ using namespace il2cpp::debugger;
 
 const Reply *Agent::Process(const ObjectRefGetTypeCommand *command)
 {
-	ObjectRefGetTypeCommand::Reply *get_type_reply = command->reply();
+    ObjectRefGetTypeCommand::Reply *get_type_reply = command->reply();
 
-	Il2CppObject *object = command->object();
+    Il2CppObject *object = command->object();
 
-	get_type_reply->type(il2cpp_object_get_class(object));
+    get_type_reply->type(il2cpp_object_get_class(object));
 
-	return get_type_reply;
+    return get_type_reply;
 }
 
 const Reply *Agent::Process(const ObjectRefGetDomainCommand *command)
 {
-	ObjectRefGetDomainCommand::Reply *get_domain_reply = command->reply();
+    ObjectRefGetDomainCommand::Reply *get_domain_reply = command->reply();
 
-	Il2CppObject *object = command->object();
+    Il2CppObject *object = command->object();
 
-	// TODO: use `object` even if we don't really have domains in il2cpp?
+    // TODO: use `object` even if we don't really have domains in il2cpp?
 
-	get_domain_reply->domain(il2cpp_domain_get());
+    get_domain_reply->domain(il2cpp_domain_get());
 
-	return get_domain_reply;
+    return get_domain_reply;
 }
 
 const Reply *Agent::Process(const ObjectRefIsCollectedCommand *command)
 {
-	LOG("warning: `ObjectRefIsCollectedCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `ObjectRefIsCollectedCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 const Reply *Agent::Process(const ObjectRefSetValuesCommand *command)
 {
-	LOG("warning: `ObjectRefSetValuesCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `ObjectRefSetValuesCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 const Reply *Agent::Process(const ObjectRefGetAddressCommand *command)
 {
-	LOG("warning: `ObjectRefGetAddressCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `ObjectRefGetAddressCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 const Reply *Agent::Process(const ObjectRefGetValuesCommand *command)
 {
-	LOG("warning: `ObjectRefGetValuesCommand` not implemented. Returning a `NotImplemented` reply!");
+    LOG("warning: `ObjectRefGetValuesCommand` not implemented. Returning a `NotImplemented` reply!");
 
-	assert(0);
+    IL2CPP_ASSERT(0);
 
-	return new InternalErrorNotImplementedReply(command);
+    return new InternalErrorNotImplementedReply(command);
 }
 
 #endif

@@ -28,16 +28,14 @@ namespace Security
 {
 namespace Principal
 {
-
-class LIBIL2CPP_CODEGEN_API WindowsImpersonationContext
-{
-public:
-	static bool RevertToSelf ();
-	static Il2CppIntPtr DuplicateToken (Il2CppIntPtr token);
-	static bool SetCurrentToken (Il2CppIntPtr token);
-	static bool CloseToken (Il2CppIntPtr token);
-};
-
+    class LIBIL2CPP_CODEGEN_API WindowsImpersonationContext
+    {
+    public:
+        static bool RevertToSelf();
+        static Il2CppIntPtr DuplicateToken(Il2CppIntPtr token);
+        static bool SetCurrentToken(Il2CppIntPtr token);
+        static bool CloseToken(Il2CppIntPtr token);
+    };
 } /* namespace Principal */
 } /* namespace Security */
 } /* namespace System */

@@ -1,6 +1,5 @@
 #include "il2cpp-config.h"
 
-#include <cassert>
 #include <string>
 
 #include "icalls/System/System.ComponentModel/Win32Exception.h"
@@ -23,21 +22,19 @@ namespace System
 {
 namespace ComponentModel
 {
+    Il2CppString *Win32Exception::W32ErrorMessage(int32_t code)
+    {
+        std::string message = os::Messages::FromCode((os::ErrorCode)code);
 
-Il2CppString *Win32Exception::W32ErrorMessage (int32_t code)
-{
-	std::string message = os::Messages::FromCode ((os::ErrorCode)code);
-	
-	if (message.size() == 0)
-	{
-		// Note: this is a special case only for il2cpp. We might not want to keep
-		// this in the future, but helps with debugging and testing for now.
-		message = utils::StringUtils::Printf ("Win32 Error message: %d (message string not found in the message table)", code);
-	}
-	
-	return vm::String::New (message.c_str ());
-}
+        if (message.size() == 0)
+        {
+            // Note: this is a special case only for il2cpp. We might not want to keep
+            // this in the future, but helps with debugging and testing for now.
+            message = utils::StringUtils::Printf("Win32 Error message: %d (message string not found in the message table)", code);
+        }
 
+        return vm::String::New(message.c_str());
+    }
 } /* namespace ComponentModel */
 } /* namespace System */
 } /* namespace System */

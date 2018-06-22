@@ -1,6 +1,6 @@
 #include "il2cpp-config.h"
 
-#if IL2CPP_PLATFORM_WIN32
+#if IL2CPP_TARGET_WINDOWS
 
 #include "WindowsHeaders.h"
 
@@ -10,15 +10,12 @@ namespace il2cpp
 {
 namespace os
 {
-
 namespace Image
 {
-
-void* GetImageBase ()
-{
-	return &__ImageBase;
-}
-
+    void* GetImageBase()
+    {
+        return &__ImageBase;
+    }
 }
 }
 }

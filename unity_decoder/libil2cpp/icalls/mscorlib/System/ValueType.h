@@ -14,14 +14,12 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API ValueType
-{
-public:
-	static bool InternalEquals(Il2CppObject * __this, Il2CppObject * that, Il2CppArray** fields);
-	static int InternalGetHashCode(Il2CppObject *,Il2CppArray * *);
-};
-
+    class LIBIL2CPP_CODEGEN_API ValueType
+    {
+    public:
+        static bool InternalEquals(Il2CppObject * thisPtr, Il2CppObject * that, Il2CppArray** fields);
+        static int InternalGetHashCode(Il2CppObject *, Il2CppArray * *);
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

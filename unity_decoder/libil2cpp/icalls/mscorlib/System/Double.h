@@ -11,13 +11,11 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API Double
-{
-public:
-	static bool ParseImpl (char *,double *);
-};
-
+    class LIBIL2CPP_CODEGEN_API Double
+    {
+    public:
+        static bool ParseImpl(char *, double *);
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

@@ -1,6 +1,5 @@
 #include "il2cpp-config.h"
 #include "icalls/mscorlib/System.Reflection.Emit/DerivedType.h"
-#include <cassert>
 #include "vm/Exception.h"
 
 namespace il2cpp
@@ -15,12 +14,10 @@ namespace Reflection
 {
 namespace Emit
 {
-
-void DerivedType::create_unmanaged_type (Il2CppReflectionType* type)
-{
-	NOT_SUPPORTED_SRE (DerivedType::create_unmanaged_type);
-}
-
+    void DerivedType::create_unmanaged_type(Il2CppReflectionType* type)
+    {
+        NOT_SUPPORTED_SRE(DerivedType::create_unmanaged_type);
+    }
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

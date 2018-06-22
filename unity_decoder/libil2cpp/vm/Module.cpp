@@ -5,11 +5,9 @@ namespace il2cpp
 {
 namespace vm
 {
-
-uint32_t Module::GetToken (const Il2CppImage *image)
-{
-	return image->token;
-}
-
+    uint32_t Module::GetToken(const Il2CppImage *image)
+    {
+        return image->token;
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

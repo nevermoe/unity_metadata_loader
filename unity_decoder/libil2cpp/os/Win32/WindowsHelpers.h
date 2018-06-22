@@ -1,15 +1,20 @@
 #pragma once
 
-#if IL2CPP_PLATFORM_WIN32
+#if IL2CPP_TARGET_WINDOWS
 
 #include "WindowsHeaders.h"
 #include "os/WaitStatus.h"
 
 #if IL2CPP_TARGET_WINRT
-#include "os/WinRT/WinRTImpl.h"
+#include "os/WinRT/Win32ApiWinRTEmulation.h"
 #endif
+
 #if IL2CPP_TARGET_XBOXONE
-#include "os/XboxOne/Win32ApiEmulator.h"
+#include "os/XboxOne/Win32ApiXboxEmulation.h"
+#endif
+
+#if IL2CPP_TARGET_WINRT || IL2CPP_TARGET_XBOXONE
+#include "os/WinRT/Win32ApiSharedEmulation.h"
 #endif
 
 namespace il2cpp
@@ -18,10 +23,8 @@ namespace os
 {
 namespace win
 {
-
 // Wait for a release of the given handle in way that can be interrupted by APCs.
-WaitStatus WaitForSingleObjectAndAccountForAPCs (HANDLE handle, uint32_t ms, bool interruptible);
-
+    WaitStatus WaitForSingleObjectAndAccountForAPCs(HANDLE handle, uint32_t ms, bool interruptible);
 }
 }
 }

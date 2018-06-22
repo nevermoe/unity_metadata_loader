@@ -9,14 +9,11 @@ namespace il2cpp
 {
 namespace vm
 {
-
-class LIBIL2CPP_CODEGEN_API LibraryLoader
-{
-public:
-	static void* LoadLibrary(il2cpp::utils::StringView<Il2CppNativeChar> nativeDynamicLibrary);
-	static void SetFindPluginCallback(Il2CppSetFindPlugInCallback method);
-};
-
+    class LIBIL2CPP_CODEGEN_API LibraryLoader
+    {
+    public:
+        static void* LoadLibrary(il2cpp::utils::StringView<Il2CppNativeChar> nativeDynamicLibrary);
+        static void SetFindPluginCallback(Il2CppSetFindPlugInCallback method);
+    };
 } /* namespace vm */
 } /* namespace il2cpp*/
-

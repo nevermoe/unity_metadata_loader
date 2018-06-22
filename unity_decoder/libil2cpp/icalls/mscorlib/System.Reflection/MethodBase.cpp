@@ -1,13 +1,15 @@
 #include "il2cpp-config.h"
 #include <stddef.h>
 #include "icalls/mscorlib/System.Reflection/MethodBase.h"
-#include <cassert>
 #include "class-internals.h"
+#include "il2cpp-api.h"
 #include "vm/Class.h"
 #include "vm/Exception.h"
 #include "vm/GenericClass.h"
 #include "vm/Reflection.h"
 #include "vm/StackTrace.h"
+#include "vm/MetadataCache.h"
+#include "metadata/GenericMetadata.h"
 
 namespace il2cpp
 {
@@ -19,49 +21,126 @@ namespace System
 {
 namespace Reflection
 {
+    static Il2CppClass* il2cpp_class_get_generic_type_definition(Il2CppClass *klass)
+    {
+        return klass->generic_class ? il2cpp::vm::GenericClass::GetTypeDefinition(klass->generic_class) : klass;
+    }
 
+    Il2CppReflectionMethod * MethodBase::GetMethodFromHandleInternalType(Il2CppIntPtr method, Il2CppIntPtr type)
+    {
+        Il2CppClass *klass = NULL;
+        MethodInfo* methodInfo = (MethodInfo*)method.m_value;
+        if (type.m_value)
+        {
+            klass = vm::Class::FromIl2CppType((Il2CppType*)type.m_value);
+            if (il2cpp_class_get_generic_type_definition(methodInfo->declaring_type) != il2cpp_class_get_generic_type_definition(klass))
+                return NULL;
 
-static Il2CppClass* il2cpp_class_get_generic_type_definition(Il2CppClass *klass)
-{
-	return klass->generic_class ? il2cpp::vm::GenericClass::GetTypeDefinition (klass->generic_class) : klass;
-}
+            // See the VerifyTwoArgumentGetMethodFromHandleWithGenericType for the failing test. Once we have support for inflating methods
+            // we can implement this case as well and make that test pass.
+            if (methodInfo->declaring_type != klass)
+                NOT_IMPLEMENTED_ICALL(MethodBase::GetMethodFromHandleInternalType);
+        }
+        else
+        {
+            klass = methodInfo->declaring_type;
+        }
+        return il2cpp::vm::Reflection::GetMethodObject(methodInfo, klass);
+    }
 
-Il2CppReflectionMethod * MethodBase::GetMethodFromHandleInternalType(Il2CppIntPtr method,Il2CppIntPtr type)
-{
-	Il2CppClass *klass = NULL;
-	MethodInfo* methodInfo = (MethodInfo*)method.m_value;
-	if (type.m_value)
-	{
-		klass = vm::Class::FromIl2CppType((Il2CppType*)type.m_value);
-		if (il2cpp_class_get_generic_type_definition(methodInfo->declaring_type) != il2cpp_class_get_generic_type_definition(klass))
-			return NULL;
+    Il2CppReflectionMethod* MethodBase::GetCurrentMethod()
+    {
+        NOT_SUPPORTED_IL2CPP(MethodBase::GetCurrentMethod, "This icall is not supported by il2cpp. Use the il2cpp_codegen_get_method_object intrinsic instead.");
 
-		// See the VerifyTwoArgumentGetMethodFromHandleWithGenericType for the failing test. Once we have support for inflating methods
-		// we can implement this case as well and make that test pass.
-		if (methodInfo->declaring_type != klass)
-			NOT_IMPLEMENTED_ICALL(MethodBase::GetMethodFromHandleInternalType);
-	}
-	else
-	{
-		klass = methodInfo->declaring_type;
-	}
-	return il2cpp::vm::Reflection::GetMethodObject(methodInfo, klass);
-}
+        return NULL;
+    }
 
-Il2CppReflectionMethod* MethodBase::GetCurrentMethod ()
-{
-	NOT_SUPPORTED_IL2CPP(MethodBase::GetCurrentMethod, "This icall is not supported by il2cpp. Use the il2cpp_codegen_get_method_object intrinsic instead.");
+    void* /* System.Reflection.MethodBody */ MethodBase::GetMethodBodyInternal(Il2CppIntPtr handle)
+    {
+        NOT_SUPPORTED_IL2CPP(MethodBase::GetMethodBodyInternal, "This icall is not supported by il2cpp.");
 
-	return NULL;
-}
+        return 0;
+    }
 
-void* /* System.Reflection.MethodBody */ MethodBase::GetMethodBodyInternal (Il2CppIntPtr handle)
-{
-	NOT_SUPPORTED_IL2CPP (MethodBase::GetMethodBodyInternal, "This icall is not supported by il2cpp.");
-	
-	return 0;
-}
+#if NET_4_0
 
+    static const MethodInfo* il2cpp_method_get_equivalent_method(const MethodInfo *method, Il2CppClass *klass)
+    {
+        int offset = -1, i;
+
+        if (method->is_inflated)
+        {
+            const Il2CppGenericContext *context = il2cpp::vm::MetadataCache::GetMethodGenericContext(method);
+            if (context->method_inst)
+            {
+                const MethodInfo *result;
+
+                //MonoMethodInflated *inflated = (MonoMethodInflated*)method;
+                //method is inflated, we should inflate it on the other class
+                Il2CppGenericContext newCtx;
+                newCtx.method_inst = context->method_inst;
+                newCtx.class_inst = context->class_inst;
+                if (klass->generic_class)
+                {
+                    newCtx.class_inst = klass->generic_class->context.class_inst;
+                }
+                else if (klass->genericContainerIndex != kGenericContainerIndexInvalid)
+                {
+                    NOT_IMPLEMENTED(il2cpp_method_get_equivalent_method: generic_container_case);
+                    //const Il2CppGenericContainer *genericContainer = il2cpp::vm::MetadataCache::GetGenericContainerFromIndex(klass->genericContainerIndex);
+                    //newCtx.class_inst = genericContainer->context.class_inst;
+                }
+
+                result = il2cpp::metadata::GenericMetadata::Inflate(method, klass, &newCtx);
+                return result;
+            }
+        }
+
+        il2cpp::vm::Class::SetupMethods(method->declaring_type);
+
+        for (i = 0; i < method->declaring_type->method_count; ++i)
+        {
+            if (method->declaring_type->methods[i] == method)
+            {
+                offset = i;
+                break;
+            }
+        }
+
+        il2cpp::vm::Class::SetupMethods(klass);
+
+        IL2CPP_ASSERT(offset >= 0 && offset < klass->method_count);
+        return klass->methods[offset];
+    }
+
+    Il2CppReflectionMethod* MethodBase::GetMethodFromHandleInternalType_native(Il2CppIntPtr method_handle, Il2CppIntPtr type_handle, bool genericCheck)
+    {
+        Il2CppReflectionMethod *res = NULL;
+        Il2CppClass *klass;
+        const MethodInfo *method = (const MethodInfo*)method_handle.m_value;
+        if (type_handle.m_value && genericCheck)
+        {
+            klass = il2cpp_class_from_il2cpp_type((Il2CppType*)type_handle.m_value);
+            if (il2cpp_class_get_generic_type_definition(method->declaring_type) != il2cpp_class_get_generic_type_definition(klass))
+                return NULL;
+
+            if (method->declaring_type != klass)
+            {
+                method = il2cpp_method_get_equivalent_method(method, klass);
+                if (!method)
+                    return NULL;
+            }
+        }
+        else if (type_handle.m_value)
+            klass = il2cpp_class_from_il2cpp_type((Il2CppType*)type_handle.m_value);
+        else
+            klass = method->declaring_type;
+
+        res = il2cpp_method_get_object(method, klass);
+        return res;
+    }
+
+#endif
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

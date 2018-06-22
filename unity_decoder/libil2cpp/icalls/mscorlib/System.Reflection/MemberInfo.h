@@ -26,13 +26,11 @@ namespace System
 {
 namespace Reflection
 {
-
-class LIBIL2CPP_CODEGEN_API MemberInfo
-{
-public:
-	static int32_t get_MetadataToken (Il2CppObject* /* System.Reflection.MemberInfo */ self);
-};
-
+    class LIBIL2CPP_CODEGEN_API MemberInfo
+    {
+    public:
+        static int32_t get_MetadataToken(Il2CppObject* /* System.Reflection.MemberInfo */ self);
+    };
 } /* namespace Reflection */
 } /* namespace System */
 } /* namespace mscorlib */

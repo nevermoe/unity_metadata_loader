@@ -4,64 +4,92 @@
 #include "vm/Object.h"
 #include "vm/CCW.h"
 #include "vm/Class.h"
-#include "vm/ComUtils.h"
+#include "vm/CachedCCWBase.h"
 #include "vm/Exception.h"
 #include "vm/MetadataCache.h"
+#include "vm/RCW.h"
+#include "vm/Runtime.h"
+#include "vm/String.h"
 
 namespace il2cpp
 {
 namespace vm
 {
+    struct ManagedObject : CachedCCWBase<ManagedObject>
+    {
+        inline ManagedObject(Il2CppObject* obj) :
+            CachedCCWBase<ManagedObject>(obj)
+        {
+        }
 
-namespace
-{
+        virtual il2cpp_hresult_t STDCALL QueryInterface(const Il2CppGuid& iid, void** object) IL2CPP_OVERRIDE
+        {
+            if (::memcmp(&iid, &Il2CppIUnknown::IID, sizeof(Il2CppGuid)) == 0
+                || ::memcmp(&iid, &Il2CppIInspectable::IID, sizeof(Il2CppGuid)) == 0
+                || ::memcmp(&iid, &Il2CppIAgileObject::IID, sizeof(Il2CppGuid)) == 0)
+            {
+                *object = GetIdentity();
+                AddRefImpl();
+                return IL2CPP_S_OK;
+            }
 
-struct NOVTABLE ManagedObject : ManagedObjectBase<ManagedObject>
-{
-	inline ManagedObject(Il2CppObject* obj) : ManagedObjectBase<ManagedObject>(obj) {}
-};
+            if (::memcmp(&iid, &Il2CppIManagedObjectHolder::IID, sizeof(Il2CppGuid)) == 0)
+            {
+                *object = static_cast<Il2CppIManagedObjectHolder*>(this);
+                AddRefImpl();
+                return IL2CPP_S_OK;
+            }
 
-} /* namespace anonymous */
+            if (::memcmp(&iid, &Il2CppIMarshal::IID, sizeof(Il2CppGuid)) == 0)
+            {
+                *object = static_cast<Il2CppIMarshal*>(this);
+                AddRefImpl();
+                return IL2CPP_S_OK;
+            }
 
-typedef Il2CppIUnknown* (*CreateCCWFunc)(Il2CppObject* obj, const Il2CppGuid& iid);
+            *object = NULL;
+            return IL2CPP_E_NOINTERFACE;
+        }
 
-Il2CppIUnknown* CCW::Create(Il2CppObject* obj, const Il2CppGuid& iid)
-{
-	if (!obj)
-		return NULL;
+        virtual il2cpp_hresult_t STDCALL GetIids(uint32_t* iidCount, Il2CppGuid** iids) IL2CPP_OVERRIDE
+        {
+            *iidCount = 0;
+            *iids = NULL;
+            return IL2CPP_S_OK;
+        }
+    };
 
-	il2cpp_hresult_t hr;
-	Il2CppIUnknown* result;
+    Il2CppIUnknown* CCW::CreateCCW(Il2CppObject* obj)
+    {
+        // check for ccw create function, which is implemented by objects that implement COM or Windows Runtime interfaces
+        const Il2CppInteropData* interopData = obj->klass->interopData;
+        if (interopData != NULL)
+        {
+            const CreateCCWFunc createCcw = interopData->createCCWFunction;
 
-	// check for rcw object. com interface can be extracted from it and there's no need to create ccw
-	if (obj->klass->is_import_or_windows_runtime)
-	{
-		hr = static_cast<Il2CppComObject*>(obj)->identity->QueryInterface(iid, reinterpret_cast<void**>(&result));
-		Exception::RaiseIfFailed(hr);
-		return result;
-	}
+            if (createCcw != NULL)
+                return createCcw(obj);
+        }
 
-	// check for ccw create function (implemented by com import types)
+        // otherwise create generic ccw object that "only" implements IUnknown, IMarshal, IInspectable, IAgileObject and IManagedObjectHolder interfaces
+        void* memory = utils::Memory::Malloc(sizeof(ManagedObject));
+        if (memory == NULL)
+            Exception::RaiseOutOfMemoryException();
+        return static_cast<Il2CppIManagedObjectHolder*>(new(memory)ManagedObject(obj));
+    }
 
-	const int32_t index = obj->klass->typeDefinition->ccwFunctionIndex;
-	if (index != kMethodIndexInvalid)
-	{
-		const CreateCCWFunc createCcw = reinterpret_cast<CreateCCWFunc>(MetadataCache::GetCreateCcwFuncFromIndex(index));
-		assert(createCcw);
-		return createCcw(obj, iid);
-	}
-
-	// otherwise create generic ccw object that only implements IUnknown, IMarshal and IManagedObject interfaces
-
-	ComObject<ManagedObject>* instance = ComObject<ManagedObject>::__CreateInstance(obj);
-	hr = instance->QueryInterface(iid, reinterpret_cast<void**>(&result));
-	if (IL2CPP_HR_FAILED(hr))
-	{
-		instance->__DestroyInstance();
-		Exception::Raise(hr);
-	}
-	return result;
-}
-
+    Il2CppException* CCW::GetIPropertyValueInvalidCast(Il2CppObject* value, const char* from, const char* to)
+    {
+        Il2CppClass* klass = il2cpp::vm::Object::GetClass(value);
+        const MethodInfo* toString = il2cpp::vm::Class::GetMethodFromName(klass, "ToString", 0);
+        Il2CppString* valueString = (Il2CppString*)il2cpp::vm::Runtime::Invoke(toString, value, NULL, NULL);
+        std::string utf8Value = il2cpp::utils::StringUtils::Utf16ToUtf8(il2cpp::utils::StringUtils::GetChars(valueString));
+        std::string message = il2cpp::utils::StringUtils::Printf(
+                "Object in an IPropertyValue is of type '%s' with value '%s', which cannot be converted to a '%s'.",
+                from,
+                utf8Value.c_str(),
+                to);
+        return il2cpp::vm::Exception::GetInvalidCastException(message.c_str());
+    }
 } /* namespace vm */
 } /* namespace il2cpp */

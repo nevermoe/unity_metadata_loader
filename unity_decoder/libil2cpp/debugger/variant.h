@@ -8,47 +8,43 @@ namespace il2cpp
 {
 namespace debugger
 {
+    class Buffer;
 
-class Buffer;
+    class Variant
+    {
+    public:
 
-class Variant
-{
+        Variant();
+        Variant(const Il2CppType *type, void *value);
 
-public:
+        inline const Il2CppType *type() const
+        {
+            return _type;
+        }
 
-	Variant();
-	Variant(const Il2CppType *type, void *value);
+        inline void *value() const
+        {
+            return _value;
+        }
 
-	inline const Il2CppType *type() const 
-	{
-		return _type;
-	}
-	
-	inline void *value() const
-	{
-		return _value;
-	}
+        virtual void WriteTo(Buffer &out) const;
 
-	virtual void WriteTo(Buffer &out) const;
-	
-	static ErrorCode ReadInto(Buffer &in, const Il2CppType *expected_type, void *addr);
+        static ErrorCode ReadInto(Buffer & in, const Il2CppType * expected_type, void *addr);
 
-private:
+    private:
 
-	const Il2CppType *_type;
-	void *_value;
-};
+        const Il2CppType *_type;
+        void *_value;
+    };
 
-class VTypeVariant : public Variant
-{
+    class VTypeVariant : public Variant
+    {
+    public:
 
-public:
+        VTypeVariant();
+        VTypeVariant(const Il2CppType *type, void *value);
 
-	VTypeVariant();
-	VTypeVariant(const Il2CppType *type, void *value);
-
-	virtual void WriteTo(Buffer &out) const;
-};
-
+        virtual void WriteTo(Buffer &out) const;
+    };
 } /* namespace debugger */
 } /* namespace il2cpp */

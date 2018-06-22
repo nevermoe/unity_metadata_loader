@@ -11,12 +11,10 @@ namespace il2cpp
 {
 namespace debugger
 {
-
-const Reply *Agent::Process(const InternalErrorNotImplementedCommand *command)
-{
-	return new InternalErrorNotImplementedReply(command);
-}
-
+    const Reply *Agent::Process(const InternalErrorNotImplementedCommand *command)
+    {
+        return new InternalErrorNotImplementedReply(command);
+    }
 }
 }
 

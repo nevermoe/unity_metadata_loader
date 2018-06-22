@@ -24,13 +24,11 @@ namespace mscorlib
 {
 namespace System
 {
-
-class LIBIL2CPP_CODEGEN_API RuntimeMethodHandle
-{
-public:
-	static Il2CppIntPtr GetFunctionPointer (Il2CppIntPtr m);
-};
-
+    class LIBIL2CPP_CODEGEN_API RuntimeMethodHandle
+    {
+    public:
+        static Il2CppIntPtr GetFunctionPointer(Il2CppIntPtr m);
+    };
 } /* namespace System */
 } /* namespace mscorlib */
 } /* namespace icalls */

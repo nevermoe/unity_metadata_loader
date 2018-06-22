@@ -5,11 +5,9 @@ namespace il2cpp
 {
 namespace os
 {
-
 namespace Encoding
 {
-	std::string GetCharSet();
+    std::string GetCharSet();
 }
-
 }
 }

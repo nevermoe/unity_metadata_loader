@@ -26,13 +26,11 @@ namespace System
 {
 namespace Globalization
 {
-
-class LIBIL2CPP_CODEGEN_API RegionInfo
-{
-public:
-	static bool construct_internal_region_from_name (void* /* System.Globalization.RegionInfo */ self, Il2CppString* name);
-};
-
+    class LIBIL2CPP_CODEGEN_API RegionInfo
+    {
+    public:
+        static bool construct_internal_region_from_name(Il2CppRegionInfo* regionInfo, Il2CppString* name);
+    };
 } /* namespace Globalization */
 } /* namespace System */
 } /* namespace mscorlib */

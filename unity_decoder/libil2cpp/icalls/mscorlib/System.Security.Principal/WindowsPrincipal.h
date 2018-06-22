@@ -28,14 +28,12 @@ namespace Security
 {
 namespace Principal
 {
-
-class LIBIL2CPP_CODEGEN_API WindowsPrincipal
-{
-public:
-	static bool IsMemberOfGroupName (Il2CppIntPtr user, Il2CppString* group);
-	static bool IsMemberOfGroupId (Il2CppIntPtr user, Il2CppIntPtr group);
-};
-
+    class LIBIL2CPP_CODEGEN_API WindowsPrincipal
+    {
+    public:
+        static bool IsMemberOfGroupName(Il2CppIntPtr user, Il2CppString* group);
+        static bool IsMemberOfGroupId(Il2CppIntPtr user, Il2CppIntPtr group);
+    };
 } /* namespace Principal */
 } /* namespace Security */
 } /* namespace System */

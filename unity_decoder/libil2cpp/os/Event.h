@@ -9,39 +9,37 @@ namespace il2cpp
 {
 namespace os
 {
+    class EventImpl;
 
-class EventImpl;
+    class Event : public il2cpp::utils::NonCopyable
+    {
+    public:
+        Event(bool manualReset = false, bool signaled = false);
+        ~Event();
 
-class Event : public il2cpp::utils::NonCopyable
-{
-public:
-	Event (bool manualReset = false, bool signaled = false);
-	~Event ();
+        ErrorCode Set();
+        ErrorCode Reset();
+        WaitStatus Wait(bool interruptible = false);
+        WaitStatus Wait(uint32_t ms, bool interruptible = false);
 
-	ErrorCode Set ();
-	ErrorCode Reset ();
-	WaitStatus Wait (bool interruptible = false);
-	WaitStatus Wait (uint32_t ms, bool interruptible = false);
+    private:
+        EventImpl* m_Event;
+    };
 
-private:
-	EventImpl* m_Event;
-};
+    class EventHandle : public Handle
+    {
+    public:
+        EventHandle(Event* event)
+            : m_Event(event) {}
 
-class EventHandle : public Handle
-{
-public:
-	EventHandle (Event* event)
-		: m_Event (event) {}
+        virtual ~EventHandle() { delete m_Event; }
+        virtual bool Wait() { m_Event->Wait(true); return true; }
+        virtual bool Wait(uint32_t ms) { return m_Event->Wait(ms, true) != kWaitStatusTimeout; }
+        virtual void Signal() { m_Event->Set(); }
+        Event& Get() { return *m_Event; }
 
-	virtual ~EventHandle () { delete m_Event; };
-	virtual bool Wait () { m_Event->Wait (true); return true; }
-	virtual bool Wait (uint32_t ms) { return m_Event->Wait (ms, true) != kWaitStatusTimeout; }
-	virtual void Signal () { m_Event->Set (); }
-	Event& Get() { return *m_Event; }
-
-private:
-	Event* m_Event;
-};
-
+    private:
+        Event* m_Event;
+    };
 }
 }

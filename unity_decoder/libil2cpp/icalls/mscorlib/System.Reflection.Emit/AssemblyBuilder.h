@@ -17,14 +17,12 @@ namespace Reflection
 {
 namespace Emit
 {
-
-class LIBIL2CPP_CODEGEN_API AssemblyBuilder
-{
-public:
-	static void basic_init (mscorlib_System_Reflection_Emit_AssemblyBuilder* );
-	static mscorlib_System_Reflection_Module* InternalAddModule (mscorlib_System_Reflection_Emit_AssemblyBuilder * __this, Il2CppString* fileName);
-};
-	
+    class LIBIL2CPP_CODEGEN_API AssemblyBuilder
+    {
+    public:
+        static void basic_init(mscorlib_System_Reflection_Emit_AssemblyBuilder*);
+        static mscorlib_System_Reflection_Module* InternalAddModule(mscorlib_System_Reflection_Emit_AssemblyBuilder * thisPtr, Il2CppString* fileName);
+    };
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

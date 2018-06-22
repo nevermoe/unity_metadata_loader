@@ -8,40 +8,37 @@ namespace il2cpp
 {
 namespace debugger
 {
+    class EventCompositeCommand : public Command
+    {
+    public:
 
-class EventCompositeCommand : public Command
-{
+        EventCompositeCommand();
+        explicit EventCompositeCommand(int32_t /*ignored*/);
 
-public:
-	
-	EventCompositeCommand();
-	explicit EventCompositeCommand(int32_t /*ignored*/);
+        inline SuspendPolicy suspend_policy() const
+        {
+            return _suspend_policy;
+        }
 
-	inline SuspendPolicy suspend_policy() const
-	{
-		return _suspend_policy;
-	}
+        inline void suspend_policy(SuspendPolicy v)
+        {
+            _suspend_policy = v;
+        }
 
-	inline void suspend_policy(SuspendPolicy v)
-	{
-		_suspend_policy = v;
-	}
+        void AddEvent(int32_t req_id, const Event *evt);
 
-	void AddEvent(int32_t req_id, const Event *evt);
+    protected:
 
-protected:
-	
-	void WriteContentTo(Buffer &out) const;
+        void WriteContentTo(Buffer &out) const;
 
-private:
+    private:
 
-	SuspendPolicy _suspend_policy;
-	std::map<int32_t, const Event*> _events;
+        SuspendPolicy _suspend_policy;
+        std::map<int32_t, const Event*> _events;
 
-	PROTOCOL_COMMAND(Event, Composite);
+        PROTOCOL_COMMAND(Event, Composite);
 
-	DISALLOW_COPY(EventCompositeCommand);
-};
-
+        DISALLOW_COPY(EventCompositeCommand);
+    };
 }
 }

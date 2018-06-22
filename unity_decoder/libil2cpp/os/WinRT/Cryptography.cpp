@@ -1,79 +1,38 @@
 #include "il2cpp-config.h"
 
-#if IL2CPP_TARGET_WINRT
+#if IL2CPP_TARGET_WINRT || IL2CPP_TARGET_XBOXONE
 
+#include "os/Win32/WindowsHeaders.h"
 #include "os/Cryptography.h"
-#include "os/Win32/WindowsHelpers.h"
-
-#include <robuffer.h>
-#include <windows.security.cryptography.h>
-#include <wrl.h>
 
 namespace il2cpp
 {
 namespace os
 {
+// This has to be non-null value because the return value of NULL from GetCryptographyProvider means it failed
+    void* const kCryptographyProvider = reinterpret_cast<void*>(0x12345678);
 
-using namespace ABI::Windows::Security::Cryptography;
-using namespace ABI::Windows::Storage::Streams;
-using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
-using namespace Windows::Storage::Streams;
+    void* Cryptography::GetCryptographyProvider()
+    {
+        return kCryptographyProvider;
+    }
 
-void* Cryptography::GetCryptographyProvider()
-{
-	ICryptographicBufferStatics* provider;
+    bool Cryptography::OpenCryptographyProvider()
+    {
+        return true;
+    }
 
-	auto hr = RoGetActivationFactory(HStringReference(RuntimeClass_Windows_Security_Cryptography_CryptographicBuffer).Get(), 
-		__uuidof(ICryptographicBufferStatics), reinterpret_cast<void**>(&provider));
+    void Cryptography::ReleaseCryptographyProvider(void* provider)
+    {
+        // Do nothing, since we never allocated it
+    }
 
-	if (SUCCEEDED(hr))
-		return provider;
-
-	return nullptr;
-}
-
-bool Cryptography::OpenCryptographyProvider()
-{
-	return false;
-}
-
-void Cryptography::ReleaseCryptographyProvider(void* provider)
-{
-	Assert(provider != nullptr);
-	static_cast<ICryptographicBufferStatics*>(provider)->Release();
-}
-
-bool Cryptography::FillBufferWithRandomBytes(void* provider, uint32_t length, unsigned char* data)
-{
-	Assert(provider != nullptr);
-	Assert(data != nullptr);
-
-	ComPtr<IBuffer> buffer;
-	ComPtr<IBufferByteAccess> bufferAccess;
-
-	auto cryptoProvider = static_cast<ICryptographicBufferStatics*>(provider);	
-	auto hr = cryptoProvider->GenerateRandom(length, &buffer);
-
-	if (FAILED(hr))
-		return false;
-
-	hr = buffer.As(&bufferAccess);
-
-	if (FAILED(hr))
-		return false;
-
-	uint8_t* bufferPtr;
-	hr = bufferAccess->Buffer(&bufferPtr);
-
-	if (FAILED(hr))
-		return false;
-
-	memcpy(data, bufferPtr, length);
-	return true;
-}
-
+    bool Cryptography::FillBufferWithRandomBytes(void* provider, uint32_t length, unsigned char* data)
+    {
+        NO_UNUSED_WARNING(provider);
+        return SUCCEEDED(BCryptGenRandom(NULL, data, length, BCRYPT_USE_SYSTEM_PREFERRED_RNG));
+    }
 }
 }
 
-#endif 
+#endif

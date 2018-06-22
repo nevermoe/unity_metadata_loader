@@ -12,17 +12,14 @@ namespace il2cpp
 {
 namespace debugger
 {
+    const Reply *Agent::Process(const EventCompositeCommand *command)
+    {
+        LOG("warning: `EventCompositeCommand` not implemented. Returning a `NotImplemented` reply!");
 
+        IL2CPP_ASSERT(0);
 
-const Reply *Agent::Process(const EventCompositeCommand *command)
-{
-	LOG("warning: `EventCompositeCommand` not implemented. Returning a `NotImplemented` reply!");
-
-	assert(0);
-
-	return new InternalErrorNotImplementedReply(command);
-}
-
+        return new InternalErrorNotImplementedReply(command);
+    }
 }
 }
 

@@ -26,13 +26,16 @@ namespace System
 {
 namespace Diagnostics
 {
+    class LIBIL2CPP_CODEGEN_API Debugger
+    {
+    public:
+        static bool IsAttached_internal();
 
-class LIBIL2CPP_CODEGEN_API Debugger
-{
-public:
-	static bool IsAttached_internal();
-};
-
+#if NET_4_0
+        static bool IsLogging();
+        static void Log(int32_t level, Il2CppString* category, Il2CppString* message);
+#endif
+    };
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace mscorlib */

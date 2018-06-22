@@ -13,147 +13,145 @@ namespace il2cpp
 {
 namespace debugger
 {
+    const Reply *Agent::Process(const VmVersionCommand *command)
+    {
+        VmVersionCommand::Reply *vm_version_reply = command->reply();
 
-const Reply *Agent::Process(const VmVersionCommand *command)
-{
-	VmVersionCommand::Reply *vm_version_reply = command->reply();
+        vm_version_reply->name("il2cpp 0.0.1");
+        vm_version_reply->major_version(_protocol.major_version());
+        vm_version_reply->minor_version(_protocol.minor_version());
 
-	vm_version_reply->name("il2cpp 0.0.1");
-	vm_version_reply->major_version(_protocol.major_version());
-	vm_version_reply->minor_version(_protocol.minor_version());
+        return vm_version_reply;
+    }
 
-	return vm_version_reply;
-}
+    const Reply *Agent::Process(const VmSetProtocolVersionCommand *command)
+    {
+        _protocol.major_version(command->major_version());
+        _protocol.minor_version(command->minor_version());
 
-const Reply *Agent::Process(const VmSetProtocolVersionCommand *command)
-{
-	_protocol.major_version(command->major_version());
-	_protocol.minor_version(command->minor_version());
-	
-	LOG( "Protocol version " << Protocol::MajorVersion << "." << Protocol::MinorVersion << ", client protocol version " << _protocol.major_version() << "." << _protocol.minor_version() << "." );
+        LOG("Protocol version " << Protocol::MajorVersion << "." << Protocol::MinorVersion << ", client protocol version " << _protocol.major_version() << "." << _protocol.minor_version() << ".");
 
-	return command->reply();
-}
+        return command->reply();
+    }
 
-const Reply *Agent::Process(const VmResumeCommand *command)
-{
-	VmResumeCommand::Reply *empty_reply = command->reply();
-	
-	if(!IsSuspended())
-		empty_reply->error_code(kErrorCodeNotSuspended);
-	else
-		RequestResume();
+    const Reply *Agent::Process(const VmResumeCommand *command)
+    {
+        VmResumeCommand::Reply *empty_reply = command->reply();
 
-	return empty_reply;
-}
+        if (!IsSuspended())
+            empty_reply->error_code(kErrorCodeNotSuspended);
+        else
+            RequestResume();
 
-const Reply *Agent::Process(const VmAllThreadsCommand *command)
-{
-	VmAllThreadsCommand::Reply *all_threads_reply = command->reply();
+        return empty_reply;
+    }
 
-	size_t size = 0;
-	Il2CppThread **threads = CALL_IL2CPP_API(il2cpp_thread_get_all_attached_threads) (&size);
+    const Reply *Agent::Process(const VmAllThreadsCommand *command)
+    {
+        VmAllThreadsCommand::Reply *all_threads_reply = command->reply();
 
-	for(size_t i = 0; i < size; ++i)
-	{
-		Il2CppThread *thread = threads[i];
-		if (!CALL_IL2CPP_API(il2cpp_is_vm_thread)(thread))
-			continue;
+        size_t size = 0;
+        Il2CppThread **threads = CALL_IL2CPP_API(il2cpp_thread_get_all_attached_threads) (&size);
 
-		if(thread == _managed_debugger_thread)
-			continue;
+        for (size_t i = 0; i < size; ++i)
+        {
+            Il2CppThread *thread = threads[i];
+            if (!CALL_IL2CPP_API(il2cpp_is_vm_thread)(thread))
+                continue;
 
-		all_threads_reply->threads().push_back(thread);
-	}
+            if (thread == _managed_debugger_thread)
+                continue;
 
-	return all_threads_reply;
-}
+            all_threads_reply->threads().push_back(thread);
+        }
 
-const Reply *Agent::Process(const VmDisposeCommand *command)
-{
-	VmDisposeCommand::Reply *empty_reply = command->reply();
-	
-	LOG("warning: probably we should use a global lock here to avoid contention on event_req_list.");
+        return all_threads_reply;
+    }
 
-	InvalidateBreakpointData();
+    const Reply *Agent::Process(const VmDisposeCommand *command)
+    {
+        VmDisposeCommand::Reply *empty_reply = command->reply();
 
-	_event_req_list.ClearAllRequests();
+        LOG("warning: probably we should use a global lock here to avoid contention on event_req_list.");
 
-	while(IsSuspended())
-		RequestResume();
+        InvalidateBreakpointData();
 
-	return empty_reply;
-}
+        _event_req_list.ClearAllRequests();
 
-const Reply *Agent::Process(const VmSuspendCommand *command)
-{
-	VmSuspendCommand::Reply *empty_reply = command->reply();
+        while (IsSuspended())
+            RequestResume();
 
-	if(!IsSuspended())
-	{
-		RequestSuspend();
-		WaitForSuspend();
-	}
+        return empty_reply;
+    }
 
-	return empty_reply;
-}
+    const Reply *Agent::Process(const VmSuspendCommand *command)
+    {
+        VmSuspendCommand::Reply *empty_reply = command->reply();
 
-const Reply *Agent::Process(const VmAbortInvokeCommand *command)
-{
-	LOG("warning: `VmAbortInvokeCommand` not implemented. Returning a `NotImplemented` reply!");
+        if (!IsSuspended())
+        {
+            RequestSuspend();
+            WaitForSuspend();
+        }
 
-	assert(0);
+        return empty_reply;
+    }
 
-	return new InternalErrorNotImplementedReply(command);
-}
+    const Reply *Agent::Process(const VmAbortInvokeCommand *command)
+    {
+        LOG("warning: `VmAbortInvokeCommand` not implemented. Returning a `NotImplemented` reply!");
 
-const Reply *Agent::Process(const VmExitCommand *command)
-{
-	LOG("warning: `VmExitCommand` not implemented. Returning a `NotImplemented` reply!");
+        IL2CPP_ASSERT(0);
 
-	assert(0);
+        return new InternalErrorNotImplementedReply(command);
+    }
 
-	return new InternalErrorNotImplementedReply(command);
-}
+    const Reply *Agent::Process(const VmExitCommand *command)
+    {
+        LOG("warning: `VmExitCommand` not implemented. Returning a `NotImplemented` reply!");
 
-const Reply *Agent::Process(const VmInvokeMethodCommand *command)
-{
-	VmInvokeMethodCommand::Reply *reply = command->reply();
+        IL2CPP_ASSERT(0);
 
-	if (!IsSuspended())
-	{
-		reply->error_code(kErrorCodeNotSuspended);
-		return reply;
-	}
+        return new InternalErrorNotImplementedReply(command);
+    }
 
-	Il2CppThread *vm_thread = command->vm_thread();
-	int32_t flags = command->flags();
-	const MethodInfo* method = command->method ();
+    const Reply *Agent::Process(const VmInvokeMethodCommand *command)
+    {
+        VmInvokeMethodCommand::Reply *reply = command->reply();
 
-	ThreadData* vm_thread_data = _thread_data.ThreadDataFor(vm_thread);
+        if (!IsSuspended())
+        {
+            reply->error_code(kErrorCodeNotSuspended);
+            return reply;
+        }
 
-	vm_thread_data->SetMethodToInvoke(method);
+        Il2CppThread *vm_thread = command->vm_thread();
+        int32_t flags = command->flags();
+        const MethodInfo* method = command->method();
 
-	vm_thread_data->WaitForMethodToBeInvoked();
+        ThreadData* vm_thread_data = _thread_data.ThreadDataFor(vm_thread);
 
-	reply->method_did_not_throw_exception(true);
+        vm_thread_data->SetMethodToInvoke(method);
 
-	const Il2CppType* return_type = CALL_IL2CPP_API(il2cpp_method_get_return_type)(method);
-	reply->return_type(return_type->type);
+        vm_thread_data->WaitForMethodToBeInvoked();
 
-	if (return_type->type == IL2CPP_TYPE_VOID)
-	{
-		reply->skip_return_value = true;
-	}
-	else
-	{
-		int32_t actual_return = *(int32_t*)(CALL_IL2CPP_API(il2cpp_object_unbox)(vm_thread_data->GetReturnValueOfMethodToInvoke()));
-		reply->return_value(actual_return);
-	}
+        reply->method_did_not_throw_exception(true);
 
-	return reply;
-}
+        const Il2CppType* return_type = CALL_IL2CPP_API(il2cpp_method_get_return_type)(method);
+        reply->return_type(return_type->type);
 
+        if (return_type->type == IL2CPP_TYPE_VOID)
+        {
+            reply->skip_return_value = true;
+        }
+        else
+        {
+            int32_t actual_return = *(int32_t*)(CALL_IL2CPP_API(il2cpp_object_unbox)(vm_thread_data->GetReturnValueOfMethodToInvoke()));
+            reply->return_value(actual_return);
+        }
+
+        return reply;
+    }
 }
 }
 

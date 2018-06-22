@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{78826D45-2742-4AAA-A738-CD47C8775876}</ProjectGuid>
+    <RootNamespace>libil2cppcapitests</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>build\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../;../../../../../il2cpp-dependencies/UnitTest++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>ENABLE_UNIT_TESTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>../../../../build/$(Configuration)/$(Platform)/libil2cpp.lib;psapi.lib;Shell32.lib;Advapi32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../;../../../../../il2cpp-dependencies/UnitTest++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENABLE_UNIT_TESTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>../../../../build/$(Configuration)/$(Platform)/libil2cpp.lib;psapi.lib;Shell32.lib;Advapi32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../;../../../../../il2cpp-dependencies/UnitTest++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENABLE_UNIT_TESTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>../../../../build/$(Configuration)/$(Platform)/libil2cpp.lib;psapi.lib;Shell32.lib;Advapi32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../;../../../../../il2cpp-dependencies/UnitTest++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENABLE_UNIT_TESTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>../../../../build/$(Configuration)/$(Platform)/libil2cpp.lib;psapi.lib;Shell32.lib;Advapi32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\AssertException.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Checks.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CurrentTest.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteReporter.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteResult.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestReporter.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestResult.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\MemoryOutStream.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\NunitTestReporter.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportAssert.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Test.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestDetails.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestList.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporter.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterDebugLog.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterFormat.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterStdout.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestResults.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestRunner.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeConstraint.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpersDefault.cpp" />
+    <ClCompile Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\XmlTestReporter.cpp" />
+    <ClCompile Include="FileTests.cpp" />
+    <ClCompile Include="MainTestRunner.cpp" />
+    <ClCompile Include="NativeMethodsTests.cpp" />
+    <ClCompile Include="PathTests.cpp" />
+    <ClCompile Include="ProcessTests.cpp" />
+    <ClCompile Include="TimeTests.cpp" />
+    <ClCompile Include="TimeZoneTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\AssertException.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CheckMacros.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Checks.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Config.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\CurrentTest.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteReporter.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredSuiteResult.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestReporter.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\DeferredTestResult.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ExecuteTest.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\MemoryOutStream.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\NunitTestReporter.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportAssert.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\ReportMacros.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\Test.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestAttribute.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestDetails.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestList.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestMacros.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestProperty.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporter.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterDebugLog.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterFormat.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestReporterStdout.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestResults.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestRunner.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TestSuite.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeConstraint.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpers.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TimeHelpersDefault.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\TypeHelpers.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\UnitTest++.h" />
+    <ClInclude Include="..\..\..\..\..\il2cpp-dependencies\UnitTest++\XmlTestReporter.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

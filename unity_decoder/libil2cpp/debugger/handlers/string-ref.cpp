@@ -13,22 +13,20 @@ namespace il2cpp
 {
 namespace debugger
 {
+    const Reply *Agent::Process(const StringRefGetValueCommand *command)
+    {
+        StringRefGetValueCommand::Reply *get_value_reply = command->reply();
 
-const Reply *Agent::Process(const StringRefGetValueCommand *command)
-{
-	StringRefGetValueCommand::Reply *get_value_reply = command->reply();
+        Il2CppString *str = (Il2CppString*)command->object();
+        if (str == 0)
+            return get_value_reply;
 
-	Il2CppString *str = (Il2CppString*)command->object();
-	if(str == 0)
-		return get_value_reply;
+        get_value_reply->value(
+            utils::StringUtils::Utf16ToUtf8(
+                il2cpp_string_chars(str)));
 
-	get_value_reply->value(
-		utils::StringUtils::Utf16ToUtf8(
-			il2cpp_string_chars(str)));
-
-	return get_value_reply;
-}
-
+        return get_value_reply;
+    }
 }
 }
 

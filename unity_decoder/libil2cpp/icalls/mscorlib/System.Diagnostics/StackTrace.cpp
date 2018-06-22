@@ -1,5 +1,4 @@
 #include "il2cpp-config.h"
-#include <cassert>
 #include "class-internals.h"
 #include "object-internals.h"
 #include "vm/Array.h"
@@ -19,34 +18,34 @@ namespace System
 {
 namespace Diagnostics
 {
+    Il2CppArray* StackTrace::get_trace(Il2CppException *exc, int32_t skip, bool need_file_info)
+    {
+        Il2CppArray *res;
+        Il2CppArray *ta = exc->trace_ips;
+        int i, len;
 
-Il2CppArray* StackTrace::get_trace(Il2CppException *exc, int32_t skip, bool need_file_info)
-{
-	Il2CppArray *res;
-	Il2CppArray *ta = exc->trace_ips;
-	int i, len;
+        if (ta == NULL)
+        {
+            /* Exception is not thrown yet */
+            return Array::New(il2cpp_defaults.stack_frame_class, 0);
+        }
 
-	if (ta == NULL) {
-		/* Exception is not thrown yet */
-		return Array::New (il2cpp_defaults.stack_frame_class, 0);
-	}
+        len = Array::GetLength(ta);
 
-	len = Array::GetLength (ta);
+        res = Array::New(il2cpp_defaults.stack_frame_class, len > skip ? len - skip : 0);
 
-	res = Array::New (il2cpp_defaults.stack_frame_class, len > skip ? len - skip : 0);
+        for (i = skip; i < len; i++)
+        {
+            Il2CppStackFrame *sf = (Il2CppStackFrame*)Object::New(il2cpp_defaults.stack_frame_class);
+            MethodInfo* method = il2cpp_array_get(ta, MethodInfo*, i);
 
-	for (i = skip; i < len; i++) {
-		Il2CppStackFrame *sf = (Il2CppStackFrame *)Object::New (il2cpp_defaults.stack_frame_class);
-		MethodInfo* method = il2cpp_array_get (ta, MethodInfo*, i);
+            IL2CPP_OBJECT_SETREF(sf, method, Reflection::GetMethodObject(method, NULL));
 
-		IL2CPP_OBJECT_SETREF (sf, method, Reflection::GetMethodObject (method, NULL));
+            il2cpp_array_setref(res, i, sf);
+        }
 
-		il2cpp_array_setref (res, i, sf);
-	}
-
-	return res;
-}
-
+        return res;
+    }
 } /* namespace Diagnostics */
 } /* namespace System */
 } /* namespace mscorlib */

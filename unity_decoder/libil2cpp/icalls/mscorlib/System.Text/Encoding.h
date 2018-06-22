@@ -15,13 +15,11 @@ namespace System
 {
 namespace Text
 {
-
-class LIBIL2CPP_CODEGEN_API Encoding
-{
-public:
-	static Il2CppString* InternalCodePage (int32_t *codePage);
-};
-
+    class LIBIL2CPP_CODEGEN_API Encoding
+    {
+    public:
+        static Il2CppString* InternalCodePage(int32_t *codePage);
+    };
 } /* namespace Text */
 } /* namespace System */
 } /* namespace mscorlib */

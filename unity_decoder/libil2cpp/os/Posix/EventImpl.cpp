@@ -5,41 +5,38 @@
 #include "EventImpl.h"
 #include "PosixHelpers.h"
 #include <errno.h>
-#include <cassert>
 
 namespace il2cpp
 {
 namespace os
 {
+    EventImpl::EventImpl(bool manualReset, bool signaled)
+        : posix::PosixWaitObject(manualReset ? kManualResetEvent : kAutoResetEvent)
+    {
+        if (signaled)
+            m_Count = 1;
+    }
 
-EventImpl::EventImpl (bool manualReset, bool signaled)
-	: posix::PosixWaitObject (manualReset ? kManualResetEvent : kAutoResetEvent)
-{
-	if (signaled)
-		m_Count = 1;
-}
+    ErrorCode EventImpl::Set()
+    {
+        posix::PosixAutoLock lock(&m_Mutex);
 
-ErrorCode EventImpl::Set ()
-{
-	posix::PosixAutoLock lock (&m_Mutex);
+        m_Count = 1;
 
-	m_Count = 1;
+        if (HaveWaitingThreads())
+            pthread_cond_broadcast(&m_Condition);
 
-	if (HaveWaitingThreads ())
-		pthread_cond_broadcast (&m_Condition);
+        return kErrorCodeSuccess;
+    }
 
-	return kErrorCodeSuccess;
-}
+    ErrorCode EventImpl::Reset()
+    {
+        posix::PosixAutoLock lock(&m_Mutex);
+        m_Count = 0;
 
-ErrorCode EventImpl::Reset ()
-{
-	posix::PosixAutoLock lock (&m_Mutex);
-	m_Count = 0;
-
-	return kErrorCodeSuccess;
-}
-
+        return kErrorCodeSuccess;
+    }
 }
 }
 
-#endif 
+#endif

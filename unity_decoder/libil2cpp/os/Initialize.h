@@ -5,9 +5,7 @@ namespace il2cpp
 {
 namespace os
 {
-
-void Initialize();
-void Uninitialize();
-
+    void Initialize();
+    void Uninitialize();
 }
 }

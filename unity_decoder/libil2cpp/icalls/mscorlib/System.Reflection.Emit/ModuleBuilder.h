@@ -24,21 +24,24 @@ namespace Reflection
 {
 namespace Emit
 {
-
-class LIBIL2CPP_CODEGEN_API ModuleBuilder
-{
-public:
-	static void RegisterToken (Il2CppReflectionModuleBuilder*, Il2CppObject*, int);
-	static void WriteToFile (Il2CppReflectionModuleBuilder*, Il2CppIntPtr);
-	static void basic_init (Il2CppReflectionModuleBuilder*);
-	static void build_metadata (Il2CppReflectionModuleBuilder*);
-	static Il2CppReflectionType * create_modified_type (Il2CppReflectionTypeBuilder*, Il2CppString*);
-	static int32_t getToken (Il2CppReflectionModuleBuilder*, Il2CppObject*);
-	static int32_t getUSIndex (Il2CppReflectionModuleBuilder*, Il2CppString*);
-	static void set_wrappers_type (Il2CppReflectionModuleBuilder*, Il2CppReflectionType*);
-	static int32_t getMethodToken (Il2CppReflectionModuleBuilder*, Il2CppReflectionMethod*, Il2CppArray*);
-};
-	
+    class LIBIL2CPP_CODEGEN_API ModuleBuilder
+    {
+    public:
+        static void RegisterToken(Il2CppReflectionModuleBuilder*, Il2CppObject*, int);
+        static void WriteToFile(Il2CppReflectionModuleBuilder*, Il2CppIntPtr);
+        static void basic_init(Il2CppReflectionModuleBuilder*);
+        static void build_metadata(Il2CppReflectionModuleBuilder*);
+        static Il2CppReflectionType * create_modified_type(Il2CppReflectionTypeBuilder*, Il2CppString*);
+        static int32_t getToken(Il2CppReflectionModuleBuilder*, Il2CppObject*);
+        static int32_t getUSIndex(Il2CppReflectionModuleBuilder*, Il2CppString*);
+        static void set_wrappers_type(Il2CppReflectionModuleBuilder*, Il2CppReflectionType*);
+        static int32_t getMethodToken(Il2CppReflectionModuleBuilder*, Il2CppReflectionMethod*, Il2CppArray*);
+#if NET_4_0
+        static int32_t getMethodToken40(Il2CppObject* mb, Il2CppObject* method, Il2CppArray* opt_param_types);
+        static int32_t getToken40(Il2CppObject* mb, Il2CppObject* obj, bool create_open_instance);
+        static Il2CppObject* GetRegisteredToken(Il2CppObject* _this, int32_t token);
+#endif
+    };
 } /* namespace Emit */
 } /* namespace Reflection */
 } /* namespace System */

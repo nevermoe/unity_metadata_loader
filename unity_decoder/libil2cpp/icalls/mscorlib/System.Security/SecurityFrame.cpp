@@ -1,6 +1,5 @@
 #include "il2cpp-config.h"
 #include "icalls/mscorlib/System.Security/SecurityFrame.h"
-#include <cassert>
 #include "vm/Exception.h"
 
 namespace il2cpp
@@ -13,20 +12,18 @@ namespace System
 {
 namespace Security
 {
+    Il2CppArray * SecurityFrame::_GetSecurityStack(int32_t skip)
+    {
+        NOT_IMPLEMENTED_ICALL(SecurityManager::get_CheckExecutionRights);
+        return 0;
+    }
 
-Il2CppArray * SecurityFrame::_GetSecurityStack (int32_t skip)
-{
-	NOT_IMPLEMENTED_ICALL (SecurityManager::get_CheckExecutionRights);
-	return 0;
-}
+    void* /* System.Security.RuntimeSecurityFrame */ SecurityFrame::_GetSecurityFrame(int32_t skip)
+    {
+        NOT_SUPPORTED_IL2CPP(SecurityFrame::_GetSecurityFrame, "This icall is not supported by il2cpp.");
 
-void* /* System.Security.RuntimeSecurityFrame */ SecurityFrame::_GetSecurityFrame (int32_t skip)
-{
-	NOT_SUPPORTED_IL2CPP (SecurityFrame::_GetSecurityFrame, "This icall is not supported by il2cpp.");
-	
-	return 0;
-}
-
+        return 0;
+    }
 } /* namespace Security */
 } /* namespace System */
 } /* namespace mscorlib */

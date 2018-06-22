@@ -9,17 +9,17 @@ const Il2CppApiTestForwarder Il2CppApiTestForwarderAutoClear::zero_forwarder = {
 
 Il2CppApiTestForwarderAutoClear::Il2CppApiTestForwarderAutoClear()
 {
-	ClearAllForwardingMethods();
+    ClearAllForwardingMethods();
 }
 
 Il2CppApiTestForwarderAutoClear::~Il2CppApiTestForwarderAutoClear()
 {
-	ClearAllForwardingMethods();
+    ClearAllForwardingMethods();
 }
 
 void Il2CppApiTestForwarderAutoClear::ClearAllForwardingMethods()
 {
-	Agent::instance().TestForwarder = zero_forwarder;
+    Agent::instance().TestForwarder = zero_forwarder;
 }
 
 #endif // IL2CPP_UNIT_TESTS_ENABLED

@@ -11,17 +11,15 @@ namespace il2cpp
 {
 namespace vm
 {
-
-class LIBIL2CPP_CODEGEN_API AssemblyName
-{
+    class LIBIL2CPP_CODEGEN_API AssemblyName
+    {
 // exported
-public:
-	static std::string AssemblyNameToString (const Il2CppAssemblyName& aname);
-	static bool ParseName (Il2CppReflectionAssemblyName* aname, std::string assemblyName);
-public:
+    public:
+        static std::string AssemblyNameToString(const Il2CppAssemblyName& aname);
+        static bool ParseName(Il2CppReflectionAssemblyName* aname, std::string assemblyName);
+    public:
 
-private:
-};
-
+    private:
+    };
 } /* namespace vm */
 } /* namespace il2cpp */

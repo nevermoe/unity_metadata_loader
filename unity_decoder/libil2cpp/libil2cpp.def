@@ -5,6 +5,7 @@ il2cpp_init
 il2cpp_shutdown
 il2cpp_set_config_dir
 il2cpp_set_data_dir
+il2cpp_set_temp_dir
 il2cpp_set_commandline_arguments
 il2cpp_set_memory_callbacks
 il2cpp_get_corlib
@@ -48,6 +49,7 @@ il2cpp_class_get_property_from_name
 il2cpp_class_instance_size
 il2cpp_class_num_fields
 il2cpp_class_is_valuetype
+il2cpp_class_is_blittable
 il2cpp_class_value_size
 il2cpp_class_get_flags
 il2cpp_class_is_abstract
@@ -79,6 +81,7 @@ il2cpp_field_has_attribute
 il2cpp_field_set_value
 il2cpp_field_static_get_value
 il2cpp_field_static_set_value
+il2cpp_field_set_value_object
 
 il2cpp_gc_collect
 il2cpp_gc_collect_a_little
