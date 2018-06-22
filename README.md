@@ -1,7 +1,6 @@
 # unity_metadata_loader
 
 This project will load strings and method/class names in global-metadata.dat to IDA.
-For the newest unity version (2017.1.4p1), use branch "v24" -- which indicates the metadata's version.
 
 ## Introduction
 
@@ -33,4 +32,8 @@ After recovering the symbols:
 
 ## Declaration
 
-You are not able to compile this project because the libil2cpp's source code is removed from this repository intentionally. If you would like to make modification to this project, please search for libil2cpp's source code on your own. However, any pull request is welcome.
+Now you can compile this project because I added the libil2cpp headers.
+
+For the newest unity version (2017.1.4p1), use branch "v24" -- which indicates the metadata's version.
+
+For metadata version v23, use this fork: [https://github.com/kenjiaiko/unity_metadata_loader](https://github.com/kenjiaiko/unity_metadata_loader)
