@@ -21,6 +21,9 @@ Please refer to these two blogs for detailed information:
 4. Load unity_loader.py using File->Script File.
 5. Press Ctrl+Alt+A and all is done.
 
+## Notice
+This branch "v24" now only support 32bit Android build. 
+
 
 ## Demo
 
