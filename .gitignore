@@ -14,3 +14,4 @@ unity_decoder/Debug/
 /unity_decoder/global-metadata.dat
 unity_decoder/Release/
 *.swp
+.vs/
