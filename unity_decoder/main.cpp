@@ -307,7 +307,6 @@ int main()
 
 
 	int strCount = s_GlobalMetadataHeader->stringLiteralCount / sizeof(Il2CppStringLiteral);
-	stringLiteralFile << strCount << std::endl;
 	
 	/*
 	for (int i = MAX_META_COUNT - 1 ; i >= 0 ; i--) {
@@ -327,7 +326,10 @@ int main()
 		}
 	}
 
-	stringLiteralFile << skip << std::endl;
+
+	int totalStrNum = skip + strCount;
+
+	stringLiteralFile << totalStrNum << std::endl << strCount << std::endl;
 	for (; i < MAX_META_COUNT; i++) {
 		if (g_metadataUsages[i] == NULL) {
 			break;

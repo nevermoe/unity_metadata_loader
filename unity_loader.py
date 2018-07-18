@@ -93,6 +93,7 @@ def IsSubFollowing(addr):
 def IsDataFollowing(addr):
     i = 0
     while i < 20:
+        pAddr = GetVarFromAddr(addr)
         if not IsData(addr):
             return False;
 
@@ -157,14 +158,14 @@ def LocateStringLiterals():
         if idx < (len(referedVars)-1) and (referedVars[idx+1]-referedVars[idx]) >= 1024:
             if idc.Dword(var) == 0x0:
                 continue
-            if IsDataFollowing(idc.Dword(var)) and idc.SegName(idc.Dword(var) ) == '.bss':
+            if IsDataFollowing(var) and idc.SegName(idc.Dword(var) ) == '.bss':
                 candidateMetadaUsages.append(var)
 
     for candidate in candidateMetadaUsages:
         for referedVar in referedVars:
             if referedVar == candidate:
                 nextVar = referedVars[referedVars.index(referedVar)+1]
-                print "candidate: 0x%x, candidate end: 0x%x, method numbers: %d" % (candidate, nextVar, (nextVar-candidate)/4)
+                print "candidate: 0x%x, candidate end: 0x%x, data numbers: %d" % (candidate, nextVar, (nextVar-candidate)/4)
                 break
 
 
@@ -206,8 +207,9 @@ def LoadStringLiterals(ea = None):
     os.system(path+'/unity_decoder.exe')
     file = open('./string_literal.txt')
     
+    total_count = file.readline()
     str_count = file.readline()
-    skip_count = file.readline()
+    skip_count = int(total_count) - int(str_count)
     ea += int(skip_count) * 0x4
 
     for line in file:
