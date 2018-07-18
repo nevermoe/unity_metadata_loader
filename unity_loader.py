@@ -69,73 +69,105 @@ def GetVarFromAddr(addr):
     elif BITS == 32:
         return idc.Dword(addr)
 
-def LocatePointerLists():
+def GetMethodFromAddr(addr):
+    return GetVarFromAddr(addr) & 0xFFFFFFFE
+    
+def IsCode(addr):
+    return idc.isCode(idc.GetFlags(addr))
+
+def IsData(addr):
+    return idc.isData(idc.GetFlags(addr))
+
+def IsSubFollowing(addr):
+    i = 0
+    while i < 20:
+        pAddr = GetMethodFromAddr(addr)
+        if not IsCode(pAddr):
+            return False;
+
+        addr = idc.NextHead(addr)
+        i = i + 1
+
+    return True
+
+def IsDataFollowing(addr):
+    i = 0
+    while i < 20:
+        if not IsData(addr):
+            return False;
+
+        addr = idc.NextHead(addr)
+        i = i + 1
+
+    return True
+
+def LocateMethodPointers():
     seg = idc.FirstSeg()
     initArrayAddr = 0
     while seg != idc.BADADDR:
         seg = idc.NextSeg(seg)
         segName = idc.SegName(seg)
-        if segName == ".init_array":
-            initArrayAddr = idc.SegStart(seg)
+        if segName == ".data.rel.ro":
+            data_rel_ro = idc.SegStart(seg)
             break
-    
-    # find Il2CppCodeRegistrationOffset from init_array
-    Il2CppCodeRegistrationOffset = initArrayAddr + 30 * (BITS / 8)
-    print "find Il2CppCodeRegistrationOffset %x" % Il2CppCodeRegistrationOffset
 
-    Il2CppCodeRegistrationCpp = GetVarFromAddr(Il2CppCodeRegistrationOffset)
+    addr = data_rel_ro
+    referedVars = []
+    while idc.SegName(addr) == ".data.rel.ro":
+        for r in idautils.XrefsTo(addr,0):
+            #print "is refered: 0x%x" % addr
+            referedVars.append(addr)
+            break
 
-    print "Il2CppCodeRegistrationCpp: %x" % Il2CppCodeRegistrationCpp
-    idc.MakeName(Il2CppCodeRegistrationCpp, "Il2CppCodeRegistrationCpp")
-    
-    #Il2CppCodegenRegistration = 0
-    #for r in idautils.XrefsFrom(Il2CppCodeRegistrationAddr + 0x14, 0):
-    #    Il2CppCodegenRegistration = hex(r.to)
-        
-    #g_CodeRegistration = 0
-    #for r in idautils.XrefsFrom(Il2CppCodegenRegistration + 0x18, 0):
-    #    g_CodeRegistration = hex(r.to)
-    
-    opndValue = idc.GetOperandValue(Il2CppCodeRegistrationCpp + 0x8,1)
-    offset = GetVarFromAddr(opndValue)
-    
-    _GLOBAL_OFFSET_TABLE_ = idc.LocByName("_GLOBAL_OFFSET_TABLE_")
-    
-    
-    print "_GLOBAL_OFFSET_TABLE_ %x" % _GLOBAL_OFFSET_TABLE_
-    
-    
-    Il2CppCodegenRegistration = (_GLOBAL_OFFSET_TABLE_ + offset) & 0xFFFFFFFF
-    idc.MakeName(Il2CppCodegenRegistration, "Il2CppCodegenRegistration")
-    print "Il2CppCodegenRegistration %x" % Il2CppCodegenRegistration
-    
-    opndValue = idc.GetOperandValue(Il2CppCodegenRegistration + 0xC,1)
-    offset = GetVarFromAddr(opndValue)
-    g_CodeRegistration = (_GLOBAL_OFFSET_TABLE_ + offset) & 0xFFFFFFFF
-    idc.MakeName(g_CodeRegistration, "g_CodeRegistration")
-    print "g_CodeRegistration %x" % g_CodeRegistration
-    
-    g_MethodPointers = GetVarFromAddr(g_CodeRegistration + 0x4)
-    idc.MakeName(g_MethodPointers, "g_MethodPointers")
-    print "g_MethodPointers %x" % g_MethodPointers
-    
-    
-    opndValue = idc.GetOperandValue(Il2CppCodegenRegistration + 0x04,1)
-    offset = GetVarFromAddr(opndValue)
-    g_MetadataRegistration = GetVarFromAddr((_GLOBAL_OFFSET_TABLE_ + offset) & 0xFFFFFFFF)
-    idc.MakeName(g_MetadataRegistration, "g_MetadataRegistration")
-    print "g_MetadataRegistration %x" % g_MetadataRegistration
-    
-    g_MetadataUsages = GetVarFromAddr(g_MetadataRegistration + 0x3C)
-    idc.MakeName(g_MetadataUsages, "g_MetadataUsages")
-    print "g_MetadataUsages %x" % g_MetadataUsages
-    
-    return (g_MethodPointers, g_MetadataUsages)
+        addr += 4
 
-def GetMethodFromAddr(addr):
-    return GetVarFromAddr(addr) & 0xFFFFFFFE
-    
-    
+    candidateMethodPointers = []
+    for var in referedVars:
+        if IsSubFollowing(var):
+            candidateMethodPointers.append(var)
+
+    for candidate in candidateMethodPointers:
+        for referedVar in referedVars:
+            if referedVar == candidate:
+                nextVar = referedVars[referedVars.index(referedVar)+1]
+                print "candidate: 0x%x, candidate end: 0x%x, method numbers: %d" % (candidate, nextVar, (nextVar-candidate)/4)
+                break
+
+
+def LocateStringLiterals():
+    seg = idc.FirstSeg()
+    initArrayAddr = 0
+    while seg != idc.BADADDR:
+        seg = idc.NextSeg(seg)
+        segName = idc.SegName(seg)
+        if segName == ".data.rel.ro":
+            data_rel_ro = idc.SegStart(seg)
+            break
+
+    addr = data_rel_ro
+    referedVars = []
+    while idc.SegName(addr) == ".data.rel.ro":
+        for r in idautils.XrefsTo(addr,0):
+            referedVars.append(addr)
+            break
+        addr += 4
+
+    candidateMetadaUsages = []
+    for idx, var in enumerate(referedVars):
+        if idx < (len(referedVars)-1) and (referedVars[idx+1]-referedVars[idx]) >= 1024:
+            if idc.Dword(var) == 0x0:
+                continue
+            if IsDataFollowing(idc.Dword(var)) and idc.SegName(idc.Dword(var) ) == '.bss':
+                candidateMetadaUsages.append(var)
+
+    for candidate in candidateMetadaUsages:
+        for referedVar in referedVars:
+            if referedVar == candidate:
+                nextVar = referedVars[referedVars.index(referedVar)+1]
+                print "candidate: 0x%x, candidate end: 0x%x, method numbers: %d" % (candidate, nextVar, (nextVar-candidate)/4)
+                break
+
+
 def LoadMethods(ea = None):
     
     if ea is None:
@@ -199,32 +231,7 @@ def LoadStringLiterals(ea = None):
     
     file.close()
 
-
-def AutoLoadAndroid():
-    (g_MethodPointers,g_MetadataUsages) = LocatePointerLists()
-    LoadMethods(g_MethodPointers)
-    LoadStringLiterals(g_MetadataUsages)
-
-def AutoLoad():
-
-    if FILE_TYPE == "f_ELF":
-        AutoLoadAndroid()
-    else:
-        print "AutoLoad is not supported for your platform. Please try LocationHelper."
-
-# must be created
-idaapi.CompileLine('static LoadStringLiterals() { RunPythonStatement("LoadStringLiterals()"); }')
-idaapi.CompileLine('static LoadMethods() { RunPythonStatement("LoadMethods()"); }')
-idaapi.CompileLine('static AutoLoad() { RunPythonStatement("AutoLoad()"); }')
-idaapi.CompileLine('static LocatePointerLists() { RunPythonStatement("LocatePointerLists()"); }')
-
-# Add the hotkey
-AddHotkey("Ctrl-Alt-S", 'LoadStringLiterals')
-AddHotkey("Ctrl-Alt-M", 'LoadMethods')
-AddHotkey("Ctrl-Alt-A", 'AutoLoad')
-AddHotkey("Ctrl-Alt-L", 'LocatePointerLists')
-
-print "Ctrl-Alt-A : Automatically Load Everything"
-print "Ctrl-Alt-S : (Advanced) Load String Literals"
-print "Ctrl-Alt-M : (Advanced) Load Methods"
-print "Ctrl-Alt-L : Locate Method Pointers and Stringliteral Pointers"
+print "Type LocateMethodPointers() to print suggested candidate for method pointers"
+print "Click the location where you believe the method pointers start, type LoadMethods()"
+print "Type LocateStringLiterals() to print suggested candidate for string literals"
+print "Click the location where you believe the string literals start, type LoadStringLiterals()"
