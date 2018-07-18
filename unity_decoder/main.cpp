@@ -326,14 +326,17 @@ int main()
 			break;
 		}
 	}
+
 	stringLiteralFile << skip << std::endl;
 	for (; i < MAX_META_COUNT; i++) {
+		if (g_metadataUsages[i] == NULL) {
+			break;
+		}
 		stringLiteralFile << g_metadataUsages[i] << std::endl;
 	}
 	
 	
 	stringLiteralFile.close();
-
 
 	methodNameFile.open(MethodNameFileName);
 

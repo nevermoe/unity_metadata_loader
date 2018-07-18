@@ -7,6 +7,7 @@
 *.ipdb
 *.swp
 unity_decoder/Debug/
+/Debug/
 /Debug/string_literal.txt
 /Debug/global-metadata.dat
 /Debug/global-metadata.dat-ios
