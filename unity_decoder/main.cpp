@@ -300,8 +300,8 @@ int main()
 
 
 	stringLiteralFile.open(StringLiteralFileName);
-	int usagePairCount = s_GlobalMetadataHeader->metadataUsageListsCount / sizeof(Il2CppMetadataUsagePair);
-	for (int i = 0; i < usagePairCount; i++) {
+	int metholdUsageListsCount = s_GlobalMetadataHeader->metadataUsageListsCount / sizeof(Il2CppMetadataUsageList);
+	for (int i = 0; i < metholdUsageListsCount; i++) {
 		InitializeMethodMetadata(i);
 	}
 
